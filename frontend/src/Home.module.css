@@ -1,0 +1,105 @@
+.main {
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-direction: column;
+    border: 1px solid rgba(0,0,0,0.1);
+    background-color: #f1f1f1;
+    margin: 50px;
+    border-radius: 30px;
+    padding: 30px;
+    width: clamp(219px, 60vw, 350px);
+    height: 400px;
+    margin-bottom: 0;
+}
+
+button {
+    border: 0px solid rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    margin: 5px;
+    font-size: 30px;
+    border-radius: 10px;
+    padding: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    color: black;
+}
+
+
+
+.input {
+    padding: 15px 0;
+    border-radius: 10px;
+    padding: 5px;
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    font-size: 1.3rem;
+    margin: 30px 0 0 0;
+    width: 100%;
+}
+
+
+.label {
+    margin: 5px;
+    font-size: 1.3rem;
+    position: absolute;
+    top: 28px;
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+    width: 100%;
+}
+
+.reset {
+    color: black;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+.dinput {
+    background-color: #141313c4;
+    color:white;
+}
+
+.dcontainer {
+    border: 1px solid rgb(218, 231, 243);
+    background-color: transparent;
+}
+
+.dlabel {
+    color: #e4e4e4;
+    font-weight: bold;
+}
+
+.dreset {
+    color: yellow;
+    text-decoration: none;
+    font-size: 20px;
+}
+.buttons{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap:5px;
+}
+button:hover {
+    background-color: white;
+    color: blue;
+}
+
+input:valid+.label,
+input:focus+.label {
+    transform: translateY(-30px);
+    outline: 0;
+}

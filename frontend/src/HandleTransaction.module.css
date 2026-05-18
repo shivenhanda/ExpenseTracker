@@ -1,0 +1,100 @@
+.container {
+    display: flex;
+    justify-content: flex-end;
+    text-align: center;
+    gap: 10px;
+}
+.container1 {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+    padding:10px;
+    margin:20px 0;
+}
+.container button,.container1 .button{
+    background-color: white;
+    border: .2px solid #0003;
+    color:black;
+}
+
+.container button{
+    background:radial-gradient(circle,rgba(31, 161, 237, 1) 93%, rgba(148, 187, 233, 1) 100%);
+    color:white;
+    border:none;
+}
+.text{
+    display:flex;
+    justify-content: center;
+}
+.boxes{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    gap:10px;
+}
+.box{
+    width:200px;
+    height:50px;
+    border: 0.2px solid rgba(0, 0, 0, 0.2);
+    background-color: white;
+    border-radius: 10px;
+    padding:10px;
+    color:black;
+}
+form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width:100%;
+}
+
+input {
+    padding: 5px;
+    border-radius: 5px;
+    background-color: white;
+    border: 0.2px solid rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width:65%;
+}
+
+button,
+.button{
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 30px;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.button {
+    text-decoration: none;
+}
+
+.delete {
+    background: white;
+    border:0.2px solid rgba(0, 0, 0, 0.2);
+}
+button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap:5px;
+    background-color: white;
+    border:0.2px solid rgba(0, 0, 0, 0.2);
+}
+
+.span{
+    font-size: 20px;
+    padding:5px;
+}
+.dbox{
+    background: rgb(78 158 223 / 55%);
+    color:white;
+}
+@media (max-width:360px){
+    .container,.boxes{
+        flex-direction: column;
+    }
+}

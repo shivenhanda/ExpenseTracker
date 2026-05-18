@@ -1,0 +1,29 @@
+.data {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin: 0 10px;
+    background-color: white;
+    padding: 10px;
+}
+.ddata{
+    background: #4e9edf8c;
+    color:white;
+}
+h3,
+span {
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+
+    .type,
+    .category,
+    .edit,
+    .delete {
+        display: none;
+    }
+
+    .data {
+        grid-template-columns: 0.5fr 2fr 1fr 0.5fr 0.5fr;
+    }
+}
