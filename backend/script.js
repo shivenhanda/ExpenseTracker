@@ -8,7 +8,7 @@ import bcrypt from "bcrypt"
 import dotenv from "dotenv";
 dotenv.config()
 
-const port = 8000
+const port = process.env.PORT || 8000
 
 
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
@@ -331,6 +331,4 @@ app.get(/^\/(?!api).*/, (req, res) => {
 
 
 
-app.listen(port, () => {
-    console.log("Available on Port", port)
-})
+export default app;
