@@ -114,7 +114,6 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                 Data.sort(
                     (a, b) => new Date(b.date) - new Date(a.date)
                 );
-                console.log(Transaction)
                 setTransaction(Data)
             }
         }
