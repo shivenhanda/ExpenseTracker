@@ -14,7 +14,6 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
     const [show1, setShow1] = useState(false)
     const [editIndex, setIndex] = useState()
     const [, action1, pending1] = useActionState(UpdateData, undefined);
-    const [valueIndex, setValueIndex] = useState();
     async function UpdateData(previousData, formData) {
         let array = ["title", "money", "type", "date", "category"]
         let obj = {}
@@ -230,7 +229,6 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                         <span>{data.money}</span>
                         <span><i className="fa-solid fa-pen-to-square" onClick={() => {
                             setIndex(index)
-                            setValueIndex(data._id)
                             setShow1(true)
                         }}></i></span>
                         <span><i className="fa-solid fa-trash" onClick={async () => {

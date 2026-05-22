@@ -16,7 +16,6 @@ export default function Reports({ activation, mode }) {
     const [show, setShow] = useState(false)
     const [editIndex, setIndex] = useState()
     const [, action, pending] = useActionState(UpdateData, undefined);
-    const [valueIndex, setValueIndex] = useState();
     async function UpdateData(previousData, formData) {
         let array = ["title", "money", "type", "date", "category"]
         let obj = {}
@@ -174,7 +173,6 @@ export default function Reports({ activation, mode }) {
                                     <span>{data.money}</span>
                                     <span><i className="fa-solid fa-pen-to-square" onClick={() => {
                                         setIndex(index)
-                                        setValueIndex(data._id)
                                         setShow(true)
                                     }}></i></span>
                                     <span><i className="fa-solid fa-trash" onClick={async () => {

@@ -13,7 +13,6 @@ export default function Calendar({ activation, mode }) {
     const daysinMonth = new Date(year, month, 0).getDate();
     const firstDay = new Date(year, month - 1, 1).getDay()
     const startDay = firstDay === 0 ? 6 : firstDay - 1
-    const [valueIndex, setValueIndex] = useState();
     let days = [];
     for (let i = 0; i < startDay; i++) {
         days.push(null)
@@ -196,7 +195,6 @@ export default function Calendar({ activation, mode }) {
                             <span>{data.money}</span>
                             <span><i className="fa-solid fa-pen-to-square" onClick={() => {
                                 setIndex(index)
-                                setValueIndex(data._id)
                                 setShow(true)
                             }}></i></span>
                             <span><i className="fa-solid fa-trash" onClick={async () => {
