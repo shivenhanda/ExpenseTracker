@@ -326,8 +326,7 @@ app.post("/ViewData", async (req, res) => {
 const staticPath = path.join(process.cwd(), "..", "frontend", "build")
 app.use(express.static(staticPath))
 app.get(/^\/(?!api).*/, (req, res) => {
-    res.send("Hello backend")
-    // res.sendFile(path.join(staticPath, "index.html"));
+    res.sendFile(path.join(staticPath, "index.html"));
 });
 
 
