@@ -323,12 +323,5 @@ app.post("/ViewData", async (req, res) => {
         res.json({ success: false, message: "Server Error" })
     }
 })
-const staticPath = path.join(process.cwd(), "..", "frontend", "build")
-app.use(express.static(staticPath))
-app.get(/^\/(?!api).*/, (req, res) => {
-    res.sendFile(path.join(staticPath, "index.html"));
-});
-
-
 
 export default app;
