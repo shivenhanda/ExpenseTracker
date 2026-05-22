@@ -46,7 +46,7 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                 isUpdate: false,
                 noDelete: true
             }
-            const res = await fetch("http://localhost:8000/Updates", {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/Updates`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -83,7 +83,7 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
         let existingData;
         let updatedData = [];
         if (isOnline) {
-            const res = await fetch("http://localhost:8000/AddTransaction", {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/AddTransaction`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -240,7 +240,7 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                                     id: data._id,
                                     userId: localStorage.getItem("userId")
                                 }
-                                let res = await fetch("http://localhost:8000/Delete", {
+                                let res = await fetch(`${process.env.REACT_APP_API_URL}/Delete`, {
                                     method: "POST",
                                     headers: {
                                         "Content-Type": "application/json"
@@ -368,7 +368,7 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                     localStorage.removeItem("TransactionData");
                     setTransaction([])
                     let userId = localStorage.getItem("userId") || 0;
-                    let res = await fetch("http://localhost:8000/DeleteAllTransaction", {
+                    let res = await fetch(`${process.env.REACT_APP_API_URL}/DeleteAllTransaction`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"

@@ -40,7 +40,7 @@ export default function App() {
             userId: userId
           }
           try {
-            let res = await fetch("http://localhost:8000/SyncData", {
+            let res = await fetch(`${process.env.REACT_APP_API_URL}/SyncData`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json"
