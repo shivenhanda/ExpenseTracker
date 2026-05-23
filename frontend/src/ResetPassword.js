@@ -20,7 +20,7 @@ export default function ResetPassword({ activation, mode }) {
             password: hash
         }
         try {
-            let res = await fetch(`${process.env.REACT_APP_API_URL}/ResetPassword`, {
+            let res = await fetch(`http://localhost:8000/ResetPassword`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

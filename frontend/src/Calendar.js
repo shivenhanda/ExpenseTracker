@@ -35,7 +35,7 @@ export default function Calendar({ activation, mode }) {
                     month: month
                 };
 
-                const res = await fetch(`${process.env.REACT_APP_API_URL}/Transactions`, {
+                const res = await fetch(`http://localhost:8000/Transactions`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -87,7 +87,7 @@ export default function Calendar({ activation, mode }) {
         setTransaction(newData)
         localStorage.setItem("TransactionData", JSON.stringify(newData));
         if (isOnline) {
-            const res = await fetch(`${process.env.REACT_APP_API_URL}/Updates`, {
+            const res = await fetch(`http://localhost:8000/Updates`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -207,7 +207,7 @@ export default function Calendar({ activation, mode }) {
                                         id: data._id,
                                         userId: localStorage.getItem("userId")
                                     }
-                                    let res = await fetch(`${process.env.REACT_APP_API_URL}/Delete`, {
+                                    let res = await fetch(`http://localhost:8000/Delete`, {
                                         method: "POST",
                                         headers: {
                                             "Content-Type": "application/json"

@@ -5,17 +5,15 @@ import dns from "dns"
 import cors from "cors"
 import Users from "./Add.js";
 import bcrypt from "bcrypt"
-import dotenv from "dotenv";
-dotenv.config()
 
-const port = process.env.PORT || 8000
+const port = 8000
 
 
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
 
 const connectDB = async () => {
     try {
-        await mongoose.connect(process.env.MONGO_URL, {
+        await mongoose.connect("mongodb+srv://shivenhanda2003_db_user:AykRBcw3hTvMWHli@cluster0.mjfajaj.mongodb.net/?appName=Cluster0", {
             dbName: "UsersDB",
             serverSelectionTimeoutMS: 5000,
         })
@@ -324,4 +322,12 @@ app.post("/ViewData", async (req, res) => {
     }
 })
 
-export default app;
+const staticPath = path.join(process.cwd(), "..", "frontend", "build")
+app.use(express.static(staticPath))
+app.get(/^\/(?!api).*/, (req, res) => {
+    res.sendFile(path.join(staticPath, "index.html"));
+});
+
+app.listen(port, () => {
+    console.log("Available on Port", port)
+})
