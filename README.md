@@ -1,1 +1,96 @@
 # ExpenseTracker
+
+> A full-stack expense tracking application built with React, Node, Express, and MongoDB.
+
+## 📝 Description
+
+ExpenseTracker is a MERN stack web application that helps users manage personal expenses and track financial transactions through a clean and responsive interface.
+
+## ✨ Features
+
+- 📊 Track and manage expenses
+- 🌐 REST API built with Express.js
+- 🍃 MongoDB database integration using Mongoose
+- ⚛️ Responsive React frontend
+- 🔀 Client-side routing with React Router
+
+## 🛠️ Tech Stack
+
+- ⚛️ React
+- 🚀 Express.js
+- 🟩 Node.js
+- 🍃 MongoDB
+- 🟨 JavaScript
+
+### Libraries Used
+
+- Mongoose
+- React Router
+- CORS
+- bcrypt
+
+---
+
+## 🚀 Getting Started
+
+### 1️⃣ Clone Repository
+
+```bash
+git clone https://github.com/shivenhanda/ExpenseTracker.git
+cd ExpenseTracker
+```
+
+### 2️⃣ Start Backend
+
+```bash
+cd backend
+npm install
+npm start
+```
+
+Backend runs on:
+
+```bash
+http://localhost:8000
+```
+
+### 3️⃣ Start Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+---
+
+## 📦 Key Dependencies
+
+```txt
+bcrypt
+body-parser
+cors
+express
+mongodb
+mongoose
+react-router-dom
+```
+
+---
+
+## 🎯 Use Cases
+
+- Personal expense management
+- Budget tracking
+- MERN stack learning project
+- Base template for finance apps
+
+---
+
+## 👥 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to GitHub
+5. Open a Pull Request
