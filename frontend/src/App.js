@@ -23,53 +23,53 @@ export default function App() {
     window.addEventListener("offline", offline)
     console.log(isOnline ? "True" : "False")
     console.log("Sync:", sync ? "True" : "False")
-    const syncData = async () => {
-      if (!isOnline) {
-        setSync(1);
-      }
-      else if (isOnline && sync && user) {
-        console.log("user", user)
-        let data = JSON.parse(localStorage.getItem("TransactionData"))
-        if (data) {
-          let userId = localStorage.getItem("userId")
-          let define = {
-            user: user.name,
-            email: user.email,
-            password: user.password,
-            transaction: data,
-            userId: userId
-          }
-          try {
-            let res = await fetch(`http://localhost:8000/SyncData`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify(define)
-            })
-            let result = await res.json();
-            if (!result.success) {
-              console.log(result.message)
-              localStorage.removeItem("TransactionData")
-              localStorage.removeItem("user")
-              localStorage.removeItem("userId")
-              alert("All Data Deleted.Register Again")
-              return;
-            }
-            if (result.success && result.userId && result.transaction) {
-              localStorage.setItem("userId", result.userId);
-              result.transaction.sort((a, b) => new Date(b.date) - new Date(a.date));
-              localStorage.setItem("TransactionData",JSON.stringify(result.transaction))
-            }
-            setSync(0);
-          }
-          catch (error) {
-            console.log("Frontend Error")
-          }
-        }
-      }
-    }
-    syncData();
+    // const syncData = async () => {
+    //   if (!isOnline) {
+    //     setSync(1);
+    //   }
+    //   else if (isOnline && sync && user) {
+    //     console.log("user", user)
+    //     let data = JSON.parse(localStorage.getItem("TransactionData"))
+    //     if (data) {
+    //       let userId = localStorage.getItem("userId")
+    //       let define = {
+    //         user: user.name,
+    //         email: user.email,
+    //         password: user.password,
+    //         transaction: data,
+    //         userId: userId
+    //       }
+    //       try {
+    //         let res = await fetch(`http://localhost:8000/SyncData`, {
+    //           method: "POST",
+    //           headers: {
+    //             "Content-Type": "application/json"
+    //           },
+    //           body: JSON.stringify(define)
+    //         })
+    //         let result = await res.json();
+    //         if (!result.success) {
+    //           console.log(result.message)
+    //           localStorage.removeItem("TransactionData")
+    //           localStorage.removeItem("user")
+    //           localStorage.removeItem("userId")
+    //           alert("All Data Deleted.Register Again")
+    //           return;
+    //         }
+    //         if (result.success && result.userId && result.transaction) {
+    //           localStorage.setItem("userId", result.userId);
+    //           result.transaction.sort((a, b) => new Date(b.date) - new Date(a.date));
+    //           localStorage.setItem("TransactionData",JSON.stringify(result.transaction))
+    //         }
+    //         setSync(0);
+    //       }
+    //       catch (error) {
+    //         console.log("Frontend Error")
+    //       }
+    //     }
+    //   }
+    // }
+    // syncData();
     return () => {
       window.removeEventListener("online", online)
       window.removeEventListener("offline", offline)
