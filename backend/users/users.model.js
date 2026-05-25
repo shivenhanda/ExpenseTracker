@@ -18,5 +18,5 @@ const schema = new mongoose.Schema({
         required: true,
     }
 })
-const Users = mongoose.model("Users", schema);
-export default Users;
+const UsersModel = mongoose.model("Users", schema);
+export default UsersModel;
