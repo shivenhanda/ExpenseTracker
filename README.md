@@ -28,7 +28,7 @@ ExpenseTracker is a MERN stack web application that helps users manage personal 
 - React Router
 - CORS
 - bcrypt
-
+- chartjs
 ---
 
 ## 🚀 Getting Started
