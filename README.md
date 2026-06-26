@@ -48,12 +48,6 @@ npm install
 npm start
 ```
 
-Backend runs on:
-
-```bash
-http://localhost:8000
-```
-
 ### 3️⃣ Start Frontend
 
 ```bash
@@ -81,16 +75,5 @@ react-router-dom
 ## 🎯 Use Cases
 
 - Personal expense management
-- Budget tracking
 - MERN stack learning project
-- Base template for finance apps
-
 ---
-
-## 👥 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to GitHub
-5. Open a Pull Request
