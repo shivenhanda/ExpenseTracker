@@ -98,7 +98,7 @@ async function HandleSignUp(previousData, formData, setActivation, isOnline, set
             return { success: false, message: "User Already registered" };
         }
         if (isOnline) {
-            const res = await fetch(`http://localhost:8000/SignUp`, {
+            const res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/SignUp`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -140,7 +140,7 @@ async function HandleLogin(previousData, formData, setActivation, isOnline) {
             name: name,
             password: password
         }
-        const res = await fetch(`http://localhost:8000/login`, {
+        const res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -179,7 +179,7 @@ async function HandleLogin(previousData, formData, setActivation, isOnline) {
                 let define = {
                     userId: localStorage.getItem("userId")
                 }
-                let res = await fetch (`http://localhost:8000/ViewData`, {
+                let res = await fetch (`https://expense-tracker-two-eta-98.vercel.app/ViewData`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"

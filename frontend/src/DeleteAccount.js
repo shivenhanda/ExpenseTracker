@@ -23,7 +23,7 @@ export default function DeleteAccount({ setActivation, mode }) {
             localStorage.removeItem("TransactionData")
             localStorage.removeItem("user")
             localStorage.removeItem("userId")
-            let res = await fetch(`http://localhost:8000/DeleteAccount`, {
+            let res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/DeleteAccount`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

@@ -20,7 +20,7 @@ export default function ResetPassword({ activation, mode }) {
             password: hash
         }
         try {
-            let res = await fetch(`http://localhost:8000/ResetPassword`, {
+            let res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/ResetPassword`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
