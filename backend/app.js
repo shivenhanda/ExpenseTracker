@@ -9,23 +9,18 @@ import userRouter from "./users/users.routes.js";
 
 const app = express();
 
-/* ---------------- DATABASE ---------------- */
 connectDB();
 
-/* ---------------- MIDDLEWARE ---------------- */
 app.use(cors());
 app.use(express.json());
 
-/* ---------------- API ROUTES ---------------- */
 app.use("/", transactionRouter);
 app.use("/", userRouter);
 
-/* ---------------- FRONTEND ---------------- */
 const staticPath = path.join(process.cwd(), "..", "frontend", "build");
 
 app.use(express.static(staticPath));
 
-/* ---------------- REACT ROUTES ---------------- */
 app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(staticPath, "index.html"));
 });
