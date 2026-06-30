@@ -2,6 +2,8 @@
 
 > A full-stack expense tracking application built with React, Node, Express, and MongoDB.
 
+🌐 **Live Demo:** https://expensetracker-eta-navy-42.vercel.app
+
 ## 📝 Description
 
 ExpenseTracker is a MERN stack web application that helps users manage personal expenses and track financial transactions through a clean and responsive interface.
