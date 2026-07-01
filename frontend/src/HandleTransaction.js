@@ -5,6 +5,7 @@ import Reports from "./Reports";
 import style1 from './Reports.module.css'
 import { Online } from "./App";
 import { Pie } from "react-chartjs-2";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function HandleTransaction({ displayadd, mode, activation }) {
     let isOnline = useContext(Online)
@@ -145,35 +146,93 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
     return (
         <div>
             {
-                show1 &&
-                < form action={action1} className={style.DataUpdate}>
-                    <h2>Enter only the fields you want to update.</h2>
-                    <label htmlFor="title">Enter Transaction</label>
-                    <input type="text" name="title" placeholder="Enter Transaction Title" />
-                    <label htmlFor="money">Amount</label>
-                    <input type="number" name="money" placeholder="Enter Transaction Amount" />
-                    <label htmlFor="date">Transaction Date</label>
-                    <input type="date" name="date" id="date" />
-                    <label htmlFor="type">Type</label>
-                    <select name="type" id="type">
-                        <option value=""></option>
-                        <option value="Income">Income</option>
-                        <option value="Expense">Expense</option>
-                    </select>
-                    <label htmlFor="category">Category</label>
-                    <select name="category" id="category">
-                        <option value=""></option>
-                        <option value="Job">Job</option>
-                        <option value="Home">Home</option>
-                        <option value="Grocery">Grocery</option>
-                        <option value="Shopping">Shopping</option>
-                        <option value="Education">Education</option>
-                        <option value="Bill">Bill</option>
-                        <option value="Other">Other</option>
-                    </select>
-                    <button type="submit" disabled={pending1}>{pending1 ? "Saving..." : "Save"}</button>
-                    <button type="button" onClick={() => setShow1(false)}>Close</button>
-                </form >
+                <AnimatePresence>
+                    {show1 && (
+                        <motion.div
+                            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-5"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                        >
+                            <motion.form
+                                action={action1}
+                                initial={{ scale: .8, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: .8, opacity: 0 }}
+                                transition={{ duration: .3 }}
+                                className="w-[95%] max-w-xl rounded-3xl bg-white p-8 shadow-2xl space-y-5"
+                                style={{padding:"5px"}}
+                            >
+                                <h2 className="text-3xl font-bold text-center text-emerald-600">
+                                    Update Transaction
+                                </h2>
+
+                                <p className="text-center text-gray-500">
+                                    Leave fields empty if you don't want to update them.
+                                </p>
+
+                                <input
+                                    name="title"
+                                    placeholder="Transaction Title"
+                                    className="w-full rounded-xl border p-3"
+                                />
+
+                                <input
+                                    type="number"
+                                    name="money"
+                                    placeholder="Amount"
+                                    className="w-full rounded-xl border p-3"
+                                />
+
+                                <input
+                                    type="date"
+                                    name="date"
+                                    className="w-full rounded-xl border p-3"
+                                />
+
+                                <select
+                                    name="type"
+                                    className="w-full rounded-xl border p-3"
+                                >
+                                    <option value="">Select Type</option>
+                                    <option>Income</option>
+                                    <option>Expense</option>
+                                </select>
+
+                                <select
+                                    name="category"
+                                    className="w-full rounded-xl border p-3"
+                                >
+                                    <option value="">Category</option>
+                                    <option>Job</option>
+                                    <option>Home</option>
+                                    <option>Shopping</option>
+                                    <option>Bill</option>
+                                    <option>Education</option>
+                                    <option>Grocery</option>
+                                    <option>Other</option>
+                                </select>
+
+                                <div className="flex gap-4">
+                                    <button
+                                        disabled={pending1}
+                                        className="flex-1 rounded-xl bg-emerald-600 py-3 font-semibold text-white hover:bg-emerald-700"
+                                    >
+                                        {pending1 ? "Updating..." : "Update"}
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setShow1(false)}
+                                        className="flex-1 rounded-xl border py-3 hover:bg-gray-100"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </motion.form>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             }
             {
                 !show && (
@@ -321,32 +380,85 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
     function AddTransaction({ setShow, pending }) {
         return (
             <>
-                <form action={action}>
-                    <label htmlFor="add">New Transaction</label>
-                    <input type="text" name="add" placeholder="Enter Transaction Title" />
-                    <label htmlFor="money">Amount</label>
-                    <input type="number" name="money" placeholder="Enter Transaction Amount" />
-                    <label htmlFor="date">Transaction Date</label>
-                    <input type="date" name="date" id="date" />
-                    <label htmlFor="type">Type</label>
-                    <select name="type" id="type">
-                        <option value="NotSelected">Select Type</option>
-                        <option value="Income">Income</option>
-                        <option value="Expense">Expense</option>
-                    </select>
-                    <label htmlFor="category">Category</label>
-                    <select name="category" id="category">
-                        <option value="Job">Job</option>
-                        <option value="Home">Home</option>
-                        <option value="Grocery">Grocery</option>
-                        <option value="Shopping">Shopping</option>
-                        <option value="Education">Education</option>
-                        <option value="Bill">Bill</option>
-                        <option value="Other">Other</option>
-                    </select>
-                    <button type="submit" disabled={pending}>{pending ? "Saving..." : "Save"}</button>
-                    <button type="button" onClick={() => setShow(null)}>Close</button>
-                </form>
+                <AnimatePresence>
+                <motion.div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                >
+                    <motion.form
+                        action={action}
+                        initial={{ scale: 0.8, opacity: 0, y: 40 }}
+                        animate={{ scale: 1, opacity: 1, y: 0 }}
+                        exit={{ scale: 0.8, opacity: 0 }}
+                        transition={{ duration: .3 }}
+                        className="w-[95%] max-w-xl rounded-3xl bg-white p-8 shadow-2xl space-y-5"
+                        style={{padding:"5px"}}
+                    >
+                        <h2 className="text-3xl font-bold text-center text-blue-600">
+                            Add Transaction
+                        </h2>
+
+                        <input
+                            name="add"
+                            placeholder="Transaction Title"
+                            className="w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+
+                        <input
+                            type="number"
+                            name="money"
+                            placeholder="Amount"
+                            className="w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+
+                        <input
+                            type="date"
+                            name="date"
+                            className="w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+
+                        <select
+                            name="type"
+                            className="w-full rounded-xl border p-3"
+                        >
+                            <option>Income</option>
+                            <option>Expense</option>
+                        </select>
+
+                        <select
+                            name="category"
+                            className="w-full rounded-xl border p-3"
+                        >
+                            <option>Job</option>
+                            <option>Home</option>
+                            <option>Shopping</option>
+                            <option>Bill</option>
+                            <option>Education</option>
+                            <option>Grocery</option>
+                            <option>Other</option>
+                        </select>
+
+                        <div className="flex gap-4 pt-3">
+                            <button
+                                disabled={pending}
+                                className="flex-1 rounded-xl bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700"
+                            >
+                                {pending ? "Saving..." : "Save"}
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={() => setShow(null)}
+                                className="flex-1 rounded-xl border py-3 font-semibold hover:bg-gray-100"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </motion.form>
+                </motion.div>
+            </AnimatePresence>
             </>
         )
     }
