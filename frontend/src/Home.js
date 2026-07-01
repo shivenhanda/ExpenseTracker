@@ -148,7 +148,6 @@ async function HandleLogin(previousData, formData, setActivation, isOnline) {
             body: JSON.stringify(message)
         })
         let result = await res.json();
-        console.log("result",result)
         let define = {
             name: result.name,
             password: result.password

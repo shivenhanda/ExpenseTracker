@@ -19,7 +19,6 @@ export const SignUp= async (req, res) => {
 export const login=async (req, res) => {
     try {
         const { name, password } = req.body;
-        console.log("server name",name)
         if (!name) {
             return res.json({
                 success: false,
@@ -27,9 +26,7 @@ export const login=async (req, res) => {
             });
         }
         const existingUser = await loginUser({ name }, { _id: 1, name: 1, email: 1, password: 1 })
-        console.log("server existing user",existingUser)
         if (!existingUser) {
-            console.log("server existing user no found")
             res.json({ success: false, "message": "No User Found. Please Sign Up" })
         }
         res.json({ success: true, name: existingUser.name, password: existingUser.password, id: existingUser._id });
