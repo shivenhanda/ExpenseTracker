@@ -1,6 +1,5 @@
 # ExpenseTracker
 
-> A full-stack expense tracking application built with React, Node, Express, and MongoDB.
 
 🌐 **Live Demo:** https://expensetracker-eta-navy-42.vercel.app
 
