@@ -1,22 +1,4 @@
 export default function About({mode}) {
-    const teamMembers = [
-        {
-            name: "Shivansh",
-            role: "UI/UX Designer",
-            image: "/shivansh.jpeg",
-        },
-        {
-            name: "Shiven Handa",
-            role: "MERN Stack Developer",
-            image: "/shiven.jpeg",
-        },
-        {
-            name: "Utsav",
-            role: "UI/UX Designer",
-            image: "/utsav.jpeg",
-        },
-    ];
-
     return (
         <div
             style={{
@@ -114,74 +96,6 @@ export default function About({mode}) {
                                 }}
                             >
                                 {item}
-                            </div>
-                        ))}
-                    </div>
-                </section>
-                <section>
-                    <div style={{ textAlign: "center", marginBottom: "30px" }}>
-                        <h2
-                            style={{
-                                fontSize: "2rem",
-                                fontWeight: "700",
-                                color: mode==="dark"?"yellow":"red",
-                                marginBottom: "10px",
-                            }}
-                        >
-                            Meet Our Team
-                        </h2>
-                    </div>
-
-                    <div
-                        style={{
-                            display: "grid",
-                            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-                            gap: "30px",
-                        }}
-                    >
-                        {teamMembers.map((member, index) => (
-                            <div
-                                key={index}
-                                style={{
-                                    background: "#ffffff",
-                                    borderRadius: "20px",
-                                    padding: "25px",
-                                    textAlign: "center",
-                                    boxShadow: "0 8px 25px rgba(0,0,0,0.08)",
-                                    transition: "transform 0.3s ease",
-                                }}
-                            >
-                                <img
-                                    src={member.image}
-                                    alt={member.name}
-                                    style={{
-                                        width: "140px",
-                                        height: "140px",
-                                        objectFit: "cover",
-                                        borderRadius: "50%",
-                                        border: "4px solid #e2e8f0",
-                                        marginBottom: "20px",
-                                    }}
-                                />
-                                <h3
-                                    style={{
-                                        fontSize: "1.3rem",
-                                        fontWeight: "700",
-                                        color: "#0f172a",
-                                        marginBottom: "8px",
-                                    }}
-                                >
-                                    {member.name}
-                                </h3>
-                                <p
-                                    style={{
-                                        fontSize: "1rem",
-                                        color: "#64748b",
-                                        fontWeight: "500",
-                                    }}
-                                >
-                                    {member.role}
-                                </p>
                             </div>
                         ))}
                     </div>
