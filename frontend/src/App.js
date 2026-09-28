@@ -12,7 +12,7 @@ export const Online = createContext(false)
 export default function App() {
   const [activation, setActivation] = useState(false)
   const [isOnline, setOnline] = useState(navigator.onLine);
-  const [user, setUser] = useState(() => {
+  const [, setUser] = useState(() => {
     return JSON.parse(localStorage.getItem("user")) || null;
   });
   const [mode, setMode] = useState("light")
@@ -23,6 +23,15 @@ export default function App() {
     localStorage.setItem("theme", mode);
     document.body.className = mode;
   }, [mode]);
+  useEffect(() => {
+    const updateOnlineStatus = () => setOnline(navigator.onLine);
+    window.addEventListener("online", updateOnlineStatus);
+    window.addEventListener("offline", updateOnlineStatus);
+    return () => {
+      window.removeEventListener("online", updateOnlineStatus);
+      window.removeEventListener("offline", updateOnlineStatus);
+    };
+  }, []);
   return (
     <Online.Provider value={isOnline}>
       <div className="body">
