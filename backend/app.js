@@ -7,11 +7,15 @@ import transactionRouter from "./transactions/transactions.routes.js";
 import userRouter from "./users/users.routes.js";
 
 const app = express();
-
+app.use((req, res, next) => {
+    console.log("REQUEST:", req.method, req.url);
+    next();
+});
 const corsOptions = {
     origin: "https://expensetracker-eta-navy-42.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type"],
+    optionsSuccessStatus: 204,
 };
 
 app.use(cors(corsOptions));
