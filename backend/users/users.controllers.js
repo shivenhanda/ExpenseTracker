@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import UsersModel from "./users.model.js";
 import TransactionModel from "../transactions/transactions.model.js";
 import { createUser, DeleteUser, loginUser, ResetUserPassword } from "./users.services.js";
