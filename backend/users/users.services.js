@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import UsersModel from "./users.model.js";
 
 export const createUser=async (data)=>{
@@ -9,6 +10,6 @@ export const loginUser=async({name})=>{
 export const ResetUserPassword=async({userId,password})=>{
     return await UsersModel.findOneAndUpdate({ _id: userId }, { $set: { password: password } })
 }
-export const DeleteUser=async({userId, password})=>{
+export const DeleteUser=async({userId})=>{
     return await UsersModel.findOne({ _id: new mongoose.Types.ObjectId(userId) }, { _id: 0, password: 1 })
 }

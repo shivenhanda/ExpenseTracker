@@ -1,7 +1,10 @@
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 import UsersModel from "./users.model.js";
+import TransactionModel from "../transactions/transactions.model.js";
 import { createUser, DeleteUser, loginUser, ResetUserPassword } from "./users.services.js";
 
-export const SignUp= async (req, res) => {
+export const SignUp = async (req, res) => {
     try {
         let { name, email, password } = req.body;
         const existingUser = await UsersModel.findOne({ $or: [{ name }, { email }] }, { _id: 1 })
@@ -11,50 +14,50 @@ export const SignUp= async (req, res) => {
         const newUser = await createUser({ name, email, password })
         return res.json({ success: true, message: newUser._id.toString() })
     } catch (error) {
-        console.error("Signup error",error)
-        return res.json({ success: false, message:error.message })
+        console.error("Signup error", error)
+        return res.json({ success: false, message: error.message })
     }
 }
-export const login=async (req, res) => {
+export const login = async (req, res) => {
     try {
-        const { name} = req.body;
+        const { name } = req.body;
         if (!name) {
             return res.json({
                 success: false,
                 message: "Name required"
             });
         }
-        const existingUser = await loginUser({ name }, { _id: 1, name: 1, email: 1, password: 1 })
+        const existingUser = await loginUser({ name })
         if (!existingUser) {
             return res.json({ success: false, "message": "No User Found. Please Sign Up" })
         }
         return res.json({ success: true, name: existingUser.name, password: existingUser.password, id: existingUser._id });
     }
     catch (error) {
-        console.log("Login error",error)
+        console.log("Login error", error)
         return res.json({ success: false, message: error.message });
     }
 }
-export const ResetPassword=async (req, res) => {
+export const ResetPassword = async (req, res) => {
     try {
         const { userId, password } = req.body;
-        let Update = await ResetUserPassword({userId,password})
+        let Update = await ResetUserPassword({ userId, password })
         if (!Update) {
-            res.json({ success: false, message: "No User Found" })
+            return res.json({ success: false, message: "No User Found" })
         }
-        res.json({ success: true, message: password })
+        return res.json({ success: true, message: password })
     }
     catch (error) {
-        res.json({ success: false, message: "Server Error" })
+        return res.json({ success: false, message: "Server Error" })
     }
 }
-export const DeleteAccount=async (req, res) => {
+export const DeleteAccount = async (req, res) => {
     try {
-        const { name, userId, password } = req.body;
+        const { userId, password } = req.body;
         if (!mongoose.Types.ObjectId.isValid(userId)) {
             return res.json({ success: false, message: "Invalid User ID" });
         }
-        let find = await DeleteUser({userId,password})
+        let find = await DeleteUser({ userId })
         if (!find) {
             return res.json({ success: false, message: "No User found" })
         }
@@ -62,11 +65,12 @@ export const DeleteAccount=async (req, res) => {
         if (!match) {
             return res.json({ success: false, message: "Password Not Match" })
         }
-        let Delete = await Transaction.deleteMany({ userId: new mongoose.Types.ObjectId(userId) })
-        Delete = await Users.findOneAndDelete({ _id: new mongoose.Types.ObjectId(userId) })
+        let Delete = await TransactionModel.deleteMany({ userId: new mongoose.Types.ObjectId(userId) })
+        Delete = await UsersModel.findOneAndDelete({ _id: new mongoose.Types.ObjectId(userId) })
         return res.json({ success: true, message: "Account Deleted Successfully" })
     }
     catch (error) {
-        return res.json({ success: false, message: "Server Error" })
+        console.error("Delete Error",error)
+        return res.json({ success: false, message: error.message })
     }
 }
