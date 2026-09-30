@@ -9,7 +9,13 @@ import userRouter from "./users/users.routes.js";
 
 const app = express();
 
-connectDB();
+connectDB()
+    .then(() => {
+        console.log("MongoDB connected successfully");
+    })
+    .catch((error) => {
+        console.error("MongoDB connection failed:", error);
+    });
 
 app.use(cors());
 app.use(express.json());
