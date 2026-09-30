@@ -4,7 +4,7 @@ export const createUser=async (data)=>{
     return await UsersModel.create(data);
 }
 export const loginUser=async({name})=>{
-    return await UsersModel.findOne({ name }, { _id: 1, name: 1, email: 1, password: 1 })
+    return await UsersModel.findOne({ name })
 }
 export const ResetUserPassword=async({userId,password})=>{
     return await UsersModel.findOneAndUpdate({ _id: userId }, { $set: { password: password } })

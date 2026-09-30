@@ -4,8 +4,6 @@ import { createUser, DeleteUser, loginUser, ResetUserPassword } from "./users.se
 export const SignUp= async (req, res) => {
     try {
         let { name, email, password } = req.body;
-        name = name.trim();
-        email = email.trim().toLowerCase();
         const existingUser = await UsersModel.findOne({ $or: [{ name }, { email }] }, { _id: 1 })
         if (existingUser) {
             return res.json({ success: false, message: "User Already Register with these name or email" })
@@ -13,12 +11,13 @@ export const SignUp= async (req, res) => {
         const newUser = await createUser({ name, email, password })
         return res.json({ success: true, message: newUser._id.toString() })
     } catch (error) {
-        return res.json({ success: false, message: "Server Error" })
+        console.error("Signup error",error)
+        return res.json({ success: false, message:error.message })
     }
 }
 export const login=async (req, res) => {
     try {
-        const { name, password } = req.body;
+        const { name} = req.body;
         if (!name) {
             return res.json({
                 success: false,
@@ -27,12 +26,13 @@ export const login=async (req, res) => {
         }
         const existingUser = await loginUser({ name }, { _id: 1, name: 1, email: 1, password: 1 })
         if (!existingUser) {
-            res.json({ success: false, "message": "No User Found. Please Sign Up" })
+            return res.json({ success: false, "message": "No User Found. Please Sign Up" })
         }
-        res.json({ success: true, name: existingUser.name, password: existingUser.password, id: existingUser._id });
+        return res.json({ success: true, name: existingUser.name, password: existingUser.password, id: existingUser._id });
     }
     catch (error) {
-        return res.json({ success: false, message: "Server Error" });
+        console.log("Login error",error)
+        return res.json({ success: false, message: error.message });
     }
 }
 export const ResetPassword=async (req, res) => {
