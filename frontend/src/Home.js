@@ -13,7 +13,7 @@ export default function Home({ activation, setActivation, setUser, mode }) {
     const [logindata, loginaction, loginpending] = useActionState((prev, formData) => HandleLogin(prev, formData, setActivation, isOnline), undefined)
     return (
         <>
-            {activation ? <HandleTransaction mode={mode} activation={activation}/> : <div className={style.main}>
+            {activation ? <HandleTransaction mode={mode} activation={activation} /> : <div className={style.main}>
                 <div className={`${style.container} ${mode === "dark" ? style.dcontainer : ""}`}>
                     {
                         activeform === 'signup' && <SignUpUser action={action} pending={pending} data={data} setActivation={setActivation} mode={mode} />
@@ -23,7 +23,7 @@ export default function Home({ activation, setActivation, setUser, mode }) {
                     }
                     <div className={style.buttons}>
                         {
-                            activeform==="login"?(<><p>Create a New Account</p><span onClick={() => setform("signup")} style={{border:"1px solid black",backgroundColor:"black",color:"white",padding:"5px",borderRadius:"5px",fontWeight:"bold"}}>Click here</span></>):(<><p>Already have an Account</p><span onClick={() => setform("login")} style={{border:"1px solid black",backgroundColor:"black",color:"white",padding:"5px",borderRadius:"5px",fontWeight:"bold"}}>Click here</span></>)
+                            activeform === "login" ? (<><p>Create a New Account</p><span onClick={() => setform("signup")} style={{ border: "1px solid black", backgroundColor: "black", color: "white", padding: "5px", borderRadius: "5px", fontWeight: "bold" }}>Click here</span></>) : (<><p>Already have an Account</p><span onClick={() => setform("login")} style={{ border: "1px solid black", backgroundColor: "black", color: "white", padding: "5px", borderRadius: "5px", fontWeight: "bold" }}>Click here</span></>)
                         }
                     </div>
                 </div>
@@ -38,18 +38,18 @@ function SignUpUser({ action, pending, data, setActivation, mode }) {
         <>
             <form action={action}>
                 <div className={style.row}>
-                    <input className={`${style.input} ${mode==="dark"?style.dinput:""}`} type="text" name="user" id="user" autoComplete='off' required />
+                    <input className={`${style.input} ${mode === "dark" ? style.dinput : ""}`} type="text" name="user" id="user" autoComplete='off' required />
                     <label htmlFor="user" className={`${style.label} ${mode === "dark" ? style.dlabel : ""}`}><i className='fa-solid fa-user'></i>Username</label>
                 </div>
                 <div className={style.row}>
-                    <input className={`${style.input} ${mode==="dark"?style.dinput:""}`} type="email" name="email" id="email" required />
+                    <input className={`${style.input} ${mode === "dark" ? style.dinput : ""}`} type="email" name="email" id="email" required />
                     <label htmlFor="email" className={`${style.label} ${mode === "dark" ? style.dlabel : ""}`}><i className='fa-solid fa-envelope'></i>Email ID</label>
                 </div>
                 <div className={style.row}>
-                    <input className={`${style.input} ${mode==="dark"?style.dinput:""}`} type="password" name="password" id="password" autoComplete='password' minLength={8} required />
+                    <input className={`${style.input} ${mode === "dark" ? style.dinput : ""}`} type="password" name="password" id="password" autoComplete='password' minLength={8} required />
                     <label htmlFor="password" className={`${style.label} ${mode === "dark" ? style.dlabel : ""}`}><i className="fa-solid fa-lock"></i>Password</label>
                 </div>
-                <button className={`${mode==="dark"?style.dbutton:""}`} disabled={pending}>{pending ? "Signing Up..." : "Sign Up"}</button>
+                <button className={`${mode === "dark" ? style.dbutton : ""}`} disabled={pending}>{pending ? "Signing Up..." : "Sign Up"}</button>
                 {data?.success === false && <p>{data.message}</p>}
             </form>
         </>
@@ -60,14 +60,14 @@ function LoginUser({ loginaction, loginpending, logindata, setActivation, mode }
         <>
             <form action={loginaction}>
                 <div className={style.row}>
-                    <input className={`${style.input} ${mode==="dark"?style.dinput:""}`} type="text" name="user" id="user" autoComplete='off' required />
-                    <label htmlFor="user" className={`${style.label} ${mode === "dark" ? style.dlabel : ""}`}><i class="fa-solid fa-user"></i>Username</label>
+                    <input className={`${style.input} ${mode === "dark" ? style.dinput : ""}`} type="text" name="user" id="user" autoComplete='off' required />
+                    <label htmlFor="user" className={`${style.label} ${mode === "dark" ? style.dlabel : ""}`}><i className="fa-solid fa-user"></i>Username</label>
                 </div>
                 <div className={style.row}>
-                    <input className={`${style.input} ${mode==="dark"?style.dinput:""}`} type="password" name="password" id="password" autoComplete="password" minLength={8} required />
-                    <label htmlFor="password" className={`${style.label} ${mode === "dark" ? style.dlabel : ""}`}><i class="fa-solid fa-lock"></i>Password</label>
+                    <input className={`${style.input} ${mode === "dark" ? style.dinput : ""}`} type="password" name="password" id="password" autoComplete="password" minLength={8} required />
+                    <label htmlFor="password" className={`${style.label} ${mode === "dark" ? style.dlabel : ""}`}><i className="fa-solid fa-lock"></i>Password</label>
                 </div>
-                <button  className={`${mode==="dark"?style.dbutton:""}`} disabled={loginpending}>{loginpending ? "Trying Login..." : "Login"}</button>
+                <button className={`${mode === "dark" ? style.dbutton : ""}`} disabled={loginpending}>{loginpending ? "Trying Login..." : "Login"}</button>
                 <Link to="/ResetPassword" className={mode === "dark" ? style.dreset : style.reset}>Reset Password</Link>
                 {logindata?.success === false && <p>{logindata.message}</p>}
             </form>
@@ -86,32 +86,30 @@ async function HandleSignUp(previousData, formData, setActivation, isOnline, set
                 message: "All Fields Required"
             }
         }
-        alert("Account created Successfully")
+        if (!isOnline) {
+            return { success: false, message: "Check Internet Connection" };
+        }
+        name = name.trim();
+        email = email.trim().toLowerCase();
         password = await bcrypt.hash(password, 10)
         let object = {
             name: name,
             email: email,
             password: password
         }
-        if (!isOnline && localStorage.getItem("user")) {
-            alert("User already registered on this device")
-            return { success: false, message: "User Already registered" };
+        const res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/SignUp`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(object)
+        });
+        let result = await res.json();
+        if (!res.ok || !result.success) {
+            setActivation(false);
+            return { success: false, message: result.message };
         }
-        if (isOnline) {
-            const res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/SignUp`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(object)
-            });
-            let result = await res.json();
-            if (!result.success) {
-                setActivation(false);
-                return { success: false, message: result.message };
-            }
-            localStorage.setItem("userId", result.message);
-        }
+        localStorage.setItem("userId", result.message);
         let define = { name: name, email: email, password: password }
         localStorage.setItem("user", JSON.stringify(define))
         localStorage.setItem("TransactionData", JSON.stringify([]))
@@ -120,14 +118,18 @@ async function HandleSignUp(previousData, formData, setActivation, isOnline, set
         return { success: true, message: "Signup Successfully." };
     }
     catch (error) {
-        return { success: false, message: "Server Error" };
+        console.error("SIGNUP FRONTEND ERROR:", error);
+
+        return {
+            success: false,
+            message: error.message || "Server Error"
+        };
     }
 }
 
 async function HandleLogin(previousData, formData, setActivation, isOnline) {
     let name = formData.get("user");
     let password = formData.get("password");
-    await new Promise(res => setTimeout(res, 2000))
     if (!name || !password) {
         return {
             success: false,
@@ -148,16 +150,16 @@ async function HandleLogin(previousData, formData, setActivation, isOnline) {
             body: JSON.stringify(message)
         })
         let result = await res.json();
+        if (!res.ok || !result.success) {
+            setActivation(false);
+            return { success: false, message: result.message };
+        }
         let define = {
             name: result.name,
             password: result.password
         }
         localStorage.setItem("user", JSON.stringify(define))
         localStorage.setItem("userId", result.id);
-        if (!result.success) {
-            setActivation(false);
-            return { success: false, message: result.message };
-        }
         message = {
             name: result.name,
             password: result.password
@@ -179,7 +181,7 @@ async function HandleLogin(previousData, formData, setActivation, isOnline) {
                 let define = {
                     userId: localStorage.getItem("userId")
                 }
-                let res = await fetch (`https://expense-tracker-two-eta-98.vercel.app/ViewData`, {
+                let res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/ViewData`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -187,9 +189,11 @@ async function HandleLogin(previousData, formData, setActivation, isOnline) {
                     body: JSON.stringify(define)
                 })
                 let result = await res.json();
-                if (!result.success) {
-                    console.log(result.message)
-                    return;
+                if (!res.ok || !result.success) {
+                    return {
+                        success: false,
+                        message: result.message || "Unable to load transaction data"
+                    };
                 }
                 localStorage.setItem("TransactionData", JSON.stringify(result.message))
             }
