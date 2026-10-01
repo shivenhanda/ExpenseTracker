@@ -43,7 +43,7 @@ export const SignUp = async (req, res) => {
         if (existingUser) {
             return res.json({ success: false, message: "User Already Register with these name or email" })
         }
-        password=await bcrypt.hash(password, 10);
+        password = await bcrypt.hash(password, 10);
         const newUser = await createUser({ name, email, password })
         const token = jwt.sign(
             {
@@ -57,7 +57,7 @@ export const SignUp = async (req, res) => {
         res.cookie("token", token, {
             httpOnly: true,
             secure: true,
-            sameSite:'none',
+            sameSite: 'none',
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
         return res.json({ success: true, message: newUser._id.toString() })
@@ -99,6 +99,14 @@ export const ResetPassword = async (req, res) => {
     catch (error) {
         return res.json({ success: false, message: "Server Error" })
     }
+}
+export const Logout = async (req, res) => {
+    res.clearCookie('token', {
+        path: '/',
+        httpOnly: true,
+        secure: true,
+    });
+    return res.redirect('/');
 }
 export const DeleteAccount = async (req, res) => {
     try {

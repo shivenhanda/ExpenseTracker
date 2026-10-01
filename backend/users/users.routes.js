@@ -8,5 +8,6 @@ userRouter.post("/login", login)
 userRouter.post("/ResetPassword", ResetPassword)
 userRouter.post("/DeleteAccount", DeleteAccount)
 userRouter.get("/CheckAuth", CheckAuth);
+userRouter.get("/logout",Logout)
 
 export default userRouter;
