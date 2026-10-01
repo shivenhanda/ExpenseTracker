@@ -91,7 +91,6 @@ async function HandleSignUp(previousData, formData, setActivation, isOnline, set
         }
         name = name.trim();
         email = email.trim().toLowerCase();
-        password = await bcrypt.hash(password, 10)
         let object = {
             name: name,
             email: email,
@@ -102,6 +101,7 @@ async function HandleSignUp(previousData, formData, setActivation, isOnline, set
             headers: {
                 "Content-Type": "application/json"
             },
+            credentials: "include",
             body: JSON.stringify(object)
         });
         let result = await res.json();
@@ -110,10 +110,7 @@ async function HandleSignUp(previousData, formData, setActivation, isOnline, set
             return { success: false, message: result.message };
         }
         localStorage.setItem("userId", result.message);
-        let define = { name: name, email: email, password: password }
-        localStorage.setItem("user", JSON.stringify(define))
         localStorage.setItem("TransactionData", JSON.stringify([]))
-        setUser(define)
         setActivation(true);
         return { success: true, message: "Signup Successfully." };
     }
