@@ -13,6 +13,7 @@ app.use((req, res, next) => {
 });
 const corsOptions = {
     origin: "https://expensetracker-eta-navy-42.vercel.app",
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type"],
     optionsSuccessStatus: 204,
