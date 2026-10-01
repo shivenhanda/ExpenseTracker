@@ -4,6 +4,7 @@ import UsersModel from "./users.model.js";
 import TransactionModel from "../transactions/transactions.model.js";
 import jwt from 'jsonwebtoken';
 import { createUser, DeleteUser, loginUser, ResetUserPassword } from "./users.services.js";
+import connectDB from "../database/mongodb.js";
 
 export const CheckAuth = async (req, res) => {
     try {
@@ -36,6 +37,7 @@ export const CheckAuth = async (req, res) => {
 };
 export const SignUp = async (req, res) => {
     try {
+        await connectDB()
         let { name, email, password } = req.body;
         const existingUser = await UsersModel.findOne({ $or: [{ name }, { email }] }, { _id: 1 })
         if (existingUser) {
@@ -65,6 +67,7 @@ export const SignUp = async (req, res) => {
 }
 export const login = async (req, res) => {
     try {
+        await connectDB();
         const { name } = req.body;
         if (!name) {
             return res.json({

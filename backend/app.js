@@ -39,6 +39,4 @@ app.get(/^\/(?!api).*/, (req, res) => {
     res.sendFile(path.join(staticPath, "index.html"));
 });
 
-connectDB()
-
 export default app;

@@ -3,6 +3,9 @@ import dns from 'dns'
 
 dns.setServers(['8.8.8.8', '1.1.1.1'])
 const connectDB = async () => {
+    if (mongoose.connection.readyState === 1) {
+        return;
+    }
     const uri = process.env.mongoDB;
 
     if (!uri) {
