@@ -1,5 +1,5 @@
 import express from 'express'
-import { SignUp, login, ResetPassword, DeleteAccount, CheckAuth } from './users.controllers.js'
+import { SignUp, login, ResetPassword, DeleteAccount, CheckAuth, Logout } from './users.controllers.js'
 
 const userRouter = express.Router()
 
