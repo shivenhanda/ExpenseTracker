@@ -1,7 +1,7 @@
 import express from "express";
 import path from "path";
 import cors from "cors";
-
+import cookieParser from "cookieParser";
 import connectDB from "./database/mongodb.js";
 import transactionRouter from "./transactions/transactions.routes.js";
 import userRouter from "./users/users.routes.js";
@@ -19,7 +19,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
+app.use(cookieParser());
 app.use(express.json());
 
 app.use("/", transactionRouter);

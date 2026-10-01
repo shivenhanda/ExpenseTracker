@@ -2,8 +2,38 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import UsersModel from "./users.model.js";
 import TransactionModel from "../transactions/transactions.model.js";
+import jwt from 'jsonwebtoken';
 import { createUser, DeleteUser, loginUser, ResetUserPassword } from "./users.services.js";
 
+export const CheckAuth = async (req, res) => {
+    try {
+        const token = req.cookies.token;
+
+        if (!token) {
+            return res.json({
+                success: false,
+                message: "Not authenticated"
+            });
+        }
+
+        const decoded = jwt.verify(
+            token,
+            process.env.JWT_SECRET
+        );
+
+        return res.json({
+            success: true,
+            userId: decoded.userId,
+            name: decoded.name
+        });
+
+    } catch (error) {
+        return res.json({
+            success: false,
+            message: "Invalid or expired token"
+        });
+    }
+};
 export const SignUp = async (req, res) => {
     try {
         let { name, email, password } = req.body;
@@ -12,6 +42,21 @@ export const SignUp = async (req, res) => {
             return res.json({ success: false, message: "User Already Register with these name or email" })
         }
         const newUser = await createUser({ name, email, password })
+        const token = jwt.sign(
+            {
+                name: name,
+                userId: newUser._id
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        );
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: true,
+            sameSite:'none',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
         return res.json({ success: true, message: newUser._id.toString() })
     } catch (error) {
         console.error("Signup error", error)
@@ -70,7 +115,7 @@ export const DeleteAccount = async (req, res) => {
         return res.json({ success: true, message: "Account Deleted Successfully" })
     }
     catch (error) {
-        console.error("Delete Error",error)
+        console.error("Delete Error", error)
         return res.json({ success: false, message: error.message })
     }
 }
