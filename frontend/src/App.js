@@ -63,6 +63,12 @@ export default function App() {
       window.removeEventListener("offline", updateOnlineStatus);
     };
   }, []);
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.href =
+      "https://expense-tracker-two-eta-98.vercel.app/logout";
+    setActivation(false)
+  };
   if (checkingAuth) {
     return <h2>Checking authentication...</h2>;
   }
@@ -85,7 +91,7 @@ export default function App() {
             </Link>
             <ul className="lists">
               <li className={`a
-        ${mode === "dark" ? "da" : ""}`} onClick={() => setActivation(false)}>Logout</li>
+        ${mode === "dark" ? "da" : ""}`} onClick={() => handleLogout()}>Logout</li>
               <li><Link to="/ResetPassword" className={`a
         ${mode === "dark" ? "da" : ""}`}>Reset Password</Link></li>
               <li><Link to="/DeleteAccount" className={`a
