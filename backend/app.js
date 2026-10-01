@@ -40,11 +40,5 @@ app.get(/^\/(?!api).*/, (req, res) => {
 });
 
 connectDB()
-    .then(() => {
-        console.log("MongoDB connected successfully");
-    })
-    .catch((error) => {
-        console.error("MongoDB connection failed:", error);
-    });
 
 export default app;

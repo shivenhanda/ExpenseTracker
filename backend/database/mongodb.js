@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import dns from 'dns'
 
-dns.setServers(['8.8.8.8','1.1.1.1'])
-const connectDB = () =>{
+dns.setServers(['8.8.8.8', '1.1.1.1'])
+const connectDB = async () => {
     const uri = process.env.mongoDB;
 
     if (!uri) {
@@ -11,9 +11,13 @@ const connectDB = () =>{
         );
     }
 
-    return mongoose.connect(uri, {
-        dbName: "UsersDB",
-        serverSelectionTimeoutMS: 10000,
-    });
+    try {
+        await mongoose.connect(process.env.MONGODB_URI);
+
+        console.log("MongoDB connected successfully");
+    } catch (error) {
+        console.error("MongoDB connection failed:", error);
+        throw error;
+    }
 }
 export default connectDB;
