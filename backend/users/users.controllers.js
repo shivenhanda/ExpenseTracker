@@ -106,7 +106,7 @@ export const Logout = async (req, res) => {
         httpOnly: true,
         secure: true,
     });
-    return res.redirect('/');
+    return res.redirect('https://expensetracker-eta-navy-42.vercel.app/');
 }
 export const DeleteAccount = async (req, res) => {
     try {
