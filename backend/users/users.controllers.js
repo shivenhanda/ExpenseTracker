@@ -43,6 +43,7 @@ export const SignUp = async (req, res) => {
         if (existingUser) {
             return res.json({ success: false, message: "User Already Register with these name or email" })
         }
+        password=await bcrypt.hash(password, 10);
         const newUser = await createUser({ name, email, password })
         const token = jwt.sign(
             {
