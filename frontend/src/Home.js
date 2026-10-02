@@ -151,7 +151,6 @@ async function HandleLogin(previousData, formData, setActivation, isOnline) {
             return { success: false, message: result.message };
         }
         localStorage.setItem("userId", result.message);
-        setActivation(true);
         res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/ViewData`, {
             method: "POST",
             headers: {
@@ -167,6 +166,7 @@ async function HandleLogin(previousData, formData, setActivation, isOnline) {
             };
         }
         localStorage.setItem("TransactionData", JSON.stringify(result.message));
+        setActivation(true);
         return {
             success: true
         }
