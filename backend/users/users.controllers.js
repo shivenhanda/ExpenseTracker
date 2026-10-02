@@ -80,6 +80,8 @@ export const login = async (req, res) => {
         if (!existingUser) {
             return res.json({ success: false, "message": "No User Found. Please Sign Up" })
         }
+        console.log("password",password);
+        console.log("hashpassword",existingUser?.password);
         const isPasswordCorrect = await bcrypt.compare(
             password,
             existingUser.password
