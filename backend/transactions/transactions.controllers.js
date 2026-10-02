@@ -92,6 +92,7 @@ export const ViewData=async(req,res)=>{
         res.json({ success: true, message: transactions })
     }
     catch (error) {
+        console.log("Unable to load Data",error.message)
         res.json({ success: false, message: "Server Error" })
     }
 }
