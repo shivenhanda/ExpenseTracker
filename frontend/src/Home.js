@@ -166,6 +166,7 @@ async function HandleLogin(previousData, formData, setActivation, isOnline) {
                 message: result.message || "Unable to load transaction data"
             };
         }
+        localStorage.setItem("TransactionData",result.transactions);
         return {
             success: true
         }
