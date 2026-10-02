@@ -1,7 +1,6 @@
 import { useActionState, useContext, useState } from 'react'
 import style from './Home.module.css'
 import HandleTransaction from './HandleTransaction'
-import bcrypt from 'bcryptjs'
 import { Link } from 'react-router-dom'
 import { Online } from './App'
 
@@ -133,9 +132,8 @@ async function HandleLogin(previousData, formData, setActivation, isOnline) {
             message: "All fields Required"
         }
     }
-    let message = {};
     if (isOnline) {
-        message = {
+        let message = {
             name: name,
             password: password
         }
@@ -144,6 +142,7 @@ async function HandleLogin(previousData, formData, setActivation, isOnline) {
             headers: {
                 "Content-Type": "application/json"
             },
+            credentials: "include",
             body: JSON.stringify(message)
         })
         let result = await res.json();
@@ -151,64 +150,30 @@ async function HandleLogin(previousData, formData, setActivation, isOnline) {
             setActivation(false);
             return { success: false, message: result.message };
         }
-        let define = {
-            name: result.name,
-            password: result.password
-        }
-        localStorage.setItem("user", JSON.stringify(define))
-        localStorage.setItem("userId", result.id);
-        message = {
-            name: result.name,
-            password: result.password
-        }
-    }
-    else {
-        message = JSON.parse(localStorage.getItem("user"))
-        if (!message) {
+        localStorage.setItem("userId", result.message);
+        setActivation(true);
+        res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/ViewData`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ userId: result.message })
+        })
+        result = await res.json();
+        if (!res.ok || !result.success) {
             return {
                 success: false,
-                message: "No User Found. Please Sign Up"
-            }
+                message: result.message || "Unable to load transaction data"
+            };
         }
-    }
-    let match = await bcrypt.compare(password, message.password);
-    if (name === message.name && match) {
-        if (isOnline) {
-            try {
-                let define = {
-                    userId: localStorage.getItem("userId")
-                }
-                let res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/ViewData`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(define)
-                })
-                let result = await res.json();
-                if (!res.ok || !result.success) {
-                    return {
-                        success: false,
-                        message: result.message || "Unable to load transaction data"
-                    };
-                }
-                localStorage.setItem("TransactionData", JSON.stringify(result.message))
-            }
-            catch (error) {
-                console.log("Frontend Error")
-                setActivation(false)
-                return { success: false, message: "Frontend Error" }
-            }
-        }
-        setActivation(true);
         return {
             success: true
         }
     }
-    alert("If you are facing problems with online login, please try creating a new account in offline mode without connecting to the internet, and then log in again")
-    localStorage.removeItem("user")
-    return {
-        success: false,
-        message: "Check entered Information"
+    else {
+        return {
+            success: false,
+            message: "Check Internet Connection"
+        }
     }
 }
