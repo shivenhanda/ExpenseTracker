@@ -69,18 +69,43 @@ export const SignUp = async (req, res) => {
 export const login = async (req, res) => {
     try {
         await connectDB();
-        const { name } = req.body;
-        if (!name) {
+        const { name, password } = req.body;
+        if (!name || !password) {
             return res.json({
                 success: false,
-                message: "Name required"
+                message: "Name and Password required"
             });
         }
         const existingUser = await loginUser({ name })
         if (!existingUser) {
             return res.json({ success: false, "message": "No User Found. Please Sign Up" })
         }
-        return res.json({ success: true, name: existingUser.name, password: existingUser.password, id: existingUser._id });
+        const isPasswordCorrect = await bcrypt.compare(
+            password,
+            existingUser.password
+        );
+        if (!isPasswordCorrect) {
+            return res.json({
+                success: false,
+                message: "Invalid name or password"
+            });
+        }
+        const token = jwt.sign(
+            {
+                name: existingUser.name,
+                userId: existingUser._id
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        );
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+        return res.json({ success: true, message: existingUser._id });
     }
     catch (error) {
         console.log("Login error", error)
