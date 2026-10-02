@@ -137,7 +137,7 @@ async function HandleLogin(previousData, formData, setActivation, isOnline) {
             name: name,
             password: password
         }
-        const res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/login`, {
+        let res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
