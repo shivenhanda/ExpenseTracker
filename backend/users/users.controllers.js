@@ -80,8 +80,6 @@ export const login = async (req, res) => {
         if (!existingUser) {
             return res.json({ success: false, "message": "No User Found. Please Sign Up" })
         }
-        console.log("password",password);
-        console.log("hashpassword",existingUser?.password);
         const isPasswordCorrect = await bcrypt.compare(
             password,
             existingUser.password
@@ -89,7 +87,7 @@ export const login = async (req, res) => {
         if (!isPasswordCorrect) {
             return res.json({
                 success: false,
-                message: "Invalid name or password"
+                message: "Invalid password"
             });
         }
         const token = jwt.sign(
