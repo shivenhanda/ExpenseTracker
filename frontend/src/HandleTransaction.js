@@ -203,7 +203,26 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
         },
         { Income: 0, Expense: 0 }
     );
+    const categoryExpenses = currentMonthTransactions
+        .filter(item => item.type === "Expense")
+        .reduce((acc, item) => {
+            const category = item.category || "Other";
+            acc[category] = (acc[category] || 0) + Number(item.money);
+            return acc;
+        }, {});
 
+    const categoryLabels = Object.keys(categoryExpenses);
+    const categoryValues = Object.values(categoryExpenses);
+
+    const categoryColors = [
+        "#3B82F6",
+        "#8B5CF6",
+        "#EC4899",
+        "#F59E0B",
+        "#10B981",
+        "#EF4444",
+        "#6366F1"
+    ];
     return (
         <div>
             {
@@ -391,52 +410,224 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                 </div>
             )}
             {
-                <div style={{ height: "300px", display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "#F6F8FC" }}>
-                    <Pie
-                        data={{
-                            labels: ["Income", "Expense"],
-                            datasets: [
-                                {
-                                    label: monthname,
-                                    data: [Income, Expense],
-                                    backgroundColor: ["rgb(0,255,0)", "rgb(255,0,0)"]
-                                }
-                            ]
+                <div
+                    style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+                        gap: "24px",
+                        padding: "25px 10px",
+                        marginTop: "25px"
+                    }}
+                >
+                    <div
+                        style={{
+                            height: "360px",
+                            padding: "20px",
+                            borderRadius: "20px",
+                            background: mode === "dark" ? "#111827" : "#ffffff",
+                            boxShadow: mode === "dark"
+                                ? "0 10px 30px rgba(0,0,0,.25)"
+                                : "0 10px 30px rgba(15,23,42,.08)",
+                            border: mode === "dark"
+                                ? "1px solid #1f2937"
+                                : "1px solid #e5e7eb"
                         }}
-                        options={{
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    position: "top",
-                                    labels: {
-                                        color: mode === "dark" ? "white" : "black",
+                    >
+                        <Pie
+                            data={{
+                                labels: ["Income", "Expense"],
+                                datasets: [
+                                    {
+                                        label: monthname,
+                                        data: [Income, Expense],
+                                        backgroundColor: [
+                                            "#10B981",
+                                            "#EF4444"
+                                        ],
+                                        borderWidth: 3,
+                                        borderColor: mode === "dark"
+                                            ? "#111827"
+                                            : "#ffffff"
+                                    }
+                                ]
+                            }}
+                            options={{
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: "bottom",
+                                        labels: {
+                                            color: mode === "dark"
+                                                ? "#E5E7EB"
+                                                : "#374151",
+                                            font: {
+                                                weight: "600",
+                                                size: 13
+                                            },
+                                            padding: 18
+                                        }
+                                    },
+
+                                    tooltip: {
+                                        backgroundColor: mode === "dark"
+                                            ? "#1F2937"
+                                            : "#111827",
+                                        padding: 12,
+                                        cornerRadius: 10,
+
+                                        callbacks: {
+                                            label: function (context) {
+                                                return `${context.label}: ₹${Number(context.raw).toLocaleString("en-IN")}`;
+                                            }
+                                        }
+                                    },
+
+                                    title: {
+                                        display: true,
+                                        text: `${monthname} Overview`,
+                                        color: mode === "dark"
+                                            ? "#F9FAFB"
+                                            : "#111827",
                                         font: {
-                                            weight: "bold",
-                                            size: 15
+                                            size: 18,
+                                            weight: "700"
+                                        },
+                                        padding: {
+                                            bottom: 20
                                         }
-                                    }
-                                },
-                                tooltip: {
-                                    callbacks: {
-                                        label: function (context) {
-                                            let value = context.raw
-                                            let label = context.label
-                                            return `${label} ${value}`
-                                        }
-                                    }
-                                },
-                                title: {
-                                    display: true,
-                                    text: `${monthname} Transactions`,
-                                    color: mode === "dark" ? "white" : "#2563EB",
-                                    font: {
-                                        size: 20
                                     }
                                 }
-                            }
+                            }}
+                        />
+                    </div>
+
+                    <div
+                        style={{
+                            height: "360px",
+                            padding: "20px",
+                            borderRadius: "20px",
+                            background: mode === "dark" ? "#111827" : "#ffffff",
+                            boxShadow: mode === "dark"
+                                ? "0 10px 30px rgba(0,0,0,.25)"
+                                : "0 10px 30px rgba(15,23,42,.08)",
+                            border: mode === "dark"
+                                ? "1px solid #1f2937"
+                                : "1px solid #e5e7eb"
                         }}
-                    />
+                    >
+                        {categoryLabels.length > 0 ? (
+                            <Pie
+                                data={{
+                                    labels: categoryLabels,
+                                    datasets: [
+                                        {
+                                            label: "Category Expense",
+                                            data: categoryValues,
+                                            backgroundColor: categoryLabels.map(
+                                                (_, index) =>
+                                                    categoryColors[index % categoryColors.length]
+                                            ),
+                                            borderWidth: 3,
+                                            borderColor: mode === "dark"
+                                                ? "#111827"
+                                                : "#ffffff"
+                                        }
+                                    ]
+                                }}
+                                options={{
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+
+                                    plugins: {
+                                        legend: {
+                                            position: "bottom",
+                                            labels: {
+                                                color: mode === "dark"
+                                                    ? "#E5E7EB"
+                                                    : "#374151",
+                                                font: {
+                                                    weight: "600",
+                                                    size: 12
+                                                },
+                                                padding: 12
+                                            }
+                                        },
+
+                                        tooltip: {
+                                            backgroundColor: mode === "dark"
+                                                ? "#1F2937"
+                                                : "#111827",
+
+                                            padding: 12,
+                                            cornerRadius: 10,
+
+                                            callbacks: {
+                                                label: function (context) {
+                                                    const total = categoryValues.reduce(
+                                                        (sum, value) => sum + value,
+                                                        0
+                                                    );
+
+                                                    const percentage = total > 0
+                                                        ? ((context.raw / total) * 100).toFixed(1)
+                                                        : 0;
+
+                                                    return [
+                                                        `${context.label}`,
+                                                        `Expense: ₹${Number(context.raw).toLocaleString("en-IN")}`,
+                                                        `${percentage}% of expenses`
+                                                    ];
+                                                }
+                                            }
+                                        },
+
+                                        title: {
+                                            display: true,
+                                            text: `${monthname} Category Expenses`,
+                                            color: mode === "dark"
+                                                ? "#F9FAFB"
+                                                : "#111827",
+                                            font: {
+                                                size: 18,
+                                                weight: "700"
+                                            },
+                                            padding: {
+                                                bottom: 20
+                                            }
+                                        }
+                                    }
+                                }}
+                            />
+                        ) : (
+                            <div
+                                style={{
+                                    height: "100%",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    flexDirection: "column",
+                                    color: mode === "dark"
+                                        ? "#9CA3AF"
+                                        : "#6B7280"
+                                }}
+                            >
+                                <i
+                                    className="fa-solid fa-chart-pie"
+                                    style={{
+                                        fontSize: "40px",
+                                        marginBottom: "15px"
+                                    }}
+                                ></i>
+
+                                <h3>No Expense Data</h3>
+
+                                <p>
+                                    Add an expense to see category analysis
+                                </p>
+                            </div>
+                        )}
+                    </div>
                 </div>
             }
         </div>)
@@ -502,64 +693,64 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                         Add Transaction
                     </h2>
 
-                            <input
-                                name="add"
-                                placeholder="Transaction Title"
-                                className="w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-blue-500"
-                            />
+                    <input
+                        name="add"
+                        placeholder="Transaction Title"
+                        className="w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-blue-500"
+                    />
 
-                            <input
-                                type="number"
-                                name="money"
-                                placeholder="Amount"
-                                className="w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-blue-500"
-                            />
+                    <input
+                        type="number"
+                        name="money"
+                        placeholder="Amount"
+                        className="w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-blue-500"
+                    />
 
-                            <input
-                                type="date"
-                                name="date"
-                                className="w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-blue-500"
-                            />
+                    <input
+                        type="date"
+                        name="date"
+                        className="w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-blue-500"
+                    />
 
-                            <select
-                                name="type"
-                                className="w-full rounded-xl border p-3"
-                            >
-                                <option>Income</option>
-                                <option>Expense</option>
-                            </select>
+                    <select
+                        name="type"
+                        className="w-full rounded-xl border p-3"
+                    >
+                        <option>Income</option>
+                        <option>Expense</option>
+                    </select>
 
-                            <select
-                                name="category"
-                                className="w-full rounded-xl border p-3"
-                            >
-                                <option>Job</option>
-                                <option>Home</option>
-                                <option>Shopping</option>
-                                <option>Bill</option>
-                                <option>Education</option>
-                                <option>Grocery</option>
-                                <option>Other</option>
-                            </select>
+                    <select
+                        name="category"
+                        className="w-full rounded-xl border p-3"
+                    >
+                        <option>Job</option>
+                        <option>Home</option>
+                        <option>Shopping</option>
+                        <option>Bill</option>
+                        <option>Education</option>
+                        <option>Grocery</option>
+                        <option>Other</option>
+                    </select>
 
-                            <div className="flex gap-4 pt-3">
-                                <button
-                                    disabled={pending}
-                                    className="flex-1 rounded-xl bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700"
-                                >
-                                    {pending ? "Saving..." : "Save"}
-                                </button>
+                    <div className="flex gap-4 pt-3">
+                        <button
+                            disabled={pending}
+                            className="flex-1 rounded-xl bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700"
+                        >
+                            {pending ? "Saving..." : "Save"}
+                        </button>
 
-                                <button
-                                    type="button"
-                                    onClick={() => setShow(null)}
-                                    className="flex-1 rounded-xl border py-3 font-semibold hover:bg-gray-100"
-                                >
-                                    Cancel
-                                </button>
-                            </div>
-                        </motion.form>
-                    </motion.div>
+                        <button
+                            type="button"
+                            onClick={() => setShow(null)}
+                            className="flex-1 rounded-xl border py-3 font-semibold hover:bg-gray-100"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </motion.form>
+            </motion.div>
         )
     }
     function DeleteAllTransaction({ setShow, setTransaction }) {
