@@ -74,7 +74,7 @@ function LoginUser({ loginaction, loginpending, logindata, setActivation, mode }
     )
 }
 
-async function HandleSignUp(previousData, formData, setActivation, isOnline) {
+async function HandleSignUp(_, formData, setActivation, isOnline) {
     try {
         let name = formData.get("user");
         let email = formData.get("email");
@@ -122,7 +122,7 @@ async function HandleSignUp(previousData, formData, setActivation, isOnline) {
     }
 }
 
-async function HandleLogin(previousData, formData, setActivation, isOnline) {
+async function HandleLogin(_, formData, setActivation, isOnline) {
     let name = formData.get("user");
     let password = formData.get("password");
 

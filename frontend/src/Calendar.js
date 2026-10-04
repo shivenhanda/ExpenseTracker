@@ -72,7 +72,7 @@ export default function Calendar({ activation, mode }) {
     const [show, setShow] = useState(false)
     const [editIndex, setIndex] = useState()
     const [, action, pending] = useActionState(UpdateData, undefined);
-    async function UpdateData(previousData, formData) {
+    async function UpdateData(_, formData) {
         if (!isOnline) {
             alert("Check internet connection");
             return;

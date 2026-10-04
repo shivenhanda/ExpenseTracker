@@ -12,8 +12,7 @@ export const Online = createContext(false)
 export default function App() {
   const [activation, setActivation] = useState(false)
   const [isOnline, setOnline] = useState(navigator.onLine);
-  const [mode, setMode] = useState("light")
-  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [mode, setMode] = useState("light");
   function toggleMode() {
     setMode(prev => (prev === "light" ? "dark" : "light"));
   }
@@ -40,8 +39,6 @@ export default function App() {
       } catch (error) {
         console.error("Auth check error:", error);
         setActivation(false);
-      } finally {
-        setCheckingAuth(false);
       }
     };
 
