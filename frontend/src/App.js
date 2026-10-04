@@ -12,9 +12,6 @@ export const Online = createContext(false)
 export default function App() {
   const [activation, setActivation] = useState(false)
   const [isOnline, setOnline] = useState(navigator.onLine);
-  const [, setUser] = useState(() => {
-    return JSON.parse(localStorage.getItem("user")) || null;
-  });
   const [mode, setMode] = useState("light")
   const [checkingAuth, setCheckingAuth] = useState(true);
   function toggleMode() {
@@ -105,7 +102,7 @@ export default function App() {
           <Route path="/About" element={<About mode={mode} />} />
           <Route path="/ResetPassword" element={<ResetPassword activation={activation} mode={mode} />} />
           <Route path="/DeleteAccount" element={<DeleteAccount setActivation={setActivation} mode={mode} />} />
-          <Route path="*" element={<Home activation={activation} setActivation={setActivation} setUser={setUser} mode={mode} />} />
+          <Route path="*" element={<Home activation={activation} setActivation={setActivation} mode={mode} />} />
         </Routes>
       </div>
     </Online.Provider>

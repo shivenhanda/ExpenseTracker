@@ -5,10 +5,10 @@ import { Link } from 'react-router-dom'
 import { Online } from './App'
 
 
-export default function Home({ activation, setActivation, setUser, mode }) {
+export default function Home({ activation, setActivation, mode }) {
     let isOnline = useContext(Online)
     const [activeform, setform] = useState("signup");
-    const [data, action, pending] = useActionState((prev, formData) => HandleSignUp(prev, formData, setActivation, isOnline, setUser), undefined)
+    const [data, action, pending] = useActionState((prev, formData) => HandleSignUp(prev, formData, setActivation, isOnline), undefined)
     const [logindata, loginaction, loginpending] = useActionState((prev, formData) => HandleLogin(prev, formData, setActivation, isOnline), undefined)
     return (
         <>
@@ -74,7 +74,7 @@ function LoginUser({ loginaction, loginpending, logindata, setActivation, mode }
     )
 }
 
-async function HandleSignUp(previousData, formData, setActivation, isOnline, setUser) {
+async function HandleSignUp(previousData, formData, setActivation, isOnline) {
     try {
         let name = formData.get("user");
         let email = formData.get("email");
@@ -109,7 +109,6 @@ async function HandleSignUp(previousData, formData, setActivation, isOnline, set
             return { success: false, message: result.message };
         }
         localStorage.setItem("userId", result.message);
-        localStorage.setItem("TransactionData", JSON.stringify([]))
         setActivation(true);
         return { success: true, message: "Signup Successfully." };
     }
@@ -126,55 +125,64 @@ async function HandleSignUp(previousData, formData, setActivation, isOnline, set
 async function HandleLogin(previousData, formData, setActivation, isOnline) {
     let name = formData.get("user");
     let password = formData.get("password");
+
     if (!name || !password) {
         return {
             success: false,
             message: "All fields Required"
-        }
+        };
     }
+
     if (isOnline) {
-        let message = {
-            name: name,
-            password: password
-        }
-        let res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/login`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            credentials: "include",
-            body: JSON.stringify(message)
-        })
-        let result = await res.json();
-        if (!res.ok || !result.success) {
+        try {
+            let message = {
+                name: name,
+                password: password
+            };
+
+            let res = await fetch(
+                `https://expense-tracker-two-eta-98.vercel.app/login`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    credentials: "include",
+                    body: JSON.stringify(message)
+                }
+            );
+
+            let result = await res.json();
+
+            if (!res.ok || !result.success) {
+                setActivation(false);
+
+                return {
+                    success: false,
+                    message: result.message || "Login failed"
+                };
+            }
+
+            localStorage.setItem("userId", result.message);
+            setActivation(true);
+
+            return {
+                success: true
+            };
+
+        } catch (error) {
+            console.error("LOGIN FRONTEND ERROR:", error);
             setActivation(false);
-            return { success: false, message: result.message };
-        }
-        localStorage.setItem("userId", result.message);
-        res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/ViewData`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ userId: result.message })
-        })
-        result = await res.json();
-        if (!res.ok || !result.success) {
+
             return {
                 success: false,
-                message: result.message || "Unable to load transaction data"
+                message: error.message || "Server Error"
             };
         }
-        localStorage.setItem("TransactionData", JSON.stringify(result.message));
-        setActivation(true);
-        return {
-            success: true
-        }
-    }
-    else {
+    } else {
         return {
             success: false,
             message: "Check Internet Connection"
-        }
+        };
     }
 }

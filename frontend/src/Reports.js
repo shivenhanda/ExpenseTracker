@@ -17,24 +17,28 @@ export default function Reports({ activation, mode }) {
     const [editIndex, setIndex] = useState()
     const [, action, pending] = useActionState(UpdateData, undefined);
     async function UpdateData(previousData, formData) {
+        if (!isOnline) {
+            alert("Check internet connection");
+            return;
+        }
         let array = ["title", "money", "type", "date", "category"]
         let obj = {}
         array.forEach(data => {
             let value = formData.get(data)
             if (value !== null && value.trim() !== "") {
-                obj[data] = value.trim();
+                if (data === "money") {
+                    obj[data] = Number(value.trim());
+                } else {
+                    obj[data] = value.trim();
+                }
             }
         })
-        await new Promise(res => setTimeout(res, 2000))
         let Value = {
             ...Transaction[editIndex],
-            ...obj
+            ...obj,
+            userId: localStorage.getItem("userId")
         }
-        let newData = [...Transaction]
-        newData[editIndex] = Value
-        setTransaction(newData)
-        localStorage.setItem("TransactionData", JSON.stringify(newData));
-        if (isOnline) {
+        try {
             const res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/Updates`, {
                 method: "POST",
                 headers: {
@@ -43,36 +47,30 @@ export default function Reports({ activation, mode }) {
                 body: JSON.stringify(Value)
             })
             let data = await res.json();
-            if (!data.success) {
-                alert(data.message)
+            if (!res.ok || !data.success) {
+                alert(data.message || "Failed to update transaction")
+                return;
             }
+            let updatedItem = data.transactions || Value;
+            let newData = [...Transaction]
+            newData[editIndex] = updatedItem
+            newData.sort((a, b) => new Date(a.date) - new Date(b.date));
+            setTransaction(newData)
+            setShow(false)
+        } catch (error) {
+            console.error("Update error:", error);
+            alert("Failed to update transaction");
         }
-        setShow(false)
     }
     useEffect(() => {
         const fetchData = async () => {
             if (!isOnline) {
-                let Data = localStorage.getItem("TransactionData");
-                if (Data) {
-                    Data = JSON.parse(Data);
-                    const filteredData = Data.filter(item => item && item.date).filter(item => {
-                        const itemDate = new Date(item.date);
-
-                        return (
-                            itemDate.getFullYear() === year &&
-                            itemDate.getMonth() + 1 === month
-                        );
-                    });
-
-                    filteredData.sort(
-                        (a, b) => new Date(a.date) - new Date(b.date)
-                    );
-
-                    setTransaction(filteredData);
-                }
+                alert("Check internet connection");
+                return;
             }
-            else {
+            try {
                 const userId = localStorage.getItem("userId");
+                if (!userId) return;
 
                 const define = {
                     userId,
@@ -90,9 +88,17 @@ export default function Reports({ activation, mode }) {
 
                 const data = await res.json();
 
-                if (data.success) {
-                    setTransaction(data.transactions);
+                if (data.success && Array.isArray(data.transactions)) {
+                    const sorted = [...data.transactions].sort(
+                        (a, b) => new Date(a.date) - new Date(b.date)
+                    );
+                    setTransaction(sorted);
+                } else {
+                    setTransaction([]);
                 }
+            } catch (error) {
+                console.error("Fetch transactions error:", error);
+                alert("Failed to fetch transactions");
             }
         }
         let list1 = []
@@ -101,13 +107,15 @@ export default function Reports({ activation, mode }) {
             list1.push(i)
         }
         setlist(list1)
-        fetchData();
-    }, [month, year, isOnline]);
+        if (activation) {
+            fetchData();
+        }
+    }, [month, year, isOnline, activation]);
     return (
         <>
             {
                 show &&
-                < form action={action} className={style.DataUpdate}>
+                < form key={editIndex} action={action} className={style.DataUpdate}>
                     <h2>Enter only the fields you want to update.</h2>
                     <label htmlFor="title">Enter Transaction</label>
                     <input type="text" name="title" placeholder="Enter Transaction Title" />
@@ -166,7 +174,7 @@ export default function Reports({ activation, mode }) {
                         {
                             Transaction.map((data, index) => (
                                 <div key={data._id || index} className={`${style1.data} ${mode === "dark" ? style1.ddata : ""}`}>
-                                    <span>{data.date ? new Date(data.date).toISOString().split("T")[0] : "--"}</span>
+                                    <span>{data.date && !isNaN(new Date(data.date).getTime()) ? new Date(data.date).toISOString().split("T")[0] : "--"}</span>
                                     <span>{data.title}</span>
                                     <span className={style1.type}>{data.type}</span>
                                     <span className={style1.category}>{data.category}</span>
@@ -176,16 +184,16 @@ export default function Reports({ activation, mode }) {
                                         setShow(true)
                                     }}></i></span>
                                     <span><i className="fa-solid fa-trash" onClick={async () => {
-                                        let newData = [...Transaction]
-                                        newData.splice(index, 1)
-                                        setTransaction(newData)
-                                        localStorage.setItem("TransactionData", JSON.stringify(newData))
-                                        if (isOnline) {
+                                        if (!isOnline) {
+                                            alert("Check internet connection");
+                                            return;
+                                        }
+                                        try {
                                             let define = {
                                                 id: data._id,
                                                 userId: localStorage.getItem("userId")
                                             }
-                                            let res = await fetch(`https://expense-tracker-two-eta-98.vercel.app}/Delete`, {
+                                            let res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/Delete`, {
                                                 method: "POST",
                                                 headers: {
                                                     "Content-Type": "application/json"
@@ -193,11 +201,17 @@ export default function Reports({ activation, mode }) {
                                                 body: JSON.stringify(define)
                                             })
                                             let result = await res.json();
-                                            if (!result.success) {
-                                                alert(result.message)
+                                            if (!res.ok || !result.success) {
+                                                alert(result.message || "Failed to delete transaction")
                                                 return;
                                             }
+                                            let newData = [...Transaction]
+                                            newData.splice(index, 1)
+                                            setTransaction(newData)
                                             alert(result.message)
+                                        } catch (error) {
+                                            console.error("Delete error:", error);
+                                            alert("Failed to delete transaction");
                                         }
                                     }}></i>
                                     </span>
