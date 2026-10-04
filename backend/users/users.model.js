@@ -18,5 +18,6 @@ const schema = new mongoose.Schema({
         required: true,
     }
 })
+
 const UsersModel = mongoose.model("Users", schema);
 export default UsersModel;
