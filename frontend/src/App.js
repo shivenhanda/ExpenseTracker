@@ -69,9 +69,6 @@ export default function App() {
       "https://expense-tracker-two-eta-98.vercel.app/logout";
     setActivation(false)
   };
-  if (checkingAuth) {
-    return <h2>Checking authentication...</h2>;
-  }
   return (
     <Online.Provider value={isOnline}>
       <div className="body">
