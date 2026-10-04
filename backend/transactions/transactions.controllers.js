@@ -6,10 +6,12 @@ import {
     UpdateTransaction,
     ViewTransaction
 } from './transactions.services.js';
+import connectDB from '../database/mongodb.js';
 
 
 export const addTransaction = async (req, res) => {
     try {
+        await connectDB();
         const {
             userId,
             title,
@@ -46,6 +48,7 @@ export const addTransaction = async (req, res) => {
 
 export const Transactions = async (req, res) => {
     try {
+        await connectDB();
         const {
             userId,
             year,
@@ -76,6 +79,7 @@ export const Transactions = async (req, res) => {
 
 export const Updates = async (req, res) => {
     try {
+        await connectDB();
         const {
             _id,
             userId,
@@ -121,6 +125,7 @@ export const Updates = async (req, res) => {
 
 export const Delete = async (req, res) => {
     try {
+        await connectDB();
         const {
             id,
             userId
@@ -156,6 +161,7 @@ export const Delete = async (req, res) => {
 
 export const DeleteAllTransaction = async (req, res) => {
     try {
+        await connectDB();
         const {
             userId
         } = req.body;
@@ -189,6 +195,7 @@ export const DeleteAllTransaction = async (req, res) => {
 
 export const ViewData = async (req, res) => {
     try {
+        await connectDB();
         const {
             userId
         } = req.body;

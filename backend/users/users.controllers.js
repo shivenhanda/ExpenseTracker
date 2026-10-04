@@ -114,6 +114,7 @@ export const login = async (req, res) => {
 }
 export const ResetPassword = async (req, res) => {
     try {
+        await connectDB();
         const { userId, password } = req.body;
         let Update = await ResetUserPassword({ userId, password })
         if (!Update) {
@@ -135,6 +136,7 @@ export const Logout = async (req, res) => {
 }
 export const DeleteAccount = async (req, res) => {
     try {
+        await connectDB();
         const { userId, password } = req.body;
         if (!mongoose.Types.ObjectId.isValid(userId)) {
             return res.json({ success: false, message: "Invalid User ID" });
