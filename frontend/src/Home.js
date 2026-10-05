@@ -8,8 +8,8 @@ import { Online } from './App'
 export default function Home({ activation, setActivation, mode }) {
     let isOnline = useContext(Online)
     const [activeform, setform] = useState("signup");
-    const [data, action, pending] = useActionState((_, formData) => HandleSignUp(_, formData, setActivation, isOnline), undefined)
-    const [logindata, loginaction, loginpending] = useActionState((prev, formData) => HandleLogin(_, formData, setActivation, isOnline), undefined)
+    const [data, action, pending] = useActionState((previousData, formData) => HandleSignUp(previousData, formData, setActivation, isOnline), undefined)
+    const [logindata, loginaction, loginpending] = useActionState((prev, formData) => HandleLogin(previousData, formData, setActivation, isOnline), undefined)
 
     return (
         <>
@@ -281,7 +281,7 @@ function LoginUser({ loginaction, loginpending, logindata, setActivation, mode }
         </>
     )
 }
-async function HandleSignUp(_, formData, setActivation, isOnline) {
+async function HandleSignUp(previousData, formData, setActivation, isOnline) {
     try {
         let name = formData.get("user");
         let email = formData.get("email");
@@ -329,7 +329,7 @@ async function HandleSignUp(_, formData, setActivation, isOnline) {
     }
 }
 
-async function HandleLogin(_, formData, setActivation, isOnline) {
+async function HandleLogin(previousData, formData, setActivation, isOnline) {
     let name = formData.get("user");
     let password = formData.get("password");
 
