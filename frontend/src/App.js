@@ -98,7 +98,7 @@ export default function App() {
           <Route path="/Reports" element={<Reports activation={activation} mode={mode} />} />
           <Route path="/About" element={<About mode={mode} />} />
           <Route path="/ResetPassword" element={<ResetPassword activation={activation} mode={mode} />} />
-          <Route path="/DeleteAccount" element={<DeleteAccount setActivation={setActivation} mode={mode} />} />
+          <Route path="/DeleteAccount" element={<DeleteAccount mode={mode} handleLogout={handleLogout}/>} />
           <Route path="*" element={<Home activation={activation} setActivation={setActivation} mode={mode} />} />
         </Routes>
       </div>
