@@ -115,15 +115,17 @@ export const login = async (req, res) => {
 export const ResetPassword = async (req, res) => {
     try {
         await connectDB();
-        const { userId, password } = req.body;
-        let Update = await ResetUserPassword({ userId, password })
+        let { name, password } = req.body;
+        password=await bcrypt.hash(password, 10);
+        let Update = await ResetUserPassword({ name, password })
         if (!Update) {
             return res.json({ success: false, message: "No User Found" })
         }
-        return res.json({ success: true, message: password })
+        return res.json({ success: true, message: "Password Updated Successfully" })
     }
     catch (error) {
-        return res.json({ success: false, message: "Server Error" })
+        console.error("Password Update",error)
+        return res.json({ success: false, message: error.message })
     }
 }
 export const Logout = async (req, res) => {
