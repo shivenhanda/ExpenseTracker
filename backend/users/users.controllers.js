@@ -139,11 +139,8 @@ export const Logout = async (req, res) => {
 export const DeleteAccount = async (req, res) => {
     try {
         await connectDB();
-        const { userId, password } = req.body;
-        if (!mongoose.Types.ObjectId.isValid(userId)) {
-            return res.json({ success: false, message: "Invalid User ID" });
-        }
-        let find = await DeleteUser({ userId })
+        const { name, password } = req.body;
+        let find = await DeleteUser({ name })
         if (!find) {
             return res.json({ success: false, message: "No User found" })
         }
@@ -151,8 +148,21 @@ export const DeleteAccount = async (req, res) => {
         if (!match) {
             return res.json({ success: false, message: "Password Not Match" })
         }
-        let Delete = await TransactionModel.deleteMany({ userId: new mongoose.Types.ObjectId(userId) })
-        Delete = await UsersModel.findOneAndDelete({ _id: new mongoose.Types.ObjectId(userId) })
+        let deletetoken = req.cookies.token;
+
+        if (!deletetoken) {
+            return res.json({
+                success: false,
+                message: "Login Again First"
+            });
+        }
+
+        let token = jwt.verify(
+            deletetoken,
+            process.env.JWT_SECRET
+        );
+        let Delete = await TransactionModel.deleteMany({ userId: token.userId})
+        Delete = await UsersModel.findOneAndDelete({name:name })
         return res.json({ success: true, message: "Account Deleted Successfully" })
     }
     catch (error) {
