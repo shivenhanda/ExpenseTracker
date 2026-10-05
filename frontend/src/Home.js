@@ -9,7 +9,7 @@ export default function Home({ activation, setActivation, mode }) {
     let isOnline = useContext(Online)
     const [activeform, setform] = useState("signup");
     const [data, action, pending] = useActionState((previousData, formData) => HandleSignUp(previousData, formData, setActivation, isOnline), undefined)
-    const [logindata, loginaction, loginpending] = useActionState((prev, formData) => HandleLogin(previousData, formData, setActivation, isOnline), undefined)
+    const [logindata, loginaction, loginpending] = useActionState((previousData, formData) => HandleLogin(previousData, formData, setActivation, isOnline), undefined)
 
     return (
         <>
