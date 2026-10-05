@@ -56,17 +56,7 @@ export default function DeleteAccount({ mode,handleLogout }) {
                                 </p>
                             </div>
 
-                            <div className={style.warning}>
-                                <i className="fa-solid fa-triangle-exclamation"></i>
-                                <div>
-                                    <strong>This action cannot be undone.</strong>
-                                    <span>
-                                        Make sure you want to permanently delete your account.
-                                    </span>
-                                </div>
-                            </div>
-
-                            <form onSubmit={handleSubmit}>
+                            <form onSubmit={handleSubmit} style={{display:"flex",flexDirection:"column"}}>
 
                                 <div className={style.deleteField}>
                                     <label htmlFor="name">
