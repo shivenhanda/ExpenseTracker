@@ -8,8 +8,8 @@ import { Online } from './App'
 export default function Home({ activation, setActivation, mode }) {
     let isOnline = useContext(Online)
     const [activeform, setform] = useState("signup");
-    const [data, action, pending] = useActionState((prev, formData) => HandleSignUp(prev, formData, setActivation, isOnline), undefined)
-    const [logindata, loginaction, loginpending] = useActionState((prev, formData) => HandleLogin(prev, formData, setActivation, isOnline), undefined)
+    const [data, action, pending] = useActionState((_, formData) => HandleSignUp(_, formData, setActivation, isOnline), undefined)
+    const [logindata, loginaction, loginpending] = useActionState((prev, formData) => HandleLogin(_, formData, setActivation, isOnline), undefined)
 
     return (
         <>
@@ -280,4 +280,116 @@ function LoginUser({ loginaction, loginpending, logindata, setActivation, mode }
             </form>
         </>
     )
+}
+async function HandleSignUp(_, formData, setActivation, isOnline) {
+    try {
+        let name = formData.get("user");
+        let email = formData.get("email");
+        let password = formData.get("password");
+        if (!name || !email || !password) {
+            return {
+                success: false,
+                message: "All Fields Required"
+            }
+        }
+        if (!isOnline) {
+            return { success: false, message: "Check Internet Connection" };
+        }
+        name = name.trim();
+        email = email.trim().toLowerCase();
+        let object = {
+            name: name,
+            email: email,
+            password: password
+        }
+        const res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/SignUp`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include",
+            body: JSON.stringify(object)
+        });
+        let result = await res.json();
+        if (!res.ok || !result.success) {
+            setActivation(false);
+            return { success: false, message: result.message };
+        }
+        localStorage.setItem("userId", result.message);
+        setActivation(true);
+        return { success: true, message: "Signup Successfully." };
+    }
+    catch (error) {
+        console.error("SIGNUP FRONTEND ERROR:", error);
+
+        return {
+            success: false,
+            message: error.message || "Server Error"
+        };
+    }
+}
+
+async function HandleLogin(_, formData, setActivation, isOnline) {
+    let name = formData.get("user");
+    let password = formData.get("password");
+
+    if (!name || !password) {
+        return {
+            success: false,
+            message: "All fields Required"
+        };
+    }
+
+    if (isOnline) {
+        try {
+            let message = {
+                name: name,
+                password: password
+            };
+
+            let res = await fetch(
+                `https://expense-tracker-two-eta-98.vercel.app/login`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    credentials: "include",
+                    body: JSON.stringify(message)
+                }
+            );
+
+            let result = await res.json();
+
+            if (!res.ok || !result.success) {
+                setActivation(false);
+
+                return {
+                    success: false,
+                    message: result.message || "Login failed"
+                };
+            }
+
+            localStorage.setItem("userId", result.message);
+            setActivation(true);
+
+            return {
+                success: true
+            };
+
+        } catch (error) {
+            console.error("LOGIN FRONTEND ERROR:", error);
+            setActivation(false);
+
+            return {
+                success: false,
+                message: error.message || "Server Error"
+            };
+        }
+    } else {
+        return {
+            success: false,
+            message: "Check Internet Connection"
+        };
+    }
 }
