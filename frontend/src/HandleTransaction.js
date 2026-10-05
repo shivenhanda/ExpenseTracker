@@ -203,7 +203,6 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
         },
         { Income: 0, Expense: 0 }
     );
-z
     return (
         <div>
             {
