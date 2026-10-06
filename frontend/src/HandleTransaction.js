@@ -322,6 +322,7 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                     <button
                         className={`${style.addTransaction} ${mode === "dark" ? style.darkAddTransaction : ""
                             }`}
+                        onClick={() => setShow("Add")}
                     >
                         <i className="fa-solid fa-plus"></i>
                         Add Transaction
