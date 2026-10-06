@@ -243,7 +243,7 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                                 exit={{ scale: .8, opacity: 0 }}
                                 transition={{ duration: .3 }}
                                 className="w-[95%] max-w-xl rounded-3xl bg-white p-8 shadow-2xl space-y-5"
-                                style={{ padding: "5px", display: "flex", flexDirection: "column",gap:"5px"}}
+                                style={{ padding: "5px", display: "flex", flexDirection: "column", gap: "5px" }}
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <h2 className="text-3xl font-bold text-center text-emerald-600">
@@ -256,7 +256,7 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
 
                                 <input
                                     name="title"
-                                    placeholder="Transaction Title"
+                                    placeholder="Transaction Details"
                                     className="w-full rounded-xl border p-3"
                                 />
 
@@ -319,25 +319,48 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
             }
             {
                 !show && (
-                    <div className={style.container}>
-                        <button onClick={() => setShow("Add")}><i class="fa-solid fa-plus"></i> Add Transaction</button>
-                    </div>
+                    <button
+                        className={`${style.addTransaction} ${mode === "dark" ? style.darkAddTransaction : ""
+                            }`}
+                    >
+                        <i className="fa-solid fa-plus"></i>
+                        Add Transaction
+                    </button>
                 )
             }
             {!show && (
                 <>
-                    <div><h3 style={{ textAlign: "center", fontSize: 24 }}>{monthname}  {year}</h3></div>
+                    <div>
+                        <h3 style={{ textAlign: "center", fontSize: 24 }}>
+                            {monthname} {year}
+                        </h3>
+                    </div>
                     <div className={style.boxes}>
                         <div className={`${style.box} ${mode === "dark" ? style.dbox : ""}`}>
-                            <h3> <i className="fa-solid fa-arrow-trend-up" style={{ color: "#11f90d" }}></i> Income</h3>
+                            <h3>
+                                <i
+                                    className="fa-solid fa-arrow-trend-up"
+                                    style={{ color: "#11f90d" }}
+                                />{" "}
+                                Income
+                            </h3>
                             <p className={style.income}>{Income}</p>
                         </div>
                         <div className={`${style.box} ${mode === "dark" ? style.dbox : ""}`}>
-                            <h3> <i className="fa-solid fa-arrow-down" style={{ color: "#f20707" }}></i> Expense</h3>
+                            <h3>
+                                <i
+                                    className="fa-solid fa-arrow-down"
+                                    style={{ color: "#f20707" }}
+                                />{" "}
+                                Expense
+                            </h3>
                             <p className={style.expense}>{Expense}</p>
                         </div>
                         <div className={`${style.box} ${mode === "dark" ? style.dbox : ""}`}>
-                            <h3> <i class="fa-solid fa-wallet"></i> Balance</h3>
+                            <h3>
+                                <i className="fa-solid fa-wallet"></i>{" "}
+                                Balance
+                            </h3>
                             <p className={style.balance}>{Income - Expense}</p>
                         </div>
                     </div>
@@ -468,7 +491,7 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                         justifyContent: "center",
                         alignItems: "center",
                         overflow: "hidden",
-                        backgroundColor:"transparent"
+                        backgroundColor: "transparent"
                     }}
                 >
                     <Pie
@@ -557,13 +580,12 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
             ) : (
                 <div
                     style={{
-                        height: "400px",
-                        width: "100%",
+                        height: "300px",
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
                         flexDirection: "column",
-                        gap:"5px",
+                        gap: "5px",
                         overflow: "hidden",
                         color: mode === "dark"
                             ? "#9CA3AF"
@@ -641,7 +663,7 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                     exit={{ scale: 0.8, opacity: 0 }}
                     transition={{ duration: .3 }}
                     className="w-[95%] max-w-xl rounded-3xl bg-white p-8 shadow-2xl space-y-5"
-                    style={{ padding: "5px", display: "flex", flexDirection: "column",gap:"5px" }}
+                    style={{ padding: "5px", display: "flex", flexDirection: "column", gap: "5px" }}
                     onClick={(e) => e.stopPropagation()}
                 >
                     <h2 className="text-3xl font-bold text-center text-blue-600">
@@ -650,7 +672,7 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
 
                     <input
                         name="add"
-                        placeholder="Transaction Title"
+                        placeholder="Transaction Details"
                         className="w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-blue-500"
                     />
 

@@ -132,7 +132,7 @@ export default function Calendar({ activation, mode }) {
                 < form key={editIndex} action={action} className={style.DataUpdate} style={{display: "flex", flexDirection: "column",gap:"5px"}}>
                     <h2>Enter only the fields you want to update.</h2>
                     <label htmlFor="title">Enter Transaction</label>
-                    <input type="text" name="title" placeholder="Enter Transaction Title" />
+                    <input type="text" name="title" placeholder="Enter Transaction Details" />
                     <label htmlFor="money">Amount</label>
                     <input type="number" name="money" placeholder="Enter Transaction Amount" />
                     <label htmlFor="date">Transaction Date</label>
