@@ -484,8 +484,7 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
             {categoryLabels.length > 0 ? (
                 <div
                     style={{
-                        height: "400px",
-                        width: "100%",
+                        height: "300px",
                         position: "relative",
                         display: "flex",
                         justifyContent: "center",
