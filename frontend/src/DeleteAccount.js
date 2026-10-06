@@ -21,6 +21,7 @@ export default function DeleteAccount({ mode,handleLogout }) {
                 headers: {
                     "Content-Type": "application/json"
                 },
+                credentials:"include",
                 body: JSON.stringify({ name, password })
             })
             let result = await res.json();
