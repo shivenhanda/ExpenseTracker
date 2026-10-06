@@ -56,7 +56,7 @@ export default function DeleteAccount({ mode,handleLogout }) {
                                 </p>
                             </div>
 
-                            <form onSubmit={handleSubmit} style={{display:"flex",flexDirection:"column"}}>
+                            <form onSubmit={handleSubmit} style={{display:"flex",flexDirection:"column",gap:"5px"}}>
 
                                 <div className={style.deleteField}>
                                     <label htmlFor="name">

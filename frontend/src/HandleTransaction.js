@@ -243,7 +243,7 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                                 exit={{ scale: .8, opacity: 0 }}
                                 transition={{ duration: .3 }}
                                 className="w-[95%] max-w-xl rounded-3xl bg-white p-8 shadow-2xl space-y-5"
-                                style={{ padding: "5px", display: "flex", flexDirection: "column" }}
+                                style={{ padding: "5px", display: "flex", flexDirection: "column",gap:"5px"}}
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <h2 className="text-3xl font-bold text-center text-emerald-600">
@@ -353,7 +353,7 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                 {show === "Add" && <AddTransaction setShow={setShow} pending={pending} />}
             </AnimatePresence>
             {show === "DeleteAll" && <DeleteAllTransaction setShow={setShow} setTransaction={setTransaction} />}
-            <div className={`${style1.data} ${mode === "dark" ? style1.ddata : " style.data"}`}>
+            <div className={`${style1.data} ${mode === "dark" ? style1.ddata : style1.data}`}>
                 <h3>Date</h3>
                 <h3>Title</h3>
                 <h3 className={style1.type}>Type</h3>
@@ -368,7 +368,7 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                         key={data._id || index}
                         className={`${style1.data} ${mode === "dark"
                             ? style1.ddata
-                            : " style.data"
+                            : style1.data
                             }`}
                     >
                         <span>
@@ -410,7 +410,7 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                 </div>
             )}
             {
-                <div style={{ height: "300px", display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "#F6F8FC" }}>
+                <div style={{ height: "300px", display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "transparent" }}>
                     <Pie
                         data={{
                             labels: ["Income", "Expense"],
@@ -459,96 +459,112 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                 </div>
             }
             {categoryLabels.length > 0 ? (
-                <Pie
-                    data={{
-                        labels: categoryLabels,
-                        datasets: [
-                            {
-                                label: "Category Expense",
-                                data: categoryValues,
-                                backgroundColor: categoryLabels.map(
-                                    (_, index) =>
-                                        categoryColors[index % categoryColors.length]
-                                ),
-                                borderWidth: 3,
-                                borderColor: mode === "dark"
-                                    ? "#111827"
-                                    : "#ffffff"
-                            }
-                        ]
+                <div
+                    style={{
+                        height: "400px",
+                        width: "100%",
+                        position: "relative",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        overflow: "hidden",
+                        backgroundColor:"transparent"
                     }}
-                    options={{
-                        responsive: true,
-                        maintainAspectRatio: false,
-
-                        plugins: {
-                            legend: {
-                                position: "bottom",
-                                labels: {
-                                    color: mode === "dark"
-                                        ? "#E5E7EB"
-                                        : "#374151",
-                                    font: {
-                                        weight: "600",
-                                        size: 12
-                                    },
-                                    padding: 12
+                >
+                    <Pie
+                        data={{
+                            labels: categoryLabels,
+                            datasets: [
+                                {
+                                    label: "Category Expense",
+                                    data: categoryValues,
+                                    backgroundColor: categoryLabels.map(
+                                        (_, index) =>
+                                            categoryColors[index % categoryColors.length]
+                                    ),
+                                    borderWidth: 3,
+                                    borderColor: mode === "dark"
+                                        ? "#111827"
+                                        : "#ffffff"
                                 }
-                            },
+                            ]
+                        }}
+                        options={{
+                            responsive: true,
+                            maintainAspectRatio: false,
 
-                            tooltip: {
-                                backgroundColor: mode === "dark"
-                                    ? "#1F2937"
-                                    : "#111827",
+                            plugins: {
+                                legend: {
+                                    position: "bottom",
+                                    labels: {
+                                        color: mode === "dark"
+                                            ? "#E5E7EB"
+                                            : "#374151",
+                                        font: {
+                                            weight: "600",
+                                            size: 12
+                                        },
+                                        padding: 12
+                                    }
+                                },
 
-                                padding: 12,
-                                cornerRadius: 10,
+                                tooltip: {
+                                    backgroundColor: mode === "dark"
+                                        ? "#1F2937"
+                                        : "#111827",
 
-                                callbacks: {
-                                    label: function (context) {
-                                        const total = categoryValues.reduce(
-                                            (sum, value) => sum + value,
-                                            0
-                                        );
+                                    padding: 12,
+                                    cornerRadius: 10,
 
-                                        const percentage = total > 0
-                                            ? ((context.raw / total) * 100).toFixed(1)
-                                            : 0;
+                                    callbacks: {
+                                        label: function (context) {
+                                            const total = categoryValues.reduce(
+                                                (sum, value) => sum + value,
+                                                0
+                                            );
 
-                                        return [
-                                            `${context.label}`,
-                                            `Expense: ₹${Number(context.raw).toLocaleString("en-IN")}`,
-                                            `${percentage}% of expenses`
-                                        ];
+                                            const percentage = total > 0
+                                                ? ((context.raw / total) * 100).toFixed(1)
+                                                : 0;
+
+                                            return [
+                                                `${context.label}`,
+                                                `Expense: ₹${Number(context.raw).toLocaleString("en-IN")}`,
+                                                `${percentage}% of expenses`
+                                            ];
+                                        }
+                                    }
+                                },
+
+                                title: {
+                                    display: true,
+                                    text: `${monthname} Category Expenses`,
+                                    color: mode === "dark"
+                                        ? "#F9FAFB"
+                                        : "#111827",
+                                    font: {
+                                        size: 18,
+                                        weight: "700"
+                                    },
+                                    padding: {
+                                        bottom: 20
                                     }
                                 }
-                            },
-
-                            title: {
-                                display: true,
-                                text: `${monthname} Category Expenses`,
-                                color: mode === "dark"
-                                    ? "#F9FAFB"
-                                    : "#111827",
-                                font: {
-                                    size: 18,
-                                    weight: "700"
-                                },
-                                padding: {
-                                    bottom: 20
-                                }
                             }
-                        }
-                    }}
-                />
+                        }}
+                    />
+                </div>
             ) : (
                 <div
                     style={{
-                        height: "100%",
+                        height: "400px",
+                        width: "100%",
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
                         flexDirection: "column",
+                        gap:"5px",
+                        overflow: "hidden",
                         color: mode === "dark"
                             ? "#9CA3AF"
                             : "#6B7280"
@@ -625,7 +641,7 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                     exit={{ scale: 0.8, opacity: 0 }}
                     transition={{ duration: .3 }}
                     className="w-[95%] max-w-xl rounded-3xl bg-white p-8 shadow-2xl space-y-5"
-                    style={{ padding: "5px", display: "flex", flexDirection: "column" }}
+                    style={{ padding: "5px", display: "flex", flexDirection: "column",gap:"5px" }}
                     onClick={(e) => e.stopPropagation()}
                 >
                     <h2 className="text-3xl font-bold text-center text-blue-600">

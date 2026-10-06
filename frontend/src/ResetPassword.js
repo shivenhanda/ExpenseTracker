@@ -51,7 +51,7 @@ export default function ResetPassword({ activation, mode }) {
                                 <p>Set a new password to keep your account secure.</p>
                             </div>
 
-                            <form onSubmit={handleSubmit} style={{display:"flex",flexDirection:"column"}}>
+                            <form onSubmit={handleSubmit} style={{display:"flex",flexDirection:"column",gap:"5px"}}>
 
                                 <div className={style.field}>
                                     <label htmlFor="name">

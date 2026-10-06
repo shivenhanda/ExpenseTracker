@@ -99,7 +99,7 @@ function SignUpUser({ action, pending, data, setActivation, mode }) {
                 </p>
             </div>
 
-            <form action={action} style={{display:"flex",flexDirection:"column"}}>
+            <form action={action} style={{display:"flex",flexDirection:"column",gap:"5px"}}>
 
                 <div className={style.row}>
                     <label htmlFor="user">
@@ -198,7 +198,7 @@ function LoginUser({ loginaction, loginpending, logindata, setActivation, mode }
                 </p>
             </div>
 
-            <form action={loginaction} style={{display:"flex",flexDirection:"column"}}>
+            <form action={loginaction} style={{display:"flex",flexDirection:"column",gap:"5px"}}>
 
                 <div className={style.row}>
                     <label htmlFor="user">
