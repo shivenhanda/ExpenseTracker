@@ -39,6 +39,8 @@ export const SignUp = async (req, res) => {
     try {
         await connectDB()
         let { name, email, password } = req.body;
+        name = name.trim().toLowerCase();
+        email = email.trim().toLowerCase();
         const existingUser = await UsersModel.findOne({ $or: [{ name }, { email }] }, { _id: 1 })
         if (existingUser) {
             return res.json({ success: false, message: "User Already Register with these name or email" })
@@ -47,7 +49,7 @@ export const SignUp = async (req, res) => {
         const newUser = await createUser({ name, email, password })
         const token = jwt.sign(
             {
-                name: name,
+                name: newUser.name,
                 userId: newUser._id
             },
             process.env.JWT_SECRET,
@@ -69,13 +71,14 @@ export const SignUp = async (req, res) => {
 export const login = async (req, res) => {
     try {
         await connectDB();
-        const { name, password } = req.body;
+        let { name, password } = req.body;
         if (!name || !password) {
             return res.json({
                 success: false,
                 message: "Name and Password required"
             });
         }
+        name = name.trim().toLowerCase();
         const existingUser = await loginUser({ name })
         if (!existingUser) {
             return res.json({ success: false, "message": "No User Found. Please Sign Up" })
@@ -116,7 +119,8 @@ export const ResetPassword = async (req, res) => {
     try {
         await connectDB();
         let { name, password } = req.body;
-        password=await bcrypt.hash(password, 10);
+        name = name.trim().toLowerCase()
+        password = await bcrypt.hash(password, 10);
         let Update = await ResetUserPassword({ name, password })
         if (!Update) {
             return res.json({ success: false, message: "No User Found" })
@@ -124,7 +128,7 @@ export const ResetPassword = async (req, res) => {
         return res.json({ success: true, message: "Password Updated Successfully" })
     }
     catch (error) {
-        console.error("Password Update",error)
+        console.error("Password Update", error)
         return res.json({ success: false, message: error.message })
     }
 }
@@ -139,7 +143,8 @@ export const Logout = async (req, res) => {
 export const DeleteAccount = async (req, res) => {
     try {
         await connectDB();
-        const { name, password } = req.body;
+        let { name, password } = req.body;
+        name = name.trim().toLowerCase()
         let find = await DeleteUser({ name })
         if (!find) {
             return res.json({ success: false, message: "No User found" })
@@ -161,8 +166,8 @@ export const DeleteAccount = async (req, res) => {
             deletetoken,
             process.env.JWT_SECRET
         );
-        let Delete = await TransactionModel.deleteMany({ userId: token.userId})
-        Delete = await UsersModel.findOneAndDelete({name:name })
+        let Delete = await TransactionModel.deleteMany({ userId: token.userId })
+        Delete = await UsersModel.findByIdAndDelete(token.userId);
         return res.json({ success: true, message: "Account Deleted Successfully" })
     }
     catch (error) {
