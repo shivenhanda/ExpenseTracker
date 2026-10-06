@@ -115,7 +115,7 @@ export default function Reports({ activation, mode }) {
         <>
             {
                 show &&
-                < form key={editIndex} action={action} className={style.DataUpdate}>
+                < form key={editIndex} action={action} className={style.DataUpdate} style={{display: "flex", flexDirection: "column"}}>
                     <h2>Enter only the fields you want to update.</h2>
                     <label htmlFor="title">Enter Transaction</label>
                     <input type="text" name="title" placeholder="Enter Transaction Title" />

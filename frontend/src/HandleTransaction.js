@@ -203,6 +203,26 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
         },
         { Income: 0, Expense: 0 }
     );
+    const categoryExpenses = currentMonthTransactions
+        .filter(item => item.type === "Expense")
+        .reduce((acc, item) => {
+            const category = item.category || "Other";
+            acc[category] = (acc[category] || 0) + Number(item.money);
+            return acc;
+        }, {});
+
+    const categoryLabels = Object.keys(categoryExpenses);
+    const categoryValues = Object.values(categoryExpenses);
+
+    const categoryColors = [
+        "#3B82F6",
+        "#8B5CF6",
+        "#EC4899",
+        "#F59E0B",
+        "#10B981",
+        "#EF4444",
+        "#6366F1"
+    ];
     return (
         <div>
             {
@@ -223,7 +243,7 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                                 exit={{ scale: .8, opacity: 0 }}
                                 transition={{ duration: .3 }}
                                 className="w-[95%] max-w-xl rounded-3xl bg-white p-8 shadow-2xl space-y-5"
-                                style={{ padding: "5px" }}
+                                style={{ padding: "5px", display: "flex", flexDirection: "column" }}
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <h2 className="text-3xl font-bold text-center text-emerald-600">
@@ -438,6 +458,117 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                     />
                 </div>
             }
+            {categoryLabels.length > 0 ? (
+                <Pie
+                    data={{
+                        labels: categoryLabels,
+                        datasets: [
+                            {
+                                label: "Category Expense",
+                                data: categoryValues,
+                                backgroundColor: categoryLabels.map(
+                                    (_, index) =>
+                                        categoryColors[index % categoryColors.length]
+                                ),
+                                borderWidth: 3,
+                                borderColor: mode === "dark"
+                                    ? "#111827"
+                                    : "#ffffff"
+                            }
+                        ]
+                    }}
+                    options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+
+                        plugins: {
+                            legend: {
+                                position: "bottom",
+                                labels: {
+                                    color: mode === "dark"
+                                        ? "#E5E7EB"
+                                        : "#374151",
+                                    font: {
+                                        weight: "600",
+                                        size: 12
+                                    },
+                                    padding: 12
+                                }
+                            },
+
+                            tooltip: {
+                                backgroundColor: mode === "dark"
+                                    ? "#1F2937"
+                                    : "#111827",
+
+                                padding: 12,
+                                cornerRadius: 10,
+
+                                callbacks: {
+                                    label: function (context) {
+                                        const total = categoryValues.reduce(
+                                            (sum, value) => sum + value,
+                                            0
+                                        );
+
+                                        const percentage = total > 0
+                                            ? ((context.raw / total) * 100).toFixed(1)
+                                            : 0;
+
+                                        return [
+                                            `${context.label}`,
+                                            `Expense: ₹${Number(context.raw).toLocaleString("en-IN")}`,
+                                            `${percentage}% of expenses`
+                                        ];
+                                    }
+                                }
+                            },
+
+                            title: {
+                                display: true,
+                                text: `${monthname} Category Expenses`,
+                                color: mode === "dark"
+                                    ? "#F9FAFB"
+                                    : "#111827",
+                                font: {
+                                    size: 18,
+                                    weight: "700"
+                                },
+                                padding: {
+                                    bottom: 20
+                                }
+                            }
+                        }
+                    }}
+                />
+            ) : (
+                <div
+                    style={{
+                        height: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        flexDirection: "column",
+                        color: mode === "dark"
+                            ? "#9CA3AF"
+                            : "#6B7280"
+                    }}
+                >
+                    <i
+                        className="fa-solid fa-chart-pie"
+                        style={{
+                            fontSize: "40px",
+                            marginBottom: "15px"
+                        }}
+                    ></i>
+
+                    <h3>No Expense Data</h3>
+
+                    <p>
+                        Add an expense to see category analysis
+                    </p>
+                </div>
+            )}
         </div>)
     async function Delete(data, index) {
         if (!isOnline) {
@@ -494,71 +625,71 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                     exit={{ scale: 0.8, opacity: 0 }}
                     transition={{ duration: .3 }}
                     className="w-[95%] max-w-xl rounded-3xl bg-white p-8 shadow-2xl space-y-5"
-                    style={{ padding: "5px" }}
+                    style={{ padding: "5px", display: "flex", flexDirection: "column" }}
                     onClick={(e) => e.stopPropagation()}
                 >
                     <h2 className="text-3xl font-bold text-center text-blue-600">
                         Add Transaction
                     </h2>
 
-                            <input
-                                name="add"
-                                placeholder="Transaction Title"
-                                className="w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-blue-500"
-                            />
+                    <input
+                        name="add"
+                        placeholder="Transaction Title"
+                        className="w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-blue-500"
+                    />
 
-                            <input
-                                type="number"
-                                name="money"
-                                placeholder="Amount"
-                                className="w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-blue-500"
-                            />
+                    <input
+                        type="number"
+                        name="money"
+                        placeholder="Amount"
+                        className="w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-blue-500"
+                    />
 
-                            <input
-                                type="date"
-                                name="date"
-                                className="w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-blue-500"
-                            />
+                    <input
+                        type="date"
+                        name="date"
+                        className="w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-blue-500"
+                    />
 
-                            <select
-                                name="type"
-                                className="w-full rounded-xl border p-3"
-                            >
-                                <option>Income</option>
-                                <option>Expense</option>
-                            </select>
+                    <select
+                        name="type"
+                        className="w-full rounded-xl border p-3"
+                    >
+                        <option>Income</option>
+                        <option>Expense</option>
+                    </select>
 
-                            <select
-                                name="category"
-                                className="w-full rounded-xl border p-3"
-                            >
-                                <option>Job</option>
-                                <option>Home</option>
-                                <option>Shopping</option>
-                                <option>Bill</option>
-                                <option>Education</option>
-                                <option>Grocery</option>
-                                <option>Other</option>
-                            </select>
+                    <select
+                        name="category"
+                        className="w-full rounded-xl border p-3"
+                    >
+                        <option>Job</option>
+                        <option>Home</option>
+                        <option>Shopping</option>
+                        <option>Bill</option>
+                        <option>Education</option>
+                        <option>Grocery</option>
+                        <option>Other</option>
+                    </select>
 
-                            <div className="flex gap-4 pt-3">
-                                <button
-                                    disabled={pending}
-                                    className="flex-1 rounded-xl bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700"
-                                >
-                                    {pending ? "Saving..." : "Save"}
-                                </button>
+                    <div className="flex gap-4 pt-3">
+                        <button
+                            disabled={pending}
+                            className="flex-1 rounded-xl bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700"
+                        >
+                            {pending ? "Saving..." : "Save"}
+                        </button>
 
-                                <button
-                                    type="button"
-                                    onClick={() => setShow(null)}
-                                    className="flex-1 rounded-xl border py-3 font-semibold hover:bg-gray-100"
-                                >
-                                    Cancel
-                                </button>
-                            </div>
-                        </motion.form>
-                    </motion.div>
+                        <button
+                            type="button"
+                            onClick={() => setShow(null)}
+                            className="flex-1 rounded-xl border py-3 font-semibold hover:bg-gray-100"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </motion.form>
+            </motion.div>
         )
     }
     function DeleteAllTransaction({ setShow, setTransaction }) {

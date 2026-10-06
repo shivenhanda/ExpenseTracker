@@ -17,12 +17,6 @@ export default function Home({ activation, setActivation, mode }) {
 
                 <div className={`${style.container} ${mode === "dark" ? style.dcontainer : ""}`}>
 
-                    <div className={style.brand}>
-                        <div className={style.brandIcon}>
-                            <i className="fa-solid fa-wallet"></i>
-                        </div>
-                        <span>Expense Tracker</span>
-                    </div>
 
                     {
                         activeform === 'signup' &&
@@ -46,12 +40,6 @@ export default function Home({ activation, setActivation, mode }) {
                             mode={mode}
                         />
                     }
-
-                    <div className={style.divider}>
-                        <span></span>
-                        <p>{activeform === "login" ? "New here?" : "Already a member?"}</p>
-                        <span></span>
-                    </div>
 
                     <div className={style.buttons}>
                         {
