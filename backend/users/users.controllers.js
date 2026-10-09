@@ -180,16 +180,6 @@ function generateOTP() {
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
 const otpMap = new Map()
-let transporter = nodemailer.createTransport({
-    service: "gmail",
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
-    auth: {
-        user: fromAddress,
-        pass: fromPass
-    }
-});
 export const SendOtp = async (req, res) => {
     try {
         const email = req.body.email?.trim().toLowerCase();
@@ -212,6 +202,16 @@ export const SendOtp = async (req, res) => {
         if (!fromAddress || !fromPass) {
             return res.json({ message: "Error on env" })
         }
+        let transporter = nodemailer.createTransport({
+            service: "gmail",
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true,
+            auth: {
+                user: fromAddress,
+                pass: fromPass
+            }
+        });
         const otp = generateOTP();
         const expiresAt = Date.now() + 5 * 60 * 1000;
 
