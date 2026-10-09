@@ -1,5 +1,5 @@
 import express from 'express'
-import { SignUp, login, ResetPassword, DeleteAccount, CheckAuth, Logout, SendOtp, VerifyOtp } from './users.controllers.js'
+import { SignUp, login, ResetPassword, DeleteAccount, CheckAuth, Logout, SendOtp, VerifyOtp, SetPassword } from './users.controllers.js'
 
 const userRouter = express.Router()
 
@@ -11,5 +11,6 @@ userRouter.get("/CheckAuth", CheckAuth);
 userRouter.get("/logout", Logout)
 userRouter.post("/sendotp", SendOtp)
 userRouter.post("/verifyotp", VerifyOtp)
+userRouter.post("/setpassword", SetPassword)
 
 export default userRouter;

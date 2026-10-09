@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import { createUser, DeleteUser, loginUser, ResetUserPassword } from "./users.services.js";
 import connectDB from "../database/mongodb.js";
 import nodemailer from "nodemailer";
+import crypto from "node:crypto";
 
 export const CheckAuth = async (req, res) => {
     try {
@@ -218,7 +219,7 @@ export const SendOtp = async (req, res) => {
         const mailOptions = {
             from: fromAddress,
             to: email,
-            subject: `Expense Tracker Verification Code Valid for 5 mins)`,
+            subject: `Expense Tracker Verification Code (Valid for 5 mins)`,
             text: `Your OTP is: ${otp}. This code is valid for 5 minutes only.`,
         };
         otpMap.set(email, {
@@ -257,5 +258,65 @@ export const VerifyOtp = async (req, res) => {
     catch (error) {
         console.error("Error", error);
         return res.json({ message: error.message })
+    }
+}
+export const SetPassword = async (req, res) => {
+    let existing
+    let oldPassword = null
+    let passwordUpdate = false
+    try {
+        const email = req.body.email?.trim().toLowerCase();
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailPattern.test(email)) {
+            return res.status(400).json({
+                message: "Please enter a valid email address.",
+            });
+        }
+        existing = await UsersModel.findOne({ email })
+        if (!existing) {
+            return res.json({ success: false, message: "No User Found" })
+        }
+        oldPassword = existing.password
+        let newPassword = existing.name + crypto.randomBytes(5).toString("hex")
+        let hashPassword = await bcrypt.hash(newPassword, 10);
+        const fromAddress = process.env.EMAIL_USER || "";
+        const fromPass = process.env.EMAIL_PASS || "";
+        if (!fromAddress || !fromPass) {
+            return res.json({ success: false, message: "Error on env" })
+        }
+        let Update = await ResetUserPassword({ name: existing.name, password: hashPassword })
+        if (!Update) {
+            return res.json({ success: false, message: "No User Found" })
+        }
+        passwordUpdate = true
+        let transporter = nodemailer.createTransport({
+            service: "gmail",
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true,
+            auth: {
+                user: fromAddress,
+                pass: fromPass
+            }
+        });
+        const mailOptions = {
+            from: fromAddress,
+            to: email,
+            subject: `Expense Tracker New Password`,
+            text: `Your New Password is: ${newPassword}.`,
+        };
+        await transporter.sendMail(mailOptions);
+        return res.json({ success: true, message: "New Password Sent Successfully" });
+    }
+    catch (error) {
+        console.error("Error", error);
+        try {
+            if (passwordUpdate && existing && oldPassword !== null) {
+                await ResetUserPassword({ name: existing.name, password: oldPassword })
+            }
+        } catch (error) {
+            console.error("Password rollback failed:", error.message);
+        }
+        return res.json({ success: false, message: error.message })
     }
 }

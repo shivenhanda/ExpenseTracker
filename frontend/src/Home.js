@@ -428,7 +428,7 @@ function LoginUser({ loginaction, loginpending, logindata, setActivation, mode }
 
                 <div className={style.forgot}>
                     <Link
-                        to="/ResetPassword"
+                        to="/ForgetPassword"
                         className={mode === "dark" ? style.dreset : style.reset}
                     >
                         Forgot password?
