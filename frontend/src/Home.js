@@ -1,4 +1,4 @@
-import { useActionState, useContext, useState } from 'react'
+import { useActionState, useContext, useEffect, useState } from 'react'
 import style from './Home.module.css'
 import HandleTransaction from './HandleTransaction'
 import { Link } from 'react-router-dom'
@@ -85,6 +85,122 @@ export default function Home({ activation, setActivation, mode }) {
 
 
 function SignUpUser({ action, pending, data, setActivation, mode }) {
+    const [email, setEmail] = useState("");
+    const [otp, setOtp] = useState("");
+    const [isVerify, setIsVerify] = useState(false);
+    const [otpPending, setOtpPending] = useState(false);
+    const [verifyPending, setVerifyPending] = useState(false);
+    const [otpMessage, setOtpMessage] = useState("");
+    const [otpError, setOtpError] = useState("");
+    const [resendSeconds, setResendSeconds] = useState(0);
+
+    useEffect(() => {
+        if (resendSeconds <= 0) return;
+
+        const timer = setTimeout(() => {
+            setResendSeconds((seconds) => seconds - 1);
+        }, 1000);
+
+        return () => clearTimeout(timer);
+    }, [resendSeconds]);
+    const API_URL = "https://expense-tracker-two-eta-98.vercel.app";
+
+
+    const handleSendOtp = async () => {
+        if (!email.trim()) {
+            setOtpError("Please enter your email address.");
+            return;
+        }
+
+        if (otpPending || resendSeconds > 0 || isVerify) {
+            return;
+        }
+
+        setOtpPending(true);
+        setOtpError("");
+        setOtpMessage("");
+
+        try {
+            const response = await fetch(`${API_URL}/sendotp`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email: email.trim().toLowerCase(),
+                }),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || "Failed to send OTP.");
+            }
+
+            setOtpMessage(result.message || "OTP sent successfully.");
+            setResendSeconds(60);
+        } catch (error) {
+            setOtpError(error.message || "Unable to send OTP.");
+        } finally {
+            setOtpPending(false);
+        }
+    };
+
+
+    const handleVerifyOtp = async () => {
+        if (!otp.trim()) {
+            setOtpError("Please enter the OTP.");
+            return;
+        }
+
+        setVerifyPending(true);
+        setOtpError("");
+        setOtpMessage("");
+        setIsVerify(false);
+
+        try {
+            const response = await fetch(`${API_URL}/verifyotp`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email: email.trim(),
+                    otp: otp.trim(),
+                }),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || "Invalid OTP.");
+            }
+
+            setIsVerify(true);
+            setOtpMessage(result.message || "Email verified successfully.");
+        } catch (error) {
+            setIsVerify(false);
+            setOtpError(error.message || "OTP verification failed.");
+        } finally {
+            setVerifyPending(false);
+        }
+    };
+
+    const handleEmailChange = (event) => {
+        setEmail(event.target.value);
+        setIsVerify(false);
+        setOtp("");
+        setOtpMessage("");
+        setOtpError("");
+    };
+
+    const handleSubmit = (event) => {
+        if (!isVerify) {
+            event.preventDefault();
+            setOtpError("Please verify your email before signing up.");
+        }
+    };
+
     return (
         <>
             <div className={style.header}>
@@ -99,11 +215,18 @@ function SignUpUser({ action, pending, data, setActivation, mode }) {
                 </p>
             </div>
 
-            <form action={action} style={{display:"flex",flexDirection:"column",gap:"5px"}}>
-
+            <form
+                action={action}
+                onSubmit={handleSubmit}
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "5px",
+                }}
+            >
                 <div className={style.row}>
                     <label htmlFor="user">
-                        <i className='fa-solid fa-user'></i>
+                        <i className="fa-solid fa-user"></i>
                         Username
                     </label>
 
@@ -113,25 +236,82 @@ function SignUpUser({ action, pending, data, setActivation, mode }) {
                         name="user"
                         id="user"
                         placeholder="Enter your username"
-                        autoComplete='off'
+                        autoComplete="username"
                         required
                     />
                 </div>
 
                 <div className={style.row}>
                     <label htmlFor="email">
-                        <i className='fa-solid fa-envelope'></i>
+                        <i className="fa-solid fa-envelope"></i>
                         Email address
                     </label>
 
-                    <input
-                        className={`${style.input} ${mode === "dark" ? style.dinput : ""}`}
-                        type="email"
-                        name="email"
-                        id="email"
-                        placeholder="you@example.com"
-                        required
-                    />
+                    <div className={style.otpRow}>
+                        <input
+                            className={`${style.input} ${mode === "dark" ? style.dinput : ""}`}
+                            type="email"
+                            name="email"
+                            id="email"
+                            placeholder="you@example.com"
+                            value={email}
+                            onChange={handleEmailChange}
+                            autoComplete="email"
+                            required
+                        />
+
+
+                        <button
+                            type="button"
+                            className={`${style.otpButton} ${mode === "dark" ? style.dButton : ""}`}
+                            onClick={handleSendOtp}
+                            disabled={otpPending || verifyPending || isVerify || resendSeconds > 0}
+                        >
+                            {otpPending
+                                ? "Sending..."
+                                : resendSeconds > 0 ? `Resend in ${resendSeconds}s`
+                                    : "Send OTP"}
+                        </button>
+                    </div>
+                </div>
+
+                <div className={style.row}>
+                    <label htmlFor="otp">
+                        <i className="fa-solid fa-shield-halved"></i>
+                        Email OTP
+                    </label>
+
+                    <div className={style.otpRow}>
+                        <input
+                            className={`${style.input} ${mode === "dark" ? style.dinput : ""}`}
+                            type="text"
+                            id="otp"
+                            placeholder="Enter OTP"
+                            value={otp}
+                            onChange={(event) => {
+                                setOtp(event.target.value);
+                                setOtpError("");
+                            }}
+                            inputMode="numeric"
+                            autoComplete="one-time-code"
+                        />
+
+                        <button
+                            type="button"
+                            className={`${style.otpButton} ${mode === "dark" ? style.dButton : ""}`}
+                            onClick={handleVerifyOtp}
+                            disabled={verifyPending || otpPending || isVerify}
+                        >
+                            {verifyPending ? "Verifying..." : "Verify"}
+                        </button>
+                    </div>
+
+                    {isVerify && (
+                        <span className={style.success}>
+                            <i className="fa-solid fa-circle-check"></i>
+                            Email verified successfully
+                        </span>
+                    )}
                 </div>
 
                 <div className={style.row}>
@@ -146,7 +326,7 @@ function SignUpUser({ action, pending, data, setActivation, mode }) {
                         name="password"
                         id="password"
                         placeholder="Create a password"
-                        autoComplete='password'
+                        autoComplete="new-password"
                         minLength={8}
                         required
                     />
@@ -156,9 +336,20 @@ function SignUpUser({ action, pending, data, setActivation, mode }) {
                     </span>
                 </div>
 
+                {otpError && (
+                    <p className={style.error}>{otpError}</p>
+                )}
+
+                {otpMessage && !otpError && (
+                    <p className={isVerify ? style.success : style.hint}>
+                        {otpMessage}
+                    </p>
+                )}
+
                 <button
+                    type="submit"
                     className={`${style.primaryButton} ${mode === "dark" ? style.dbutton : ""}`}
-                    disabled={pending}
+                    disabled={pending || !isVerify}
                 >
                     {pending ? (
                         <>
@@ -173,14 +364,14 @@ function SignUpUser({ action, pending, data, setActivation, mode }) {
                     )}
                 </button>
 
-                {data?.success === false &&
+                {data?.success === false && (
                     <p className={style.error}>{data.message}</p>
-                }
-
+                )}
             </form>
         </>
-    )
+    );
 }
+
 
 
 function LoginUser({ loginaction, loginpending, logindata, setActivation, mode }) {
@@ -198,7 +389,7 @@ function LoginUser({ loginaction, loginpending, logindata, setActivation, mode }
                 </p>
             </div>
 
-            <form action={loginaction} style={{display:"flex",flexDirection:"column",gap:"5px"}}>
+            <form action={loginaction} style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
 
                 <div className={style.row}>
                     <label htmlFor="user">
