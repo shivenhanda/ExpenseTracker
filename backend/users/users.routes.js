@@ -9,7 +9,7 @@ userRouter.post("/ResetPassword", ResetPassword)
 userRouter.post("/DeleteAccount", DeleteAccount)
 userRouter.get("/CheckAuth", CheckAuth);
 userRouter.get("/logout", Logout)
-userRouter.get("/sendotp", SendOtp)
-userRouter.get("/verifyotp", VerifyOtp)
+userRouter.post("/sendotp", SendOtp)
+userRouter.post("/verifyotp", VerifyOtp)
 
 export default userRouter;
