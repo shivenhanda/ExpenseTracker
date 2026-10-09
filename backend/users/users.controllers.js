@@ -261,10 +261,12 @@ export const VerifyOtp = async (req, res) => {
     }
 }
 export const SetPassword = async (req, res) => {
+
     let existing
     let oldPassword = null
     let passwordUpdate = false
     try {
+        await connectDB();
         const email = req.body.email?.trim().toLowerCase();
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!email || !emailPattern.test(email)) {
