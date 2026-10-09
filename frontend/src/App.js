@@ -7,6 +7,7 @@ import Calendar from "./Calendar";
 import ResetPassword from "./ResetPassword";
 import DeleteAccount from "./DeleteAccount";
 import About from "./About";
+import ForgetPassword from "./ForgetPassword";
 
 export const Online = createContext(false)
 export default function App() {
@@ -98,6 +99,7 @@ export default function App() {
           <Route path="/Reports" element={<Reports activation={activation} mode={mode} />} />
           <Route path="/About" element={<About mode={mode} />} />
           <Route path="/ResetPassword" element={<ResetPassword activation={activation} mode={mode} />} />
+          <Route path="/ForgetPassword" element={<ForgetPassword mode={mode} />} />
           <Route path="/DeleteAccount" element={<DeleteAccount mode={mode} handleLogout={handleLogout}/>} />
           <Route path="*" element={<Home activation={activation} setActivation={setActivation} mode={mode} />} />
         </Routes>
