@@ -5,6 +5,7 @@ import TransactionModel from "../transactions/transactions.model.js";
 import jwt from 'jsonwebtoken';
 import { createUser, DeleteUser, loginUser, ResetUserPassword } from "./users.services.js";
 import connectDB from "../database/mongodb.js";
+import nodemailer from "nodemailer";
 
 export const CheckAuth = async (req, res) => {
     try {
@@ -173,5 +174,88 @@ export const DeleteAccount = async (req, res) => {
     catch (error) {
         console.error("Delete Error", error)
         return res.json({ success: false, message: error.message })
+    }
+}
+function generateOTP() {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+}
+const otpMap = new Map()
+let transporter = nodemailer.createTransport({
+    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+        user: fromAddress,
+        pass: fromPass
+    }
+});
+export const SendOtp = async (req, res) => {
+    try {
+        const email = req.body.email?.trim().toLowerCase();
+
+        if (!email) {
+            return res.status(400).json({
+                message: "Email is required.",
+            });
+        }
+
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailPattern.test(email)) {
+            return res.status(400).json({
+                message: "Please enter a valid email address.",
+            });
+        }
+        const fromAddress = process.env.EMAIL_USER || "";
+        const fromPass = process.env.EMAIL_PASS || "";
+        if (!fromAddress || !fromPass) {
+            return res.json({ message: "Error on env" })
+        }
+        const otp = generateOTP();
+        const expiresAt = Date.now() + 5 * 60 * 1000;
+
+        const mailOptions = {
+            from: fromAddress,
+            to: email,
+            subject: `Expense Tracker Verification Code Valid for 5 mins)`,
+            text: `Your OTP is: ${otp}. This code is valid for 5 minutes only.`,
+        };
+        otpMap.set(email, {
+            otp,
+            expiresAt,
+            createdAt: Date.now()
+        });
+        await transporter.sendMail(mailOptions);
+        return res.json({ message: "OTP Sent Successfully" });
+    }
+    catch (error) {
+        console.error("Error", error);
+        return res.json({ message: error.message })
+    }
+}
+export const VerifyOtp = async (req, res) => {
+    try {
+        let { email, otp } = req.body;
+        email = email.trim().toLowerCase()
+        otp = otp.trim().toLowerCase()
+        const storedOtp = otpMap.get(email);
+        if (!storedOtp) {
+            return res.json({ message: "No OTP request found for this email. Please click 'Send OTP' first." })
+        }
+        const now = Date.now()
+        if (now > storedOtp.expiresAt) {
+            otpMap.delete(email);
+            return res.json({ message: "OTP has expired. OTP is only valid for 5 minutes. Please request a new OTP code." })
+        }
+        if (otp != storedOtp.otp) {
+            return res.json({ message: "Invalid OTP code. Please check your email and try again." })
+        }
+        otpMap.delete(email)
+        return res.json({ message: "OTP Verified Successfully." })
+    }
+    catch (error) {
+        console.error("Error", error);
+        return res.json({ message: error.message })
     }
 }
