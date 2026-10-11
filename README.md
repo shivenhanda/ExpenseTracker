@@ -65,17 +65,6 @@ This project is also an opportunity for developers to collaborate, improve an ex
 | React Router | Client-side navigation |
 | Vercel | Deployment |
 
-### 📦 Key Dependencies
-
-- `react`
-- `react-router-dom`
-- `express`
-- `mongoose`
-- `mongodb`
-- `cors`
-- `bcrypt`
-- `body-parser`
-- `chart.js`
 
 See the project's package manifests for the exact installed dependencies and versions.
 
@@ -89,9 +78,14 @@ See the project's package manifests for the exact installed dependencies and ver
 
 ## 🤝 Contribute to ExpenseTracker
 
-**New to open source? You're welcome here!**
+## 👥 Contributors
 
-You don't need to be an expert to contribute. You can help improve the project by reporting bugs, suggesting features, improving documentation, or submitting code changes.
+Thanks to everyone who helps improve ExpenseTracker!
+
+<a href="https://github.com/shivenhanda/ExpenseTracker/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=shivenhanda/ExpenseTracker"
+       alt="ExpenseTracker contributors" />
+</a>
 
 ### 💡 Ways to Contribute
 
@@ -185,10 +179,6 @@ Security matters because expense records can contain sensitive information.
 If you discover a potential security vulnerability, avoid publishing exploit details or sensitive data in a public issue. Contact the repository owner privately to discuss responsible disclosure.
 
 Never commit credentials, database connection strings, API secrets, or real user data.
-
-## 📜 License
-
-Check the repository's license file for the permissions and conditions that apply to this project. If no license is present, consider adding an appropriate open-source license before inviting outside code contributions.
 
 ## 🌟 Support the Project
 
