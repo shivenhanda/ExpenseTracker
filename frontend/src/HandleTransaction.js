@@ -224,12 +224,12 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
         "#6366F1"
     ];
     return (
-        <div>
+        <div className={style.mainWrapper}>
             {
                 <AnimatePresence>
                     {show1 && (
                         <motion.div
-                            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-5"
+                            className={style.modalOverlay}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
@@ -238,76 +238,136 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                             <motion.form
                                 key={editIndex}
                                 action={action1}
-                                initial={{ scale: .8, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                exit={{ scale: .8, opacity: 0 }}
-                                transition={{ duration: .3 }}
-                                className="w-[95%] max-w-xl rounded-3xl bg-white p-8 shadow-2xl space-y-5"
-                                style={{ padding: "5px", display: "flex", flexDirection: "column", gap: "5px" }}
+                                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                                animate={{ scale: 1, opacity: 1, y: 0 }}
+                                exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                                transition={{ duration: 0.25 }}
+                                className={`${style.modalForm} ${mode === "dark" ? style.darkModalForm : ""}`}
                                 onClick={(e) => e.stopPropagation()}
                             >
-                                <h2 className="text-3xl font-bold text-center text-emerald-600">
-                                    Update Transaction
-                                </h2>
+                                {pending1 && (
+                                    <div className={`${style.loadingOverlay} ${mode === "dark" ? style.darkLoadingOverlay : ""}`}>
+                                        <div className={`${style.spinner} ${style.updateSpinner}`}></div>
+                                        <p style={{ fontWeight: 600, color: "#059669" }}>
+                                            Updating Transaction...
+                                        </p>
+                                    </div>
+                                )}
+                                <div className={`${style.modalHeader} ${mode === "dark" ? style.darkModalHeader : ""}`}>
+                                    <div>
+                                        <h2 className={`${style.modalTitle} ${style.emeraldTitle}`}>
+                                            <i className="fa-solid fa-pen-to-square"></i>
+                                            Update Transaction
+                                        </h2>
+                                        <p className={`${style.modalSubtitle} ${mode === "dark" ? style.darkModalSubtitle : ""}`}>
+                                            Leave fields empty to keep current values.
+                                        </p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShow1(false)}
+                                        className={style.closeButton}
+                                    >
+                                        <i className="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
 
-                                <p className="text-center text-gray-500">
-                                    Leave fields empty if you don't want to update them.
-                                </p>
+                                <div className={style.modalGrid}>
+                                    <div className={`${style.fieldGroup} ${style.fullRow}`}>
+                                        <label className={`${style.fieldLabel} ${mode === "dark" ? style.darkFieldLabel : ""}`}>
+                                            <i className="fa-solid fa-pen" style={{ color: "#059669" }}></i>
+                                            Transaction Details
+                                        </label>
+                                        <input
+                                            name="title"
+                                            placeholder="e.g. Grocery, Salary"
+                                            className={`${style.formInput} ${style.emeraldFocus} ${mode === "dark" ? style.darkFormInput : ""}`}
+                                        />
+                                    </div>
 
-                                <input
-                                    name="title"
-                                    placeholder="Transaction Details"
-                                    className="w-full rounded-xl border p-3"
-                                />
+                                    <div className={style.fieldGroup}>
+                                        <label className={`${style.fieldLabel} ${mode === "dark" ? style.darkFieldLabel : ""}`}>
+                                            <i className="fa-solid fa-indian-rupee-sign" style={{ color: "#059669" }}></i>
+                                            Amount (₹)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            name="money"
+                                            placeholder="e.g. 1500"
+                                            className={`${style.formInput} ${style.emeraldFocus} ${mode === "dark" ? style.darkFormInput : ""}`}
+                                        />
+                                    </div>
 
-                                <input
-                                    type="number"
-                                    name="money"
-                                    placeholder="Amount"
-                                    className="w-full rounded-xl border p-3"
-                                />
+                                    <div className={style.fieldGroup}>
+                                        <label className={`${style.fieldLabel} ${mode === "dark" ? style.darkFieldLabel : ""}`}>
+                                            <i className="fa-solid fa-calendar" style={{ color: "#059669" }}></i>
+                                            Date
+                                        </label>
+                                        <input
+                                            type="date"
+                                            name="date"
+                                            className={`${style.formInput} ${style.emeraldFocus} ${mode === "dark" ? style.darkFormInput : ""}`}
+                                        />
+                                    </div>
 
-                                <input
-                                    type="date"
-                                    name="date"
-                                    className="w-full rounded-xl border p-3"
-                                />
+                                    <div className={style.fieldGroup}>
+                                        <label className={`${style.fieldLabel} ${mode === "dark" ? style.darkFieldLabel : ""}`}>
+                                            <i className="fa-solid fa-list" style={{ color: "#059669" }}></i>
+                                            Type
+                                        </label>
+                                        <select
+                                            name="type"
+                                            className={`${style.formInput} ${style.emeraldFocus} ${mode === "dark" ? style.darkFormInput : ""}`}
+                                        >
+                                            <option value="">Select Type</option>
+                                            <option value="Income">Income</option>
+                                            <option value="Expense">Expense</option>
+                                        </select>
+                                    </div>
 
-                                <select
-                                    name="type"
-                                    className="w-full rounded-xl border p-3"
-                                >
-                                    <option value="">Select Type</option>
-                                    <option>Income</option>
-                                    <option>Expense</option>
-                                </select>
+                                    <div className={style.fieldGroup}>
+                                        <label className={`${style.fieldLabel} ${mode === "dark" ? style.darkFieldLabel : ""}`}>
+                                            <i className="fa-solid fa-layer-group" style={{ color: "#059669" }}></i>
+                                            Category
+                                        </label>
+                                        <select
+                                            name="category"
+                                            className={`${style.formInput} ${style.emeraldFocus} ${mode === "dark" ? style.darkFormInput : ""}`}
+                                        >
+                                            <option value="">Select Category</option>
+                                            <option>Job</option>
+                                            <option>Home</option>
+                                            <option>Shopping</option>
+                                            <option>Bill</option>
+                                            <option>Education</option>
+                                            <option>Grocery</option>
+                                            <option>Other</option>
+                                        </select>
+                                    </div>
+                                </div>
 
-                                <select
-                                    name="category"
-                                    className="w-full rounded-xl border p-3"
-                                >
-                                    <option value="">Category</option>
-                                    <option>Job</option>
-                                    <option>Home</option>
-                                    <option>Shopping</option>
-                                    <option>Bill</option>
-                                    <option>Education</option>
-                                    <option>Grocery</option>
-                                    <option>Other</option>
-                                </select>
-
-                                <div className="flex gap-4">
+                                <div className={style.modalActions}>
                                     <button
                                         disabled={pending1}
-                                        className="flex-1 rounded-xl bg-emerald-600 py-3 font-semibold text-white hover:bg-emerald-700"
+                                        className={`${style.submitBtn} ${style.updateSubmitBtn}`}
                                     >
-                                        {pending1 ? "Updating..." : "Update"}
+                                        {pending1 ? (
+                                            <>
+                                                <i className="fa-solid fa-spinner fa-spin"></i>
+                                                Updating...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <i className="fa-solid fa-check"></i>
+                                                Update Transaction
+                                            </>
+                                        )}
                                     </button>
 
                                     <button
                                         type="button"
                                         onClick={() => setShow1(false)}
-                                        className="flex-1 rounded-xl border py-3 hover:bg-gray-100"
+                                        className={`${style.cancelBtn} ${mode === "dark" ? style.darkCancelBtn : ""}`}
                                     >
                                         Cancel
                                     </button>
@@ -319,14 +379,16 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
             }
             {
                 !show && (
-                    <button
-                        className={`${style.addTransaction} ${mode === "dark" ? style.darkAddTransaction : ""
-                            }`}
-                        onClick={() => setShow("Add")}
-                    >
-                        <i className="fa-solid fa-plus"></i>
-                        Add Transaction
-                    </button>
+                    <div className={style.addTransactionWrapper}>
+                        <button
+                            className={`${style.addTransaction} ${mode === "dark" ? style.darkAddTransaction : ""
+                                }`}
+                            onClick={() => setShow("Add")}
+                        >
+                            <i className="fa-solid fa-plus"></i>
+                            Add Transaction
+                        </button>
+                    </div>
                 )
             }
             {!show && (
@@ -429,12 +491,18 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
             }
             {!show && (
                 <div className={style.container1}>
-                    <Link className={style.button} to="/Reports">View All</Link>
-                    <button className={style.delete} onClick={() => setShow("DeleteAll")}>Delete All</button>
+                    <Link className={`${style.viewAllBtn} ${mode === "dark" ? style.darkViewAllBtn : ""}`} to="/Reports">
+                        <i className="fa-solid fa-list-check"></i>
+                        View All
+                    </Link>
+                    <button className={`${style.deleteAllBtn} ${mode === "dark" ? style.darkDeleteAllBtn : ""}`} onClick={() => setShow("DeleteAll")}>
+                        <i className="fa-solid fa-trash-can"></i>
+                        Delete All
+                    </button>
                 </div>
             )}
-            {
-                <div style={{ height: "300px", display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "transparent" }}>
+            <div className={style.chartsRow}>
+                <div className={style.chartCard}>
                     <Pie
                         data={{
                             labels: ["Income", "Expense"],
@@ -456,7 +524,7 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                                         color: mode === "dark" ? "white" : "black",
                                         font: {
                                             weight: "bold",
-                                            size: 15
+                                            size: 14
                                         }
                                     }
                                 },
@@ -474,139 +542,127 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                                     text: `${monthname} Transactions`,
                                     color: mode === "dark" ? "white" : "#2563EB",
                                     font: {
-                                        size: 20
+                                        size: 18
                                     }
                                 }
                             }
                         }}
                     />
                 </div>
-            }
-            {categoryLabels.length > 0 ? (
-                <div
-                    style={{
-                        height: "300px",
-                        position: "relative",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        overflow: "hidden",
-                        backgroundColor: "transparent"
-                    }}
-                >
-                    <Pie
-                        data={{
-                            labels: categoryLabels,
-                            datasets: [
-                                {
-                                    label: "Category Expense",
-                                    data: categoryValues,
-                                    backgroundColor: categoryLabels.map(
-                                        (_, index) =>
-                                            categoryColors[index % categoryColors.length]
-                                    ),
-                                    borderWidth: 3,
-                                    borderColor: mode === "dark"
-                                        ? "#111827"
-                                        : "#ffffff"
-                                }
-                            ]
-                        }}
-                        options={{
-                            responsive: true,
-                            maintainAspectRatio: false,
-
-                            plugins: {
-                                legend: {
-                                    position: "bottom",
-                                    labels: {
-                                        color: mode === "dark"
-                                            ? "#E5E7EB"
-                                            : "#374151",
-                                        font: {
-                                            weight: "600",
-                                            size: 12
-                                        },
-                                        padding: 12
+                <div className={style.chartCard}>
+                    {categoryLabels.length > 0 ? (
+                        <Pie
+                            data={{
+                                labels: categoryLabels,
+                                datasets: [
+                                    {
+                                        label: "Category Expense",
+                                        data: categoryValues,
+                                        backgroundColor: categoryLabels.map(
+                                            (_, index) =>
+                                                categoryColors[index % categoryColors.length]
+                                        ),
+                                        borderWidth: 3,
+                                        borderColor: mode === "dark"
+                                            ? "#111827"
+                                            : "#ffffff"
                                     }
-                                },
+                                ]
+                            }}
+                            options={{
+                                responsive: true,
+                                maintainAspectRatio: false,
 
-                                tooltip: {
-                                    backgroundColor: mode === "dark"
-                                        ? "#1F2937"
-                                        : "#111827",
+                                plugins: {
+                                    legend: {
+                                        position: "bottom",
+                                        labels: {
+                                            color: mode === "dark"
+                                                ? "#E5E7EB"
+                                                : "#374151",
+                                            font: {
+                                                weight: "600",
+                                                size: 12
+                                            },
+                                            padding: 10
+                                        }
+                                    },
 
-                                    padding: 12,
-                                    cornerRadius: 10,
+                                    tooltip: {
+                                        backgroundColor: mode === "dark"
+                                            ? "#1F2937"
+                                            : "#111827",
 
-                                    callbacks: {
-                                        label: function (context) {
-                                            const total = categoryValues.reduce(
-                                                (sum, value) => sum + value,
-                                                0
-                                            );
+                                        padding: 10,
+                                        cornerRadius: 10,
 
-                                            const percentage = total > 0
-                                                ? ((context.raw / total) * 100).toFixed(1)
-                                                : 0;
+                                        callbacks: {
+                                            label: function (context) {
+                                                const total = categoryValues.reduce(
+                                                    (sum, value) => sum + value,
+                                                    0
+                                                );
 
-                                            return [
-                                                `${context.label}`,
-                                                `Expense: ₹${Number(context.raw).toLocaleString("en-IN")}`,
-                                                `${percentage}% of expenses`
-                                            ];
+                                                const percentage = total > 0
+                                                    ? ((context.raw / total) * 100).toFixed(1)
+                                                    : 0;
+
+                                                return [
+                                                    `${context.label}`,
+                                                    `Expense: ₹${Number(context.raw).toLocaleString("en-IN")}`,
+                                                    `${percentage}% of expenses`
+                                                ];
+                                            }
+                                        }
+                                    },
+
+                                    title: {
+                                        display: true,
+                                        text: `${monthname} Category Expenses`,
+                                        color: mode === "dark"
+                                            ? "#F9FAFB"
+                                            : "#111827",
+                                        font: {
+                                            size: 18,
+                                            weight: "700"
+                                        },
+                                        padding: {
+                                            bottom: 15
                                         }
                                     }
-                                },
-
-                                title: {
-                                    display: true,
-                                    text: `${monthname} Category Expenses`,
-                                    color: mode === "dark"
-                                        ? "#F9FAFB"
-                                        : "#111827",
-                                    font: {
-                                        size: 18,
-                                        weight: "700"
-                                    },
-                                    padding: {
-                                        bottom: 20
-                                    }
                                 }
-                            }
-                        }}
-                    />
-                </div>
-            ) : (
-                <div
-                    style={{
-                        height: "300px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        flexDirection: "column",
-                        gap: "5px",
-                        overflow: "hidden",
-                        color: mode === "dark"
-                            ? "#9CA3AF"
-                            : "#6B7280"
-                    }}
-                >
-                    <i
-                        className="fa-solid fa-chart-pie"
-                        style={{
-                            fontSize: "40px",
-                            marginBottom: "15px"
-                        }}
-                    ></i>
+                            }}
+                        />
+                    ) : (
+                        <div
+                            style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                flexDirection: "column",
+                                gap: "5px",
+                                color: mode === "dark"
+                                    ? "#9CA3AF"
+                                    : "#6B7280"
+                            }}
+                        >
+                            <i
+                                className="fa-solid fa-chart-pie"
+                                style={{
+                                    fontSize: "36px",
+                                    marginBottom: "10px"
+                                }}
+                            ></i>
 
-                    <h3>No Expense Data</h3>
+                            <h3>No Expense Data</h3>
 
-                    <p>
-                        Add an expense to see category analysis
-                    </p>
+                            <p>
+                                Add an expense to see category analysis
+                            </p>
+                        </div>
+                    )}
                 </div>
-            )}
+            </div>
         </div>)
     async function Delete(data, index) {
         if (!isOnline) {
@@ -650,7 +706,7 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
     function AddTransaction({ setShow, pending }) {
         return (
             <motion.div
-                className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+                className={style.modalOverlay}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -658,70 +714,137 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
             >
                 <motion.form
                     action={action}
-                    initial={{ scale: 0.8, opacity: 0, y: 40 }}
+                    initial={{ scale: 0.9, opacity: 0, y: 20 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
-                    exit={{ scale: 0.8, opacity: 0 }}
-                    transition={{ duration: .3 }}
-                    className="w-[95%] max-w-xl rounded-3xl bg-white p-8 shadow-2xl space-y-5"
-                    style={{ padding: "5px", display: "flex", flexDirection: "column", gap: "5px" }}
+                    exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                    transition={{ duration: 0.25 }}
+                    className={`${style.modalForm} ${mode === "dark" ? style.darkModalForm : ""}`}
                     onClick={(e) => e.stopPropagation()}
                 >
-                    <h2 className="text-3xl font-bold text-center text-blue-600">
-                        Add Transaction
-                    </h2>
+                    {pending && (
+                        <div className={`${style.loadingOverlay} ${mode === "dark" ? style.darkLoadingOverlay : ""}`}>
+                            <div className={style.spinner}></div>
+                            <p style={{ fontWeight: 600, color: "#2563eb" }}>
+                                Creating Transaction...
+                            </p>
+                        </div>
+                    )}
+                    <div className={`${style.modalHeader} ${mode === "dark" ? style.darkModalHeader : ""}`}>
+                        <div>
+                            <h2 className={`${style.modalTitle} ${style.blueTitle}`}>
+                                <i className="fa-solid fa-circle-plus"></i>
+                                Add New Transaction
+                            </h2>
+                            <p className={`${style.modalSubtitle} ${mode === "dark" ? style.darkModalSubtitle : ""}`}>
+                                Enter details to add an income or expense.
+                            </p>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => setShow(null)}
+                            className={style.closeButton}
+                        >
+                            <i className="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
 
-                    <input
-                        name="add"
-                        placeholder="Transaction Details"
-                        className="w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    <div className={style.modalGrid}>
+                        <div className={`${style.fieldGroup} ${style.fullRow}`}>
+                            <label className={`${style.fieldLabel} ${mode === "dark" ? style.darkFieldLabel : ""}`}>
+                                <i className="fa-solid fa-pen" style={{ color: "#2563eb" }}></i>
+                                Transaction Details *
+                            </label>
+                            <input
+                                name="add"
+                                placeholder="e.g. Monthly Salary, Grocery Bill"
+                                className={`${style.formInput} ${mode === "dark" ? style.darkFormInput : ""}`}
+                                required
+                            />
+                        </div>
 
-                    <input
-                        type="number"
-                        name="money"
-                        placeholder="Amount"
-                        className="w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                        <div className={style.fieldGroup}>
+                            <label className={`${style.fieldLabel} ${mode === "dark" ? style.darkFieldLabel : ""}`}>
+                                <i className="fa-solid fa-indian-rupee-sign" style={{ color: "#2563eb" }}></i>
+                                Amount (₹) *
+                            </label>
+                            <input
+                                type="number"
+                                name="money"
+                                placeholder="e.g. 2500"
+                                className={`${style.formInput} ${mode === "dark" ? style.darkFormInput : ""}`}
+                                required
+                            />
+                        </div>
 
-                    <input
-                        type="date"
-                        name="date"
-                        className="w-full rounded-xl border p-3 outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                        <div className={style.fieldGroup}>
+                            <label className={`${style.fieldLabel} ${mode === "dark" ? style.darkFieldLabel : ""}`}>
+                                <i className="fa-solid fa-calendar" style={{ color: "#2563eb" }}></i>
+                                Date *
+                            </label>
+                            <input
+                                type="date"
+                                name="date"
+                                className={`${style.formInput} ${mode === "dark" ? style.darkFormInput : ""}`}
+                                required
+                            />
+                        </div>
 
-                    <select
-                        name="type"
-                        className="w-full rounded-xl border p-3"
-                    >
-                        <option>Income</option>
-                        <option>Expense</option>
-                    </select>
+                        <div className={style.fieldGroup}>
+                            <label className={`${style.fieldLabel} ${mode === "dark" ? style.darkFieldLabel : ""}`}>
+                                <i className="fa-solid fa-list" style={{ color: "#2563eb" }}></i>
+                                Type
+                            </label>
+                            <select
+                                name="type"
+                                className={`${style.formInput} ${mode === "dark" ? style.darkFormInput : ""}`}
+                            >
+                                <option value="Income">Income</option>
+                                <option value="Expense">Expense</option>
+                            </select>
+                        </div>
 
-                    <select
-                        name="category"
-                        className="w-full rounded-xl border p-3"
-                    >
-                        <option>Job</option>
-                        <option>Home</option>
-                        <option>Shopping</option>
-                        <option>Bill</option>
-                        <option>Education</option>
-                        <option>Grocery</option>
-                        <option>Other</option>
-                    </select>
+                        <div className={style.fieldGroup}>
+                            <label className={`${style.fieldLabel} ${mode === "dark" ? style.darkFieldLabel : ""}`}>
+                                <i className="fa-solid fa-layer-group" style={{ color: "#2563eb" }}></i>
+                                Category
+                            </label>
+                            <select
+                                name="category"
+                                className={`${style.formInput} ${mode === "dark" ? style.darkFormInput : ""}`}
+                            >
+                                <option>Job</option>
+                                <option>Home</option>
+                                <option>Shopping</option>
+                                <option>Bill</option>
+                                <option>Education</option>
+                                <option>Grocery</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                    </div>
 
-                    <div className="flex gap-4 pt-3">
+                    <div className={style.modalActions}>
                         <button
                             disabled={pending}
-                            className="flex-1 rounded-xl bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700"
+                            className={style.submitBtn}
                         >
-                            {pending ? "Saving..." : "Save"}
+                            {pending ? (
+                                <>
+                                    <i className="fa-solid fa-spinner fa-spin"></i>
+                                    Saving...
+                                </>
+                            ) : (
+                                <>
+                                    <i className="fa-solid fa-check"></i>
+                                    Save Transaction
+                                </>
+                            )}
                         </button>
 
                         <button
                             type="button"
                             onClick={() => setShow(null)}
-                            className="flex-1 rounded-xl border py-3 font-semibold hover:bg-gray-100"
+                            className={`${style.cancelBtn} ${mode === "dark" ? style.darkCancelBtn : ""}`}
                         >
                             Cancel
                         </button>

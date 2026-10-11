@@ -16,8 +16,6 @@ export default function Home({ activation, setActivation, mode }) {
             {activation ? <HandleTransaction mode={mode} activation={activation} /> : <div className={`${style.main} ${mode === "dark" ? style.darkMain : ""}`}>
 
                 <div className={`${style.container} ${mode === "dark" ? style.dcontainer : ""}`}>
-
-
                     {
                         activeform === 'signup' &&
                         <SignUpUser
@@ -218,122 +216,121 @@ function SignUpUser({ action, pending, data, setActivation, mode }) {
             <form
                 action={action}
                 onSubmit={handleSubmit}
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "5px",
-                }}
+                className={style.form}
             >
-                <div className={style.row}>
-                    <label htmlFor="user">
-                        <i className="fa-solid fa-user"></i>
-                        Username
-                    </label>
+                <div className={style.gridRow}>
+                    <div className={style.row}>
+                        <label htmlFor="user">
+                            <i className="fa-solid fa-user"></i>
+                            Username
+                        </label>
 
-                    <input
-                        className={`${style.input} ${mode === "dark" ? style.dinput : ""}`}
-                        type="text"
-                        name="user"
-                        id="user"
-                        placeholder="Enter your username"
-                        autoComplete="username"
-                        required
-                    />
-                </div>
-
-                <div className={style.row}>
-                    <label htmlFor="email">
-                        <i className="fa-solid fa-envelope"></i>
-                        Email address
-                    </label>
-
-                    <div className={style.otpRow}>
-                        <input
-                            className={`${style.input} ${mode === "dark" ? style.dinput : ""}`}
-                            type="email"
-                            name="email"
-                            id="email"
-                            placeholder="you@example.com"
-                            value={email}
-                            onChange={handleEmailChange}
-                            autoComplete="email"
-                            required
-                        />
-
-
-                        <button
-                            type="button"
-                            className={`${style.otpButton} ${mode === "dark" ? style.dButton : ""}`}
-                            onClick={handleSendOtp}
-                            disabled={otpPending || verifyPending || isVerify || resendSeconds > 0}
-                        >
-                            {otpPending
-                                ? "Sending..."
-                                : resendSeconds > 0 ? `Resend in ${resendSeconds}s`
-                                    : "Send OTP"}
-                        </button>
-                    </div>
-                </div>
-
-                <div className={style.row}>
-                    <label htmlFor="otp">
-                        <i className="fa-solid fa-shield-halved"></i>
-                        Email OTP
-                    </label>
-
-                    <div className={style.otpRow}>
                         <input
                             className={`${style.input} ${mode === "dark" ? style.dinput : ""}`}
                             type="text"
-                            id="otp"
-                            placeholder="Enter OTP"
-                            value={otp}
-                            onChange={(event) => {
-                                setOtp(event.target.value);
-                                setOtpError("");
-                            }}
-                            inputMode="numeric"
-                            autoComplete="one-time-code"
+                            name="user"
+                            id="user"
+                            placeholder="Enter your username"
+                            autoComplete="username"
+                            required
                         />
-
-                        <button
-                            type="button"
-                            className={`${style.otpButton} ${mode === "dark" ? style.dButton : ""}`}
-                            onClick={handleVerifyOtp}
-                            disabled={verifyPending || otpPending || isVerify}
-                        >
-                            {verifyPending ? "Verifying..." : "Verify"}
-                        </button>
                     </div>
 
-                    {isVerify && (
-                        <span className={style.success}>
-                            <i className="fa-solid fa-circle-check"></i>
-                            Email verified successfully
-                        </span>
-                    )}
+                    <div className={style.row}>
+                        <label htmlFor="email">
+                            <i className="fa-solid fa-envelope"></i>
+                            Email address
+                        </label>
+
+                        <div className={style.otpRow}>
+                            <input
+                                className={`${style.input} ${mode === "dark" ? style.dinput : ""}`}
+                                type="email"
+                                name="email"
+                                id="email"
+                                placeholder="you@example.com"
+                                value={email}
+                                onChange={handleEmailChange}
+                                autoComplete="email"
+                                required
+                            />
+
+                            <button
+                                type="button"
+                                className={`${style.otpButton} ${mode === "dark" ? style.dButton : ""}`}
+                                onClick={handleSendOtp}
+                                disabled={otpPending || verifyPending || isVerify || resendSeconds > 0}
+                            >
+                                {otpPending
+                                    ? "Sending..."
+                                    : resendSeconds > 0 ? `Resend in ${resendSeconds}s`
+                                        : "Send OTP"}
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-                <div className={style.row}>
-                    <label htmlFor="password">
-                        <i className="fa-solid fa-lock"></i>
-                        Password
-                    </label>
+                <div className={style.gridRow}>
+                    <div className={style.row}>
+                        <label htmlFor="otp">
+                            <i className="fa-solid fa-shield-halved"></i>
+                            Email OTP
+                        </label>
 
-                    <input
-                        className={`${style.input} ${mode === "dark" ? style.dinput : ""}`}
-                        type="password"
-                        name="password"
-                        id="password"
-                        placeholder="Create a password"
-                        autoComplete="new-password"
-                        minLength={8}
-                        required
-                    />
+                        <div className={style.otpRow}>
+                            <input
+                                className={`${style.input} ${mode === "dark" ? style.dinput : ""}`}
+                                type="text"
+                                id="otp"
+                                placeholder="Enter OTP"
+                                value={otp}
+                                onChange={(event) => {
+                                    setOtp(event.target.value);
+                                    setOtpError("");
+                                }}
+                                inputMode="numeric"
+                                autoComplete="one-time-code"
+                            />
 
-                    <span className={style.hint}>
-                        Use at least 8 characters.
-                    </span>
+                            <button
+                                type="button"
+                                className={`${style.otpButton} ${mode === "dark" ? style.dButton : ""}`}
+                                onClick={handleVerifyOtp}
+                                disabled={verifyPending || otpPending || isVerify}
+                            >
+                                {verifyPending ? "Verifying..." : "Verify"}
+                            </button>
+                        </div>
+
+                        {isVerify && (
+                            <span className={style.success}>
+                                <i className="fa-solid fa-circle-check"></i>
+                                Email verified successfully
+                            </span>
+                        )}
+                    </div>
+
+                    <div className={style.row}>
+                        <label htmlFor="password">
+                            <i className="fa-solid fa-lock"></i>
+                            Password
+                        </label>
+
+                        <input
+                            className={`${style.input} ${mode === "dark" ? style.dinput : ""}`}
+                            type="password"
+                            name="password"
+                            id="password"
+                            placeholder="Create a password"
+                            autoComplete="new-password"
+                            minLength={8}
+                            required
+                        />
+
+                        <span className={style.hint}>
+                            Use at least 8 characters.
+                        </span>
+                    </div>
                 </div>
 
                 {otpError && (
@@ -389,50 +386,51 @@ function LoginUser({ loginaction, loginpending, logindata, setActivation, mode }
                 </p>
             </div>
 
-            <form action={loginaction} style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+            <form action={loginaction} className={style.form}>
+                <div className={style.gridRow}>
+                    <div className={style.row}>
+                        <label htmlFor="user">
+                            <i className="fa-solid fa-user"></i>
+                            Username
+                        </label>
 
-                <div className={style.row}>
-                    <label htmlFor="user">
-                        <i className="fa-solid fa-user"></i>
-                        Username
-                    </label>
+                        <input
+                            className={`${style.input} ${mode === "dark" ? style.dinput : ""}`}
+                            type="text"
+                            name="user"
+                            id="user"
+                            placeholder="Enter your username"
+                            autoComplete='off'
+                            required
+                        />
+                    </div>
 
-                    <input
-                        className={`${style.input} ${mode === "dark" ? style.dinput : ""}`}
-                        type="text"
-                        name="user"
-                        id="user"
-                        placeholder="Enter your username"
-                        autoComplete='off'
-                        required
-                    />
-                </div>
+                    <div className={style.row}>
+                        <label htmlFor="password">
+                            <i className="fa-solid fa-lock"></i>
+                            Password
+                        </label>
 
-                <div className={style.row}>
-                    <label htmlFor="password">
-                        <i className="fa-solid fa-lock"></i>
-                        Password
-                    </label>
+                        <input
+                            className={`${style.input} ${mode === "dark" ? style.dinput : ""}`}
+                            type="password"
+                            name="password"
+                            id="password"
+                            placeholder="Enter your password"
+                            autoComplete="password"
+                            minLength={8}
+                            required
+                        />
 
-                    <input
-                        className={`${style.input} ${mode === "dark" ? style.dinput : ""}`}
-                        type="password"
-                        name="password"
-                        id="password"
-                        placeholder="Enter your password"
-                        autoComplete="password"
-                        minLength={8}
-                        required
-                    />
-                </div>
-
-                <div className={style.forgot}>
-                    <Link
-                        to="/ForgetPassword"
-                        className={mode === "dark" ? style.dreset : style.reset}
-                    >
-                        Forgot password?
-                    </Link>
+                        <div className={style.forgot}>
+                            <Link
+                                to="/ForgetPassword"
+                                className={mode === "dark" ? style.dreset : style.reset}
+                            >
+                                Forgot password?
+                            </Link>
+                        </div>
+                    </div>
                 </div>
 
                 <button

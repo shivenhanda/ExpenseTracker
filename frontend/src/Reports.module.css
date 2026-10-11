@@ -1,21 +1,137 @@
+/* ─── Reports Module CSS ──────────────────────────────────── */
+
+/* Transaction Table Row */
 .data {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    margin: 0 10px;
-    background-color: white;
-    padding: 10px;
+    grid-template-columns: 1.2fr 2fr 1fr 1.1fr 1fr 0.7fr 0.7fr;
+    align-items: center;
+    gap: 8px;
+    margin: 6px 0;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 13px 16px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-sizing: border-box;
 }
-.ddata{
-    background: #4e9edf8c;
-    color:white;
+
+.data:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.07);
 }
-h3,
-span {
+
+/* Header row */
+.headerRow {
+    display: grid;
+    grid-template-columns: 1.2fr 2fr 1fr 1.1fr 1fr 0.7fr 0.7fr;
+    align-items: center;
+    gap: 8px;
+    margin: 10px auto 4px;
+    max-width: 960px;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 10px 16px;
+}
+
+.ddata {
+    background: #111827;
+    border-color: #1f2937;
+    color: #f9fafb;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+.ddata:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+}
+
+h3, span {
     text-align: center;
+    font-size: 13.5px;
 }
 
-@media (max-width: 768px) {
+h3 {
+    font-weight: 700;
+    color: #374151;
+}
 
+.ddata h3 {
+    color: #e5e7eb;
+}
+
+/* Action icons */
+.editIcon {
+    color: #6366f1;
+    cursor: pointer;
+    font-size: 16px;
+    transition: transform 0.15s, color 0.15s;
+}
+
+.editIcon:hover {
+    transform: scale(1.2);
+    color: #4f46e5;
+}
+
+.deleteIcon {
+    color: #ef4444;
+    cursor: pointer;
+    font-size: 16px;
+    transition: transform 0.15s, color 0.15s;
+}
+
+.deleteIcon:hover {
+    transform: scale(1.2);
+    color: #b91c1c;
+}
+
+/* Type badge */
+.typeBadge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.incomeType {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.expenseType {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* Chart section */
+.chartWrapper {
+    width: 100%;
+    margin: 16px 0 8px;
+    padding: 20px 16px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    height: 280px;
+    box-sizing: border-box;
+}
+
+.dchartWrapper {
+    background: #111827;
+    border-color: #1f2937;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+/* Mobile card layout */
+.mobileCard {
+    display: none;
+}
+
+/* ─── Responsive ──────────────────────────────── */
+@media (max-width: 768px) {
     .type,
     .category,
     .edit,
@@ -23,7 +139,32 @@ span {
         display: none;
     }
 
-    .data {
-        grid-template-columns: 0.5fr 2fr 1fr 0.5fr 0.5fr;
+    .data,
+    .headerRow {
+        grid-template-columns: 1fr 1.8fr 1fr;
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 520px) {
+    .data,
+    .headerRow {
+        grid-template-columns: 1fr 1.6fr 1fr;
+        padding: 9px 10px;
+        gap: 4px;
+        margin: 4px 8px;
+        border-radius: 12px;
+    }
+
+    h3, span {
+        font-size: 12px;
+    }
+
+    .chartWrapper {
+        margin: 10px 8px 4px;
+        height: 220px;
+        padding: 12px 8px;
+        border-radius: 14px;
     }
 }

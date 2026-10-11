@@ -6,32 +6,42 @@
     font-style: normal;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 body {
     background-color: #F6F8FC;
 }
 
+.body {
+    padding-top: 15px;
+}
+
 .body h1 {
-    font-size: 5vw;
-    padding-left: 5px;
-    padding-bottom: 5px;
+    font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+    padding: 10px 15px 5px;
     color: black;
     text-align: center;
+    font-weight: 800;
+    letter-spacing: -0.5px;
 }
 
 .body .dh1 {
     background: linear-gradient(90deg, #abeeff, #6cdeff, #1ea7ff);
     background-clip: text;
+    -webkit-background-clip: text;
     color: transparent;
 }
 
 .links {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    padding: 5px;
-    gap: 10px;
+    padding: 12px 20px;
+    gap: 12px;
+    max-width: 1200px;
+    margin: 0 auto 15px auto;
 }
 
 .dropDown {
@@ -42,61 +52,65 @@ body {
 
 .toggle {
     cursor: pointer;
-}
-
-.Dashboard {
-    position: relative;
-    text-decoration: none;
-    font-size: 2.2vw;
-    padding: 9px;
-    color: black;
-    background-color: #88d7ed;
-    border-color: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
     border-radius: 20px;
+    transition: transform 0.2s ease;
 }
 
-.Calendar {
-    position: relative;
-    text-decoration: none;
-    font-size: 2.2vw;
-    padding: 9px;
-    color: black;
-    background-color: #a3ffa4;
-    border-color: transparent;
-    border-radius: 20px;
+.toggle:hover {
+    transform: scale(1.1);
 }
 
-.Reports {
-    position: relative;
-    text-decoration: none;
-    font-size: 2.2vw;
-    padding: 9px;
-    color: black;
-    background-color: #daa4e8;
-    border-color: transparent;
-    border-radius: 20px;
-}
-
-.About {
-    position: relative;
-    text-decoration: none;
-    font-size: 2.2vw;
-    padding: 9px;
-    color: black;
-    background-color: #d9ff85;
-    border-color: transparent;
-    border-radius: 20px;
-}
-
+.Dashboard,
+.Calendar,
+.Reports,
+.About,
 .Settings {
     position: relative;
     text-decoration: none;
-    font-size: 2.2vw;
-    padding: 9px;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 10px 20px;
     color: black;
-    background-color: #d9d5da;
     border-color: transparent;
-    border-radius: 20px;
+    border-radius: 25px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.Dashboard:hover,
+.Calendar:hover,
+.Reports:hover,
+.About:hover,
+.Settings:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.Dashboard {
+    background-color: #88d7ed;
+}
+
+.Calendar {
+    background-color: #a3ffa4;
+}
+
+.Reports {
+    background-color: #daa4e8;
+}
+
+.About {
+    background-color: #d9ff85;
+}
+
+.Settings {
+    background-color: #d9d5da;
 }
 
 ul {
@@ -104,45 +118,53 @@ ul {
     justify-content: center;
     flex-direction: column;
     text-align: center;
-    border: 1px solid #0F172A;
+    border: none;
+    margin: 0;
+    padding: 0;
 }
 
 ul li {
     list-style: none;
+    width: 100%;
 }
 
 .a {
     text-decoration: none;
     color: black;
     display: block;
-    font-weight: bold;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 10px 18px;
+    white-space: nowrap;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    cursor: pointer;
 }
 
 .lists {
     position: absolute;
     display: none;
-    margin-top: 25px;
+    top: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
     background-color: white;
     z-index: 100;
-    width:100%;
-}
-.lists li{
-    width:100%;
+    min-width: 180px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.15);
+    border: 1px solid #e2e8f0;
+    padding: 6px 0;
 }
 
 .dropDown:hover .lists {
-    top: 30px;
     display: flex;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
+    align-items: stretch;
 }
-
 
 i {
-    font-size: 20px;
+    font-size: 18px;
 }
-
 
 .dark {
     color: #E5E7EB;
@@ -158,7 +180,6 @@ i {
     border: 2px solid white;
 }
 
-
 .a:hover {
     background-color: #0F172A;
     color: white;
@@ -171,32 +192,36 @@ i {
 .da:hover {
     background-color: #0F172A;
     color: white;
-    border: 1px solid black;
+    border: none;
 }
 
-@media (max-width:600px) {
-
-    .links,
-    h1 {
-        text-align: center;
-        gap:0;
-    }
-
-    .header {
-        flex-direction: column;
-        gap: 0px;
+@media (max-width: 600px) {
+    .links {
+        gap: 8px;
+        padding: 8px 10px;
     }
 
     .body h1 {
-        font-size: 7vw;
-        padding-top: 5px;
-        padding-bottom: 0;
+        font-size: 24px;
+        padding-top: 8px;
+        padding-bottom: 2px;
+    }
+
+    .Dashboard,
+    .Calendar,
+    .Reports,
+    .About,
+    .Settings {
+        font-size: 13px;
+        padding: 8px 14px;
+        border-radius: 20px;
     }
 
     .darkLink {
-        padding:5px;
+        padding: 6px 12px;
     }
-    .lists{
-        width:72px;
+
+    .lists {
+        min-width: 165px;
     }
 }

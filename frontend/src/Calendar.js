@@ -10,7 +10,7 @@ export default function Calendar({ activation, mode }) {
     const [year, setYear] = useState(currentDate.getFullYear());
     const [month, setMonth] = useState(currentDate.getMonth() + 1);
     let monthname = new Date(year, month - 1).toLocaleString("default", { month: "long" });
-    const daysinMonth = new Date(year, month, 0).getDate();
+    const daysinMonth = new Date(year, month, 0).getDate()
     const firstDay = new Date(year, month - 1, 1).getDay()
     const startDay = firstDay === 0 ? 6 : firstDay - 1
     let days = [];
@@ -20,10 +20,11 @@ export default function Calendar({ activation, mode }) {
     for (let i = 1; i <= daysinMonth; i++) {
         days.push(i)
     }
-    const Dayname = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    const Dayname = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     const [Transaction, setTransaction] = useState([])
     let today = new Date();
     const [targetDate, setTargetDate] = useState(`${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`)
+
     useEffect(() => {
         const fetchData = async () => {
             if (!isOnline) {
@@ -72,6 +73,7 @@ export default function Calendar({ activation, mode }) {
     const [show, setShow] = useState(false)
     const [editIndex, setIndex] = useState()
     const [, action, pending] = useActionState(UpdateData, undefined);
+
     async function UpdateData(_, formData) {
         if (!isOnline) {
             alert("Check internet connection");
@@ -125,129 +127,204 @@ export default function Calendar({ activation, mode }) {
             );
         }
     }, [selected, month, year]);
+
+    const isDark = mode === "dark";
+
     return (
         <>
-            {
-                show &&
-                < form key={editIndex} action={action} className={style.DataUpdate} style={{display: "flex", flexDirection: "column",gap:"5px"}}>
-                    <h2>Enter only the fields you want to update.</h2>
-                    <label htmlFor="title">Enter Transaction</label>
-                    <input type="text" name="title" placeholder="Enter Transaction Details" />
-                    <label htmlFor="money">Amount</label>
-                    <input type="number" name="money" placeholder="Enter Transaction Amount" />
-                    <label htmlFor="date">Transaction Date</label>
-                    <input type="date" name="date" id="date" />
-                    <label htmlFor="type">Type</label>
-                    <select name="type" id="type">
-                        <option value=""></option>
-                        <option value="Income">Income</option>
-                        <option value="Expense">Expense</option>
-                    </select>
-                    <label htmlFor="category">Category</label>
-                    <input type="text" name="category" id="category" placeholder="Enter Category" />
-                    <button type="submit" disabled={pending}>{pending ? "Saving..." : "Save"}</button>
-                    <button onClick={() => setShow(false)}>Close</button>
-                </form >
-            }
-            <div className="styleMonths" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+            {/* ── Edit Popup Overlay ── */}
+            {show && (
+                <div className={style.overlay} onClick={(e) => { if (e.target === e.currentTarget) setShow(false); }}>
+                    <form
+                        key={editIndex}
+                        action={action}
+                        className={style.DataUpdate}
+                        style={{ background: isDark ? "#1f2937" : "#ffffff" }}
+                    >
+                        <h2 style={{ color: isDark ? "#f9fafb" : "#111827" }}>
+                            ✏️ Update Transaction
+                        </h2>
+                        <p style={{ fontSize: "12px", color: isDark ? "#9ca3af" : "#6b7280", textAlign: "center", marginTop: "-8px" }}>
+                            Leave fields blank to keep existing values
+                        </p>
+
+                        <div className={style.formRow}>
+                            <label style={{ color: isDark ? "#d1d5db" : "#374151" }}>Transaction Title</label>
+                            <input
+                                type="text"
+                                name="title"
+                                placeholder="Enter transaction title"
+                                style={{ background: isDark ? "#111827" : "#f9fafb", color: isDark ? "#f9fafb" : "#111827", borderColor: isDark ? "#374151" : "#d1d5db" }}
+                            />
+                        </div>
+                        <div className={style.formRow}>
+                            <label style={{ color: isDark ? "#d1d5db" : "#374151" }}>Amount (₹)</label>
+                            <input
+                                type="number"
+                                name="money"
+                                placeholder="Enter amount"
+                                style={{ background: isDark ? "#111827" : "#f9fafb", color: isDark ? "#f9fafb" : "#111827", borderColor: isDark ? "#374151" : "#d1d5db" }}
+                            />
+                        </div>
+                        <div className={style.formRow}>
+                            <label style={{ color: isDark ? "#d1d5db" : "#374151" }}>Date</label>
+                            <input
+                                type="date"
+                                name="date"
+                                style={{ background: isDark ? "#111827" : "#f9fafb", color: isDark ? "#f9fafb" : "#111827", borderColor: isDark ? "#374151" : "#d1d5db" }}
+                            />
+                        </div>
+                        <div className={style.formRow}>
+                            <label style={{ color: isDark ? "#d1d5db" : "#374151" }}>Type</label>
+                            <select
+                                name="type"
+                                style={{ background: isDark ? "#111827" : "#f9fafb", color: isDark ? "#f9fafb" : "#111827", borderColor: isDark ? "#374151" : "#d1d5db" }}
+                            >
+                                <option value="">-- Keep current --</option>
+                                <option value="Income">Income</option>
+                                <option value="Expense">Expense</option>
+                            </select>
+                        </div>
+                        <div className={style.formRow}>
+                            <label style={{ color: isDark ? "#d1d5db" : "#374151" }}>Category</label>
+                            <input
+                                type="text"
+                                name="category"
+                                placeholder="Enter category"
+                                style={{ background: isDark ? "#111827" : "#f9fafb", color: isDark ? "#f9fafb" : "#111827", borderColor: isDark ? "#374151" : "#d1d5db" }}
+                            />
+                        </div>
+
+                        <div className={style.btnRow}>
+                            <button type="submit" className={style.saveBtn} disabled={pending}>
+                                {pending ? "Saving..." : "💾 Save Changes"}
+                            </button>
+                            <button type="button" className={style.closeBtn} onClick={() => setShow(false)}
+                                style={{ background: isDark ? "#374151" : "#f9fafb", color: isDark ? "#e5e7eb" : "#374151", borderColor: isDark ? "#4b5563" : "#e5e7eb" }}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            )}
+
+            {/* ── Month Navigator ── */}
+            <div style={{ display: "flex", justifyContent: "center", padding: "0 12px" }}>
                 <div className={style.months}>
-                    <i onClick={() => {
-                        if (month === 1) {
-                            setMonth(12);
-                            setYear(year - 1);
-                        }
-                        else {
-                            setMonth(month - 1)
-                        }
-                    }} className="fa-solid fa-less-than"></i>
-                    <h3>{monthname}</h3>
-                    <i onClick={() => {
-                        if (month === 12) {
-                            setMonth(1);
-                            setYear(year + 1);
-                        }
-                        else {
-                            setMonth(month + 1)
-                        }
-                    }} className="fa-solid fa-greater-than"></i>
+                    <i
+                        onClick={() => {
+                            if (month === 1) { setMonth(12); setYear(year - 1); }
+                            else { setMonth(month - 1); }
+                        }}
+                        className="fa-solid fa-less-than"
+                    />
+                    <h3 style={{ color: isDark ? "#f9fafb" : "#111827" }}>{monthname} {year}</h3>
+                    <i
+                        onClick={() => {
+                            if (month === 12) { setMonth(1); setYear(year + 1); }
+                            else { setMonth(month + 1); }
+                        }}
+                        className="fa-solid fa-greater-than"
+                    />
                 </div>
             </div>
+
+            {/* ── Calendar Grid ── */}
             <div className={style.container}>
-                {
-                    Dayname.map((data, index) => (
-                        <div key={index} className={`${style.dayname} ${mode === "dark" ? style.ddayname : ""}`}>
-                            <span>{data}</span>
-                        </div>
-                    ))
-                }
-                {
-                    days.map((data, index) => (
-                        <div key={index} style={{ fontWeight: "bold" }} onClick={() => setSelected(data)} className={`${data === selected ? style.selected : ""}`}>
-                            <span>{data || ""}</span>
-                        </div>
-                    ))
-                }
+                {Dayname.map((data, index) => (
+                    <div key={index} className={`${style.dayname} ${isDark ? style.ddayname : ""}`}>
+                        <span>{data}</span>
+                    </div>
+                ))}
+                {days.map((data, index) => (
+                    <div
+                        key={index}
+                        onClick={() => setSelected(data)}
+                        className={`${data === selected ? style.selected : ""}`}
+                        style={{ color: isDark && data !== selected ? "#d1d5db" : undefined }}
+                    >
+                        <span>{data || ""}</span>
+                    </div>
+                ))}
             </div>
-            <div className="textTransactionDate" style={{ display: "flex", justifyContent: "center", alignItems: "center", margin: "5px" }}>
-                <p style={{ display: "inline-block", fontSize: "20px", fontWeight: "bold", backgroundColor: "black", padding: "5px", borderRadius: " 5px", color: mode === "dark" ? "yellow" : "red" }}>Transactions Date: {targetDate}</p>
+
+            {/* ── Selected Date Banner ── */}
+            <div className={style.dateBanner}>
+                <p>📅 Transactions for: {targetDate}</p>
             </div>
-            <div className={`${style1.data} ${mode === "dark" ? style1.ddata : " style.data"}`} >
-                <h3>Date</h3>
-                <h3>Title</h3>
-                <h3 className={style1.type}>Type</h3>
-                <h3 className={style1.category}>Category</h3>
-                <h3>Rupees</h3>
-                <h3 className={style1.edit}>Edit</h3>
-                <h3 className={style1.delete}>Delete</h3>
+
+            {/* ── Transaction List ── */}
+            <div className={style.txnWrapper}>
+                {/* Header */}
+                <div className={`${style1.data} ${isDark ? style1.ddata : ""}`}>
+                    <h3>Date</h3>
+                    <h3>Title</h3>
+                    <h3 className={style1.type}>Type</h3>
+                    <h3 className={style1.category}>Category</h3>
+                    <h3>₹ Amount</h3>
+                    <h3 className={style1.edit}>Edit</h3>
+                    <h3 className={style1.delete}>Delete</h3>
+                </div>
+
+                {/* Rows */}
+                {activation
+                    ? Transaction.length > 0
+                        ? Transaction.map((data, index) => (
+                            <div key={data._id || index} className={`${style1.data} ${isDark ? style1.ddata : ""}`}>
+                                <span style={{ fontSize: "12px" }}>
+                                    {data.date && !isNaN(new Date(data.date).getTime())
+                                        ? new Date(data.date).toISOString().split("T")[0]
+                                        : "--"}
+                                </span>
+                                <span>{data.title}</span>
+                                <span className={style1.type}>
+                                    <span className={`${style1.typeBadge} ${data.type === "Income" ? style1.incomeType : data.type === "Expense" ? style1.expenseType : ""}`}>
+                                        {data.type || "--"}
+                                    </span>
+                                </span>
+                                <span className={style1.category}>{data.category}</span>
+                                <span style={{ fontWeight: 600, color: data.type === "Income" ? "#16a34a" : data.type === "Expense" ? "#dc2626" : "inherit" }}>
+                                    ₹{data.money}
+                                </span>
+                                <span className={style1.edit}>
+                                    <i
+                                        className={`fa-solid fa-pen-to-square ${style1.editIcon}`}
+                                        onClick={() => { setIndex(index); setShow(true); }}
+                                    />
+                                </span>
+                                <span className={style1.delete}>
+                                    <i
+                                        className={`fa-solid fa-trash ${style1.deleteIcon}`}
+                                        onClick={async () => {
+                                            if (!isOnline) { alert("Check internet connection"); return; }
+                                            if (!window.confirm("Delete this transaction?")) return;
+                                            try {
+                                                let define = { id: data._id, userId: localStorage.getItem("userId") }
+                                                let res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/Delete`, {
+                                                    method: "POST",
+                                                    headers: { "Content-Type": "application/json" },
+                                                    body: JSON.stringify(define)
+                                                })
+                                                let result = await res.json();
+                                                if (!res.ok || !result.success) { alert(result.message || "Failed to delete transaction"); return; }
+                                                let newData = [...Transaction]
+                                                newData.splice(index, 1)
+                                                setTransaction(newData)
+                                            } catch (error) {
+                                                console.error("Delete error:", error);
+                                                alert("Failed to delete transaction");
+                                            }
+                                        }}
+                                    />
+                                </span>
+                            </div>
+                        ))
+                        : <p style={{ textAlign: "center", color: isDark ? "#9ca3af" : "#6b7280", padding: "24px", fontSize: "14px" }}>
+                            No transactions found for this date.
+                        </p>
+                    : ""}
             </div>
-            {
-                activation ?
-                    Transaction.map((data, index) => (
-                        <div key={data._id || index} className={`${style1.data} ${mode === "dark" ? style1.ddata : ""}`}>
-                            <span>{data.date && !isNaN(new Date(data.date).getTime()) ? new Date(data.date).toISOString().split("T")[0] : "--"}</span>
-                            <span>{data.title}</span>
-                            <span className={style1.type}>{data.type}</span>
-                            <span className={style1.category}>{data.category}</span>
-                            <span>{data.money}</span>
-                            <span><i className="fa-solid fa-pen-to-square" onClick={() => {
-                                setIndex(index)
-                                setShow(true)
-                            }}></i></span>
-                            <span><i className="fa-solid fa-trash" onClick={async () => {
-                                if (!isOnline) {
-                                    alert("Check internet connection");
-                                    return;
-                                }
-                                try {
-                                    let define = {
-                                        id: data._id,
-                                        userId: localStorage.getItem("userId")
-                                    }
-                                    let res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/Delete`, {
-                                        method: "POST",
-                                        headers: {
-                                            "Content-Type": "application/json"
-                                        },
-                                        body: JSON.stringify(define)
-                                    })
-                                    let result = await res.json();
-                                    if (!res.ok || !result.success) {
-                                        alert(result.message || "Failed to delete transaction")
-                                        return;
-                                    }
-                                    let newData = [...Transaction]
-                                    newData.splice(index, 1)
-                                    setTransaction(newData)
-                                    alert(result.message)
-                                } catch (error) {
-                                    console.error("Delete error:", error);
-                                    alert("Failed to delete transaction");
-                                }
-                            }}></i>
-                            </span>
-                        </div>
-                    )) : ""
-            }
         </>
     )
 }
