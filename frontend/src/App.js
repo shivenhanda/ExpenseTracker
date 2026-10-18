@@ -94,15 +94,17 @@ export default function App() {
             {mode === "light" ? (<i className="fa-regular fa-lightbulb"></i>) : (<i className="fa-solid fa-lightbulb"></i>)}
           </span>
         </div>
-        <Routes>
-          <Route path="/Calendar" element={<Calendar activation={activation} mode={mode} />} />
-          <Route path="/Reports" element={<Reports activation={activation} mode={mode} />} />
-          <Route path="/About" element={<About mode={mode} />} />
-          <Route path="/ResetPassword" element={<ResetPassword activation={activation} mode={mode} />} />
-          <Route path="/ForgetPassword" element={<ForgetPassword mode={mode} />} />
-          <Route path="/DeleteAccount" element={<DeleteAccount mode={mode} handleLogout={handleLogout}/>} />
-          <Route path="*" element={<Home activation={activation} setActivation={setActivation} mode={mode} />} />
-        </Routes>
+        <main id="main-content">
+          <Routes>
+            <Route path="/Calendar" element={<Calendar activation={activation} mode={mode} />} />
+            <Route path="/Reports" element={<Reports activation={activation} mode={mode} />} />
+            <Route path="/About" element={<About mode={mode} />} />
+            <Route path="/ResetPassword" element={<ResetPassword activation={activation} mode={mode} />} />
+            <Route path="/ForgetPassword" element={<ForgetPassword mode={mode} />} />
+            <Route path="/DeleteAccount" element={<DeleteAccount mode={mode} handleLogout={handleLogout}/>} />
+            <Route path="*" element={<Home activation={activation} setActivation={setActivation} mode={mode} />} />
+          </Routes>
+        </main>
       </div>
     </Online.Provider>
   )

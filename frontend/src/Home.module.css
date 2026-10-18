@@ -152,7 +152,7 @@
 .hint {
     display: block;
     margin-top: 6px;
-    color: #9ca3af;
+    color: #4b5563;
     font-size: 12px;
 }
 
@@ -246,7 +246,7 @@
 
 .divider p {
     margin: 0;
-    color: #9ca3af;
+    color: #4b5563;
     font-size: 11px;
 }
 
@@ -261,7 +261,7 @@
 
 .buttons p {
     margin: 0;
-    color: #6b7280;
+    color: #4b5563;
     font-size: 14px;
 }
 
@@ -298,7 +298,7 @@
     align-items: center;
     justify-content: center;
     gap: 7px;
-    color: #9ca3af;
+    color: #4b5563;
     font-size: 12px;
 }
 
@@ -354,6 +354,12 @@
 
 .dcontainer .security {
     border-color: #1f2937;
+    color: #9ca3af;
+}
+
+.dcontainer .hint,
+.dcontainer .divider p {
+    color: #9ca3af;
 }
 
 .otpRow {

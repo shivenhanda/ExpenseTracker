@@ -130,7 +130,7 @@ export default function Reports({ activation, mode }) {
                         <h2 style={{ color: isDark ? "#f9fafb" : "#111827" }}>
                             ✏️ Update Transaction
                         </h2>
-                        <p style={{ fontSize: "12px", color: isDark ? "#9ca3af" : "#6b7280", textAlign: "center", marginTop: "-8px" }}>
+                        <p style={{ fontSize: "12px", color: isDark ? "#9ca3af" : "#4b5563", textAlign: "center", marginTop: "-8px" }}>
                             Leave fields blank to keep existing values
                         </p>
 
