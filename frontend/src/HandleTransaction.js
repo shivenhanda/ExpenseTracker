@@ -407,7 +407,7 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                                 />{" "}
                                 Income
                             </h3>
-                            <p className={style.income}>{Income}</p>
+                            <p className={style.income}>₹{Income}</p>
                         </div>
                         <div className={`${style.box} ${mode === "dark" ? style.dbox : ""}`}>
                             <h3>
@@ -417,14 +417,14 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                                 />{" "}
                                 Expense
                             </h3>
-                            <p className={style.expense}>{Expense}</p>
+                            <p className={style.expense}>₹{Expense}</p>
                         </div>
                         <div className={`${style.box} ${mode === "dark" ? style.dbox : ""}`}>
                             <h3>
                                 <i className="fa-solid fa-wallet"></i>{" "}
                                 Balance
                             </h3>
-                            <p className={style.balance}>{Income - Expense}</p>
+                            <p className={style.balance}>₹{Income - Expense}</p>
                         </div>
                     </div>
                 </>
@@ -470,7 +470,7 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                         <span className={style1.category}>
                             {data.category}
                         </span>
-                        <span>{data.money}</span>
+                        <span>₹{data.money}</span>
                         <span>
                             <i
                                 className="fa-solid fa-pen-to-square"
@@ -533,7 +533,7 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
                                         label: function (context) {
                                             let value = context.raw
                                             let label = context.label
-                                            return `${label} ${value}`
+                                            return `${label}: ₹${Number(value).toLocaleString("en-IN")}`
                                         }
                                     }
                                 },
