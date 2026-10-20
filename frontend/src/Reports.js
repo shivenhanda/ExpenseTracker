@@ -11,7 +11,6 @@ export default function Reports({ activation, mode, Transaction, setTransaction,
     const [year, setYear] = useState(currentDate.getFullYear());
     const [month, setMonth] = useState(currentDate.getMonth() + 1);
     let monthname = new Date(year, month - 1).toLocaleString("default", { month: "long" });
-    const [list,] = useState([])
     const [show, setShow] = useState(false)
     const [editIndex, setIndex] = useState()
     const [, action, pending] = useActionState(UpdateData, undefined);
@@ -190,7 +189,7 @@ export default function Reports({ activation, mode, Transaction, setTransaction,
                             className={`${style1.chartWrapper} ${isDark ? style1.dchartWrapper : ""}`}
                             style={{ margin: "14px 0 8px" }}
                         >
-                            <Charts transactions={filteredTransactions} list={list} mode={mode} />
+                            <Charts transactions={filteredTransactions} mode={mode} year={year} month={month} />
                         </div>
 
                         {/* ── Transaction Table ── */}
