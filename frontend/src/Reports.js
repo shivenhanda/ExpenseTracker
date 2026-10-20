@@ -1,4 +1,4 @@
-import { useActionState, useContext, useEffect, useState } from "react"
+import { useActionState, useContext, useState } from "react"
 import style from "./Calendar.module.css"
 import style1 from './Reports.module.css'
 import Charts from "./Charts"
@@ -11,7 +11,7 @@ export default function Reports({ activation, mode, Transaction, setTransaction,
     const [year, setYear] = useState(currentDate.getFullYear());
     const [month, setMonth] = useState(currentDate.getMonth() + 1);
     let monthname = new Date(year, month - 1).toLocaleString("default", { month: "long" });
-    const [list, setlist] = useState([])
+    const [list,] = useState([])
     const [show, setShow] = useState(false)
     const [editIndex, setIndex] = useState()
     const [, action, pending] = useActionState(UpdateData, undefined);
