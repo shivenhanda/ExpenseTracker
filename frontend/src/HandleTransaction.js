@@ -6,7 +6,7 @@ import { Online } from "./App";
 import { Pie } from "react-chartjs-2";
 import { AnimatePresence, motion } from "framer-motion";
 
-export default function HandleTransaction({ displayadd, mode, activation,Transaction,setTransaction,Delete}) {
+export default function HandleTransaction({ displayadd, mode, activation, Transaction, setTransaction, Delete }) {
     let isOnline = useContext(Online)
     const [, action, pending] = useActionState((previousData, formData) => HandleData(previousData, formData, isOnline), undefined)
     const [show, setShow] = useState(null)
@@ -145,7 +145,7 @@ export default function HandleTransaction({ displayadd, mode, activation,Transac
             alert("Failed to add transaction");
         }
     }
-    
+
     let year = (new Date()).getFullYear();
     let month = (new Date()).getMonth();
     let monthname = new Date(year, month).toLocaleString("default", { month: "long" });
