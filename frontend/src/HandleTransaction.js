@@ -6,7 +6,7 @@ import { Online } from "./App";
 import { Pie } from "react-chartjs-2";
 import { AnimatePresence, motion } from "framer-motion";
 
-export default function HandleTransaction({ displayadd, mode, activation,Transaction,setTransaction }) {
+export default function HandleTransaction({ displayadd, mode, activation,Transaction,setTransaction,Delete}) {
     let isOnline = useContext(Online)
     const [, action, pending] = useActionState((previousData, formData) => HandleData(previousData, formData, isOnline), undefined)
     const [show, setShow] = useState(null)
@@ -449,7 +449,7 @@ export default function HandleTransaction({ displayadd, mode, activation,Transac
                         <span>
                             <i
                                 className="fa-solid fa-trash"
-                                onClick={() => Delete(data, index)}
+                                onClick={() => Delete(data)}
                             ></i>
                         </span>
                     </div>
@@ -630,45 +630,6 @@ export default function HandleTransaction({ displayadd, mode, activation,Transac
                 </div>
             </div>
         </div>)
-    async function Delete(data, index) {
-        if (!isOnline) {
-            alert("Check internet connection");
-            return;
-        }
-        try {
-            let define = {
-                id: data._id,
-                userId: localStorage.getItem("userId")
-            };
-            let res = await fetch(
-                `https://expense-tracker-two-eta-98.vercel.app/Delete`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(define)
-                }
-            );
-            let result = await res.json();
-            if (!res.ok || !result.success) {
-                alert(
-                    result.message ||
-                    "Failed to delete transaction"
-                );
-                return;
-            }
-            let newData = [...Transaction];
-            newData.splice(index, 1);
-            setTransaction(newData);
-
-            alert(result.message);
-
-        } catch (error) {
-            console.error("Delete transaction error:", error);
-            alert("Failed to delete transaction");
-        }
-    }
     function AddTransaction({ setShow, pending }) {
         return (
             <motion.div

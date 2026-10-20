@@ -60,39 +60,91 @@ export default function App() {
     };
   }, []);
   useEffect(() => {
-        if (activation) {
-            if (!isOnline) {
-                alert("Check internet connection");
-                return;
-            }
-            const fetchTransactions = async () => {
-                try {
-                    const userId = localStorage.getItem("userId");
-                    if (!userId) return;
-                    const res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/ViewData`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({ userId })
-                    });
-                    const result = await res.json();
-                    if (result.success && Array.isArray(result.message)) {
-                        const sorted = [...result.message].sort(
-                            (a, b) => new Date(b.date) - new Date(a.date)
-                        );
-                        setTransaction(sorted);
-                    } else {
-                        alert(result.message || "Failed to fetch transactions");
-                    }
-                } catch (error) {
-                    console.error("Fetch transactions error:", error);
-                    alert("Failed to fetch transactions");
-                }
-            };
-            fetchTransactions();
+    if (activation) {
+      if (!isOnline) {
+        alert("Check internet connection");
+        return;
+      }
+      const fetchTransactions = async () => {
+        try {
+          const userId = localStorage.getItem("userId");
+          if (!userId) return;
+          const res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/ViewData`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ userId })
+          });
+          const result = await res.json();
+          if (result.success && Array.isArray(result.message)) {
+            const sorted = [...result.message].sort(
+              (a, b) => new Date(b.date) - new Date(a.date)
+            );
+            setTransaction(sorted);
+          } else {
+            alert(result.message || "Failed to fetch transactions");
+          }
+        } catch (error) {
+          console.error("Fetch transactions error:", error);
+          alert("Failed to fetch transactions");
         }
-    }, [activation, isOnline])
+      };
+      fetchTransactions();
+    }
+  }, [activation, isOnline])
+  async function Delete(data) {
+    if (!data?._id) {
+      alert("Transaction ID is missing");
+      return;
+    }
+    if (!isOnline) {
+      alert("Check internet connection");
+      return;
+    }
+    try {
+      let define = {
+        id: data._id,
+        userId: localStorage.getItem("userId")
+      };
+      let res = await fetch(
+        `https://expense-tracker-two-eta-98.vercel.app/Delete`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(define)
+        }
+      );
+      let result = await res.json();
+      if (!res.ok || !result.success) {
+        alert(
+          result.message ||
+          "Failed to delete transaction"
+        );
+        return;
+      }
+      setTransaction((prev) => {
+        const newData = [...prev];
+        const actualIndex = newData.findIndex(
+          (item) => item._id === data._id
+        );
+
+        if (actualIndex !== -1) {
+          newData.splice(actualIndex, 1);
+        }
+
+        return newData;
+      });
+
+      alert(result.message);
+
+    } catch (error) {
+      console.error("Delete transaction error:", error);
+      alert("Failed to delete transaction");
+    }
+  }
   const handleLogout = () => {
     localStorage.clear();
     window.location.href =
@@ -131,13 +183,13 @@ export default function App() {
         </div>
         <main id="main-content">
           <Routes>
-            <Route path="/Calendar" element={<Calendar activation={activation} mode={mode} />} />
-            <Route path="/Reports" element={<Reports activation={activation} mode={mode} />} />
+            <Route path="/Calendar" element={<Calendar activation={activation} mode={mode} Transaction={Transaction} setTransaction={setTransaction} Delete={Delete} />} />
+            <Route path="/Reports" element={<Reports activation={activation} mode={mode} Transaction={Transaction} setTransaction={setTransaction} Delete={Delete} />} />
             <Route path="/About" element={<About mode={mode} />} />
             <Route path="/ResetPassword" element={<ResetPassword activation={activation} mode={mode} />} />
             <Route path="/ForgetPassword" element={<ForgetPassword mode={mode} />} />
-            <Route path="/DeleteAccount" element={<DeleteAccount mode={mode} handleLogout={handleLogout}/>} />
-            <Route path="*" element={<Home activation={activation} setActivation={setActivation} mode={mode} Transaction={Transaction} setTransaction={setTransaction}/>} />
+            <Route path="/DeleteAccount" element={<DeleteAccount mode={mode} handleLogout={handleLogout} />} />
+            <Route path="*" element={<Home activation={activation} setActivation={setActivation} mode={mode} Transaction={Transaction} setTransaction={setTransaction} Delete={Delete} />} />
           </Routes>
         </main>
       </div>

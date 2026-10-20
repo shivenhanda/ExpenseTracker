@@ -3,7 +3,7 @@ import style from "./Calendar.module.css"
 import style1 from './Reports.module.css'
 import { Online } from './App'
 
-export default function Calendar({ activation, mode }) {
+export default function Calendar({ activation, mode, Transaction, setTransaction, Delete }) {
     const [currentDate,] = useState(new Date())
     const [selected, setSelected] = useState(null);
     let isOnline = useContext(Online)
@@ -21,54 +21,21 @@ export default function Calendar({ activation, mode }) {
         days.push(i)
     }
     const Dayname = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-    const [Transaction, setTransaction] = useState([])
     let today = new Date();
     const [targetDate, setTargetDate] = useState(`${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`)
 
-    useEffect(() => {
-        const fetchData = async () => {
-            if (!isOnline) {
-                alert("Check internet connection");
-                return;
-            }
-            try {
-                const userId = localStorage.getItem("userId");
-                if (!userId) return;
+    const filtered = Transaction.filter((t) => {
+    if (!t?.date || isNaN(new Date(t.date).getTime())) {
+        return false;
+    }
 
-                const define = {
-                    userId: userId,
-                    year: year,
-                    month: month
-                };
+    const date = new Date(t.date);
 
-                const res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/Transactions`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(define)
-                });
+    const formattedDate =
+        `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 
-                const data = await res.json();
-
-                if (data.success && Array.isArray(data.transactions)) {
-                    const filtered = data.transactions.filter(t =>
-                        t && t.date && !isNaN(new Date(t.date).getTime()) &&
-                        new Date(t.date).toISOString().split("T")[0] === targetDate
-                    );
-                    setTransaction(filtered);
-                } else {
-                    setTransaction([]);
-                }
-            } catch (error) {
-                console.error("Calendar fetch error:", error);
-                alert("Failed to fetch transactions");
-            }
-        }
-        if (activation) {
-            fetchData();
-        }
-    }, [targetDate, isOnline, month, year, activation])
+    return formattedDate === targetDate;
+});
 
     const [show, setShow] = useState(false)
     const [editIndex, setIndex] = useState()
@@ -269,8 +236,8 @@ export default function Calendar({ activation, mode }) {
 
                 {/* Rows */}
                 {activation
-                    ? Transaction.length > 0
-                        ? Transaction.map((data, index) => (
+                    ? filtered.length > 0
+                        ? filtered.map((data, index) => (
                             <div key={data._id || index} className={`${style1.data} ${isDark ? style1.ddata : ""}`}>
                                 <span style={{ fontSize: "12px" }}>
                                     {data.date && !isNaN(new Date(data.date).getTime())
@@ -290,31 +257,20 @@ export default function Calendar({ activation, mode }) {
                                 <span className={style1.edit}>
                                     <i
                                         className={`fa-solid fa-pen-to-square ${style1.editIcon}`}
-                                        onClick={() => { setIndex(index); setShow(true); }}
+                                        onClick={() => {
+                                            setIndex(Transaction.findIndex(
+                                                (item) => item._id === data._id
+                                            )); setShow(true);
+                                        }}
                                     />
                                 </span>
                                 <span className={style1.delete}>
                                     <i
                                         className={`fa-solid fa-trash ${style1.deleteIcon}`}
-                                        onClick={async () => {
-                                            if (!isOnline) { alert("Check internet connection"); return; }
+                                        onClick={() => {
                                             if (!window.confirm("Delete this transaction?")) return;
-                                            try {
-                                                let define = { id: data._id, userId: localStorage.getItem("userId") }
-                                                let res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/Delete`, {
-                                                    method: "POST",
-                                                    headers: { "Content-Type": "application/json" },
-                                                    body: JSON.stringify(define)
-                                                })
-                                                let result = await res.json();
-                                                if (!res.ok || !result.success) { alert(result.message || "Failed to delete transaction"); return; }
-                                                let newData = [...Transaction]
-                                                newData.splice(index, 1)
-                                                setTransaction(newData)
-                                            } catch (error) {
-                                                console.error("Delete error:", error);
-                                                alert("Failed to delete transaction");
-                                            }
+
+                                            Delete(data);
                                         }}
                                     />
                                 </span>

@@ -5,9 +5,8 @@ import Charts from "./Charts"
 import { Online } from './App'
 
 
-export default function Reports({ activation, mode }) {
+export default function Reports({ activation, mode, Transaction, setTransaction, Delete }) {
     let isOnline = useContext(Online)
-    const [Transaction, setTransaction] = useState([])
     const [currentDate] = useState(new Date())
     const [year, setYear] = useState(currentDate.getFullYear());
     const [month, setMonth] = useState(currentDate.getMonth() + 1);
@@ -64,56 +63,18 @@ export default function Reports({ activation, mode }) {
         }
     }
 
-    useEffect(() => {
-        const fetchData = async () => {
-            if (!isOnline) {
-                alert("Check internet connection");
-                return;
-            }
-            try {
-                const userId = localStorage.getItem("userId");
-                if (!userId) return;
-
-                const define = {
-                    userId,
-                    year,
-                    month
-                };
-
-                const res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/Transactions`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(define)
-                });
-
-                const data = await res.json();
-
-                if (data.success && Array.isArray(data.transactions)) {
-                    const sorted = [...data.transactions].sort(
-                        (a, b) => new Date(a.date) - new Date(b.date)
-                    );
-                    setTransaction(sorted);
-                } else {
-                    setTransaction([]);
-                }
-            } catch (error) {
-                console.error("Fetch transactions error:", error);
-                alert("Failed to fetch transactions");
-            }
+    const filteredTransactions = Transaction.filter((data) => {
+        if (!data.date || isNaN(new Date(data.date).getTime())) {
+            return false;
         }
-        let list1 = []
-        let lastDay = new Date(year, month, 0).getDate();
-        for (let i = 1; i <= lastDay; i++) {
-            list1.push(i)
-        }
-        setlist(list1)
-        if (activation) {
-            fetchData();
-        }
-    }, [month, year, isOnline, activation]);
 
+        const date = new Date(data.date);
+
+        return (
+            date.getMonth() + 1 === month &&
+            date.getFullYear() === year
+        );
+    });
     const isDark = mode === "dark";
 
     return (
@@ -201,118 +162,108 @@ export default function Reports({ activation, mode }) {
             {/* ── Centered Page Wrapper ── */}
             <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "0 16px" }}>
 
-            {/* ── Month Navigator ── */}
-            <div style={{ display: "flex", justifyContent: "center" }}>
-                <div className={style.months}>
-                    <i
-                        onClick={() => {
-                            if (month === 1) { setMonth(12); setYear(year - 1); }
-                            else { setMonth(month - 1); }
-                        }}
-                        className="fa-solid fa-less-than"
-                    />
-                    <h3 style={{ color: isDark ? "#f9fafb" : "#111827" }}>{monthname} {year}</h3>
-                    <i
-                        onClick={() => {
-                            if (month === 12) { setMonth(1); setYear(year + 1); }
-                            else { setMonth(month + 1); }
-                        }}
-                        className="fa-solid fa-greater-than"
-                    />
-                </div>
-            </div>
-
-            {activation ? (
-                <>
-                    {/* ── Chart Card ── */}
-                    <div
-                        className={`${style1.chartWrapper} ${isDark ? style1.dchartWrapper : ""}`}
-                        style={{ margin: "14px 0 8px" }}
-                    >
-                        <Charts transactions={Transaction} list={list} mode={mode} />
+                {/* ── Month Navigator ── */}
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                    <div className={style.months}>
+                        <i
+                            onClick={() => {
+                                if (month === 1) { setMonth(12); setYear(year - 1); }
+                                else { setMonth(month - 1); }
+                            }}
+                            className="fa-solid fa-less-than"
+                        />
+                        <h3 style={{ color: isDark ? "#f9fafb" : "#111827" }}>{monthname} {year}</h3>
+                        <i
+                            onClick={() => {
+                                if (month === 12) { setMonth(1); setYear(year + 1); }
+                                else { setMonth(month + 1); }
+                            }}
+                            className="fa-solid fa-greater-than"
+                        />
                     </div>
+                </div>
 
-                    {/* ── Transaction Table ── */}
-                    <div style={{ paddingBottom: "24px" }}>
-                        {/* Header */}
-                        <div className={`${style1.data} ${isDark ? style1.ddata : ""}`}
-                            style={{ background: isDark ? "#1f2937" : "#f3f4f6", borderColor: isDark ? "#374151" : "#e5e7eb" }}
+                {activation ? (
+                    <>
+                        {/* ── Chart Card ── */}
+                        <div
+                            className={`${style1.chartWrapper} ${isDark ? style1.dchartWrapper : ""}`}
+                            style={{ margin: "14px 0 8px" }}
                         >
-                            <h3>Date</h3>
-                            <h3>Title</h3>
-                            <h3 className={style1.type}>Type</h3>
-                            <h3 className={style1.category}>Category</h3>
-                            <h3>₹ Amount</h3>
-                            <h3 className={style1.edit}>Edit</h3>
-                            <h3 className={style1.delete}>Delete</h3>
+                            <Charts transactions={filteredTransactions} list={list} mode={mode} />
                         </div>
 
-                        {/* Data Rows */}
-                        {Transaction.length > 0
-                            ? Transaction.map((data, index) => (
-                                <div key={data._id || index} className={`${style1.data} ${isDark ? style1.ddata : ""}`}>
-                                    <span style={{ fontSize: "12px" }}>
-                                        {data.date && !isNaN(new Date(data.date).getTime())
-                                            ? new Date(data.date).toISOString().split("T")[0]
-                                            : "--"}
-                                    </span>
-                                    <span>{data.title}</span>
-                                    <span className={style1.type}>
-                                        <span className={`${style1.typeBadge} ${data.type === "Income" ? style1.incomeType : data.type === "Expense" ? style1.expenseType : ""}`}>
-                                            {data.type || "--"}
+                        {/* ── Transaction Table ── */}
+                        <div style={{ paddingBottom: "24px" }}>
+                            {/* Header */}
+                            <div className={`${style1.data} ${isDark ? style1.ddata : ""}`}
+                                style={{ background: isDark ? "#1f2937" : "#f3f4f6", borderColor: isDark ? "#374151" : "#e5e7eb" }}
+                            >
+                                <h3>Date</h3>
+                                <h3>Title</h3>
+                                <h3 className={style1.type}>Type</h3>
+                                <h3 className={style1.category}>Category</h3>
+                                <h3>₹ Amount</h3>
+                                <h3 className={style1.edit}>Edit</h3>
+                                <h3 className={style1.delete}>Delete</h3>
+                            </div>
+
+                            {/* Data Rows */}
+                            {filteredTransactions.length > 0
+                                ? filteredTransactions.map((data, index) => (
+                                    <div key={data._id || index} className={`${style1.data} ${isDark ? style1.ddata : ""}`}>
+                                        <span style={{ fontSize: "12px" }}>
+                                            {data.date && !isNaN(new Date(data.date).getTime())
+                                                ? new Date(data.date).toISOString().split("T")[0]
+                                                : "--"}
                                         </span>
-                                    </span>
-                                    <span className={style1.category}>{data.category}</span>
-                                    <span style={{ fontWeight: 600, color: data.type === "Income" ? "#16a34a" : data.type === "Expense" ? "#dc2626" : "inherit" }}>
-                                        ₹{data.money}
-                                    </span>
-                                    <span className={style1.edit}>
-                                        <i
-                                            className={`fa-solid fa-pen-to-square ${style1.editIcon}`}
-                                            onClick={() => { setIndex(index); setShow(true); }}
-                                        />
-                                    </span>
-                                    <span className={style1.delete}>
-                                        <i
-                                            className={`fa-solid fa-trash ${style1.deleteIcon}`}
-                                            onClick={async () => {
-                                                if (!isOnline) { alert("Check internet connection"); return; }
-                                                if (!window.confirm("Delete this transaction?")) return;
-                                                try {
-                                                    let define = { id: data._id, userId: localStorage.getItem("userId") }
-                                                    let res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/Delete`, {
-                                                        method: "POST",
-                                                        headers: { "Content-Type": "application/json" },
-                                                        body: JSON.stringify(define)
-                                                    })
-                                                    let result = await res.json();
-                                                    if (!res.ok || !result.success) { alert(result.message || "Failed to delete transaction"); return; }
-                                                    let newData = [...Transaction]
-                                                    newData.splice(index, 1)
-                                                    setTransaction(newData)
-                                                } catch (error) {
-                                                    console.error("Delete error:", error);
-                                                    alert("Failed to delete transaction");
-                                                }
-                                            }}
-                                        />
-                                    </span>
-                                </div>
-                            ))
-                            : <p style={{ textAlign: "center", color: isDark ? "#9ca3af" : "#6b7280", padding: "28px 16px", fontSize: "14px" }}>
-                                No transactions found for {monthname} {year}.
-                            </p>
-                        }
+                                        <span>{data.title}</span>
+                                        <span className={style1.type}>
+                                            <span className={`${style1.typeBadge} ${data.type === "Income" ? style1.incomeType : data.type === "Expense" ? style1.expenseType : ""}`}>
+                                                {data.type || "--"}
+                                            </span>
+                                        </span>
+                                        <span className={style1.category}>{data.category}</span>
+                                        <span style={{ fontWeight: 600, color: data.type === "Income" ? "#16a34a" : data.type === "Expense" ? "#dc2626" : "inherit" }}>
+                                            ₹{data.money}
+                                        </span>
+                                        <span className={style1.edit}>
+                                            <i
+                                                className={`fa-solid fa-pen-to-square ${style1.editIcon}`}
+                                                onClick={() => {
+                                                    setIndex(
+                                                        Transaction.findIndex(
+                                                            (item) => item._id === data._id
+                                                        )
+                                                    ); setShow(true);
+                                                }}
+                                            />
+                                        </span>
+                                        <span className={style1.delete}>
+                                            <i
+                                                className={`fa-solid fa-trash ${style1.deleteIcon}`}
+                                                onClick={() => {
+                                                    if (!window.confirm("Delete this transaction?")) return;
+                                                    Delete(data);
+                                                }}
+                                            />
+                                        </span>
+                                    </div>
+                                ))
+                                : <p style={{ textAlign: "center", color: isDark ? "#9ca3af" : "#6b7280", padding: "28px 16px", fontSize: "14px" }}>
+                                    No transactions found for {monthname} {year}.
+                                </p>
+                            }
+                        </div>
+                    </>
+                ) : (
+                    <div style={{ textAlign: "center", padding: "48px 20px" }}>
+                        <div style={{ fontSize: "48px", marginBottom: "16px" }}>📊</div>
+                        <h2 style={{ color: isDark ? "#9ca3af" : "#6b7280", fontSize: "18px", fontWeight: 600 }}>
+                            Please Sign Up / Login to View Reports
+                        </h2>
                     </div>
-                </>
-            ) : (
-                <div style={{ textAlign: "center", padding: "48px 20px" }}>
-                    <div style={{ fontSize: "48px", marginBottom: "16px" }}>📊</div>
-                    <h2 style={{ color: isDark ? "#9ca3af" : "#6b7280", fontSize: "18px", fontWeight: 600 }}>
-                        Please Sign Up / Login to View Reports
-                    </h2>
-                </div>
-            )}
+                )}
 
             </div> {/* ── End Centered Wrapper ── */}
         </>
