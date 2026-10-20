@@ -1,5 +1,6 @@
 import { Link, Route, Routes } from "react-router-dom";
 import { useState, useEffect, createContext } from "react";
+import { Analytics } from '@vercel/analytics/react';
 import "./App.css"
 import Home from "./Home";
 import Reports from "./Reports";
@@ -193,6 +194,7 @@ export default function App() {
           </Routes>
         </main>
       </div>
+      <Analytics />
     </Online.Provider>
   )
 }
