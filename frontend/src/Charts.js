@@ -63,7 +63,7 @@ export default function Charts({ transactions = [], mode, year,
                 },
             ],
         };
-    }, [transactions, daysInMonth, year, month]);
+    }, [transactions, daysInMonth]);
 
     const gridColor = isDark
         ? "rgba(255,255,255,0.08)"
