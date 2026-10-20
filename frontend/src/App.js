@@ -13,6 +13,7 @@ export const Online = createContext(false)
 export default function App() {
   const [activation, setActivation] = useState(false)
   const [isOnline, setOnline] = useState(navigator.onLine);
+  const [Transaction, setTransaction] = useState([])
   const [mode, setMode] = useState("light");
   function toggleMode() {
     setMode(prev => (prev === "light" ? "dark" : "light"));
@@ -58,6 +59,40 @@ export default function App() {
       window.removeEventListener("offline", updateOnlineStatus);
     };
   }, []);
+  useEffect(() => {
+        if (activation) {
+            if (!isOnline) {
+                alert("Check internet connection");
+                return;
+            }
+            const fetchTransactions = async () => {
+                try {
+                    const userId = localStorage.getItem("userId");
+                    if (!userId) return;
+                    const res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/ViewData`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ userId })
+                    });
+                    const result = await res.json();
+                    if (result.success && Array.isArray(result.message)) {
+                        const sorted = [...result.message].sort(
+                            (a, b) => new Date(b.date) - new Date(a.date)
+                        );
+                        setTransaction(sorted);
+                    } else {
+                        alert(result.message || "Failed to fetch transactions");
+                    }
+                } catch (error) {
+                    console.error("Fetch transactions error:", error);
+                    alert("Failed to fetch transactions");
+                }
+            };
+            fetchTransactions();
+        }
+    }, [activation, isOnline])
   const handleLogout = () => {
     localStorage.clear();
     window.location.href =
@@ -102,7 +137,7 @@ export default function App() {
             <Route path="/ResetPassword" element={<ResetPassword activation={activation} mode={mode} />} />
             <Route path="/ForgetPassword" element={<ForgetPassword mode={mode} />} />
             <Route path="/DeleteAccount" element={<DeleteAccount mode={mode} handleLogout={handleLogout}/>} />
-            <Route path="*" element={<Home activation={activation} setActivation={setActivation} mode={mode} />} />
+            <Route path="*" element={<Home activation={activation} setActivation={setActivation} mode={mode} Transaction={Transaction} setTransaction={setTransaction}/>} />
           </Routes>
         </main>
       </div>

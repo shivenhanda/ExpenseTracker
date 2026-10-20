@@ -6,10 +6,9 @@ import { Online } from "./App";
 import { Pie } from "react-chartjs-2";
 import { AnimatePresence, motion } from "framer-motion";
 
-export default function HandleTransaction({ displayadd, mode, activation }) {
+export default function HandleTransaction({ displayadd, mode, activation,Transaction,setTransaction }) {
     let isOnline = useContext(Online)
     const [, action, pending] = useActionState((previousData, formData) => HandleData(previousData, formData, isOnline), undefined)
-    const [Transaction, setTransaction] = useState([])
     const [show, setShow] = useState(null)
     const [show1, setShow1] = useState(false)
     const [editIndex, setIndex] = useState()
@@ -146,40 +145,7 @@ export default function HandleTransaction({ displayadd, mode, activation }) {
             alert("Failed to add transaction");
         }
     }
-    useEffect(() => {
-        if (activation) {
-            if (!isOnline) {
-                alert("Check internet connection");
-                return;
-            }
-            const fetchTransactions = async () => {
-                try {
-                    const userId = localStorage.getItem("userId");
-                    if (!userId) return;
-                    const res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/ViewData`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({ userId })
-                    });
-                    const result = await res.json();
-                    if (result.success && Array.isArray(result.message)) {
-                        const sorted = [...result.message].sort(
-                            (a, b) => new Date(b.date) - new Date(a.date)
-                        );
-                        setTransaction(sorted);
-                    } else {
-                        alert(result.message || "Failed to fetch transactions");
-                    }
-                } catch (error) {
-                    console.error("Fetch transactions error:", error);
-                    alert("Failed to fetch transactions");
-                }
-            };
-            fetchTransactions();
-        }
-    }, [activation, isOnline])
+    
     let year = (new Date()).getFullYear();
     let month = (new Date()).getMonth();
     let monthname = new Date(year, month).toLocaleString("default", { month: "long" });

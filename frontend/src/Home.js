@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { Online } from './App'
 
 
-export default function Home({ activation, setActivation, mode }) {
+export default function Home({ activation, setActivation, mode ,Transaction,setTransaction}) {
     let isOnline = useContext(Online)
     const [activeform, setform] = useState("signup");
     const [data, action, pending] = useActionState((previousData, formData) => HandleSignUp(previousData, formData, setActivation, isOnline), undefined)
@@ -13,7 +13,7 @@ export default function Home({ activation, setActivation, mode }) {
 
     return (
         <>
-            {activation ? <HandleTransaction mode={mode} activation={activation} /> : <div className={`${style.main} ${mode === "dark" ? style.darkMain : ""}`}>
+            {activation ? <HandleTransaction mode={mode} activation={activation} Transaction={Transaction} setTransaction={setTransaction}/> : <div className={`${style.main} ${mode === "dark" ? style.darkMain : ""}`}>
 
                 <div className={`${style.container} ${mode === "dark" ? style.dcontainer : ""}`}>
                     {
