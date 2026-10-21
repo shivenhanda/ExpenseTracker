@@ -25,7 +25,7 @@ export default function App() {
   const fetchCategories = async () => {
     try {
       const res = await fetch(
-        "https://expense-tracker-two-eta-98.vercel.app/Categories",
+        "https://expense-tracker-two-eta-98.vercel.app/categories",
         {
           method: "GET",
           credentials: "include"

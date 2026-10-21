@@ -74,7 +74,7 @@ export default function HandleTransaction({ displayadd, mode, activation, Transa
                 color: newCategoryColor
             };
 
-            const res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/Categories`, {
+            const res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/categories`, {
                 method: "POST",
                 credentials: "include",
                 headers: {
