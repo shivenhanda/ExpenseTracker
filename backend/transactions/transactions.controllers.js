@@ -7,17 +7,29 @@ import {
     ViewTransaction
 } from './transactions.services.js';
 import connectDB from '../database/mongodb.js';
+import jwt from 'jsonwebtoken';
 
+const getAuthenticatedUserId = (req) => {
+    try {
+        return jwt.verify(req.cookies?.token, process.env.JWT_SECRET).userId;
+    } catch {
+        return null;
+    }
+};
 
 export const addTransaction = async (req, res) => {
     try {
         await connectDB();
+        const userId = getAuthenticatedUserId(req);
+        if (!userId) {
+            return res.status(401).json({ success: false, message: "Authentication required" });
+        }
         const {
-            userId,
             title,
             money,
             type,
             category,
+            categoryColor,
             date
         } = req.body;
 
@@ -27,6 +39,7 @@ export const addTransaction = async (req, res) => {
             money,
             type,
             category,
+            categoryColor,
             date
         });
 
@@ -49,8 +62,11 @@ export const addTransaction = async (req, res) => {
 export const Transactions = async (req, res) => {
     try {
         await connectDB();
+        const userId = getAuthenticatedUserId(req);
+        if (!userId) {
+            return res.status(401).json({ success: false, message: "Authentication required" });
+        }
         const {
-            userId,
             year,
             month
         } = req.body;
@@ -80,11 +96,15 @@ export const Transactions = async (req, res) => {
 export const Updates = async (req, res) => {
     try {
         await connectDB();
+        const authenticatedUserId = getAuthenticatedUserId(req);
+        if (!authenticatedUserId) {
+            return res.status(401).json({ success: false, message: "Authentication required" });
+        }
         const {
             _id,
-            userId,
             title,
             category,
+            categoryColor,
             money,
             date,
             type
@@ -92,9 +112,10 @@ export const Updates = async (req, res) => {
 
         const Update = await UpdateTransaction({
             _id,
-            userId,
+            userId: authenticatedUserId,
             title,
             category,
+            categoryColor,
             money,
             date,
             type
@@ -126,9 +147,12 @@ export const Updates = async (req, res) => {
 export const Delete = async (req, res) => {
     try {
         await connectDB();
+        const userId = getAuthenticatedUserId(req);
+        if (!userId) {
+            return res.status(401).json({ success: false, message: "Authentication required" });
+        }
         const {
-            id,
-            userId
+            id
         } = req.body;
 
         const deletedTransaction = await deleteTransaction({
@@ -162,9 +186,10 @@ export const Delete = async (req, res) => {
 export const DeleteAllTransaction = async (req, res) => {
     try {
         await connectDB();
-        const {
-            userId
-        } = req.body;
+        const userId = getAuthenticatedUserId(req);
+        if (!userId) {
+            return res.status(401).json({ success: false, message: "Authentication required" });
+        }
 
         const Delete = await deleteAllTransaction({
             userId
@@ -196,9 +221,10 @@ export const DeleteAllTransaction = async (req, res) => {
 export const ViewData = async (req, res) => {
     try {
         await connectDB();
-        const {
-            userId
-        } = req.body;
+        const userId = getAuthenticatedUserId(req);
+        if (!userId) {
+            return res.status(401).json({ success: false, message: "Authentication required" });
+        }
 
         const transactions = await ViewTransaction({
             userId

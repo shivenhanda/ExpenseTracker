@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import UsersModel from "./users.model.js";
 import TransactionModel from "../transactions/transactions.model.js";
+import CategoryModel from "../categories/categories.model.js";
 import jwt from 'jsonwebtoken';
 import { createUser, DeleteUser, loginUser, ResetUserPassword } from "./users.services.js";
 import connectDB from "../database/mongodb.js";
@@ -169,6 +170,7 @@ export const DeleteAccount = async (req, res) => {
             process.env.JWT_SECRET
         );
         let Delete = await TransactionModel.deleteMany({ userId: token.userId })
+        await CategoryModel.deleteMany({ userId: token.userId });
         Delete = await UsersModel.findByIdAndDelete(token.userId);
         return res.json({ success: true, message: "Account Deleted Successfully" })
     }

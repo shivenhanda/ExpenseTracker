@@ -2,12 +2,120 @@ import { useActionState, useContext, useEffect, useState } from "react"
 import style from './HandleTransaction.module.css'
 import { Link } from "react-router-dom";
 import style1 from './Reports.module.css'
-import { Online } from "./App";
+import { Online, CategoryContext } from "./App";
 import { Pie } from "react-chartjs-2";
 import { AnimatePresence, motion } from "framer-motion";
 
-export default function HandleTransaction({ displayadd, mode, activation, Transaction, setTransaction, Delete }) {
+export default function HandleTransaction({ displayadd, mode, activation, Transaction, setTransaction, Delete, categories: propCategories, setCategories: propSetCategories, fetchCategories: propFetchCategories }) {
     let isOnline = useContext(Online)
+    const contextCategory = useContext(CategoryContext);
+    const [localCategories, setLocalCategories] = useState([]);
+
+    const categories = propCategories || (contextCategory && contextCategory.categories) || localCategories;
+    const setCategories = propSetCategories || (contextCategory && contextCategory.setCategories) || setLocalCategories;
+
+    const [showCategoryModal, setShowCategoryModal] = useState(false);
+    const [newCategoryName, setNewCategoryName] = useState("");
+    const [newCategoryColor, setNewCategoryColor] = useState("#3B82F6");
+    const [categoryPending, setCategoryPending] = useState(false);
+
+    const defaultCategories = ["Job", "Home", "Shopping", "Bill", "Education", "Grocery", "Other"];
+    const categoryList = Array.isArray(categories) ? categories : [];
+    const customCategoryNames = categoryList
+        .map(c => typeof c === "string" ? c : (c.name || c.category))
+        .filter(Boolean);
+    const allCategories = [
+        ...defaultCategories,
+        ...customCategoryNames.filter(c => !defaultCategories.includes(c))
+    ];
+
+    const categoryColorMap = {};
+    categoryList.forEach(c => {
+        if (c && typeof c === "object") {
+            const name = c.name || c.category;
+            if (name && c.color) {
+                categoryColorMap[name] = c.color;
+            }
+        }
+    });
+
+    const presetColors = [
+        "#3B82F6",
+        "#10B981",
+        "#8B5CF6",
+        "#EC4899",
+        "#F59E0B",
+        "#EF4444",
+        "#06B6D4",
+        "#6366F1",
+        "#14B8A6",
+        "#F97316",
+        "#84CC16",
+        "#A855F7"
+    ];
+
+    async function handleCreateCategory(e) {
+        if (e) e.preventDefault();
+        const trimmed = newCategoryName.trim();
+        if (!trimmed) {
+            alert("Category name is required");
+            return;
+        }
+        if (!isOnline) {
+            alert("Check internet connection");
+            return;
+        }
+        setCategoryPending(true);
+        try {
+            const payload = {
+                category: trimmed,
+                categoryName: trimmed,
+                name: trimmed,
+                color: newCategoryColor
+            };
+
+            const res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/Categories`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+            if (!res.ok || !data.success) {
+                alert(data.message || "Failed to create category");
+                setCategoryPending(false);
+                return;
+            }
+
+            const savedItem = data.category || {
+                name: trimmed,
+                category: trimmed,
+                color: newCategoryColor
+            };
+
+            const updated = [
+                ...categoryList.filter(c => (c.name || c.category || c) !== trimmed),
+                savedItem
+            ];
+
+            if (typeof setCategories === "function") {
+                setCategories(updated);
+            }
+
+            setNewCategoryName("");
+            setShowCategoryModal(false);
+            alert(data.message || "Category saved successfully!");
+        } catch (err) {
+            console.error("Create category error:", err);
+            alert("Failed to create category");
+        } finally {
+            setCategoryPending(false);
+        }
+    }
+
     const [, action, pending] = useActionState((previousData, formData) => HandleData(previousData, formData, isOnline), undefined)
     const [show, setShow] = useState(null)
     const [show1, setShow1] = useState(false)
@@ -37,7 +145,9 @@ export default function HandleTransaction({ displayadd, mode, activation, Transa
         let Value = {
             ...Transaction[editIndex],
             ...obj,
-            userId: localStorage.getItem("userId")
+            categoryColor: obj.category
+                ? categoryColorMap[obj.category] || "#3B82F6"
+                : Transaction[editIndex]?.categoryColor || categoryColorMap[Transaction[editIndex]?.category] || "#3B82F6"
         };
 
         try {
@@ -45,6 +155,7 @@ export default function HandleTransaction({ displayadd, mode, activation, Transa
                 `https://expense-tracker-two-eta-98.vercel.app/Updates`,
                 {
                     method: "POST",
+                    credentials: "include",
                     headers: {
                         "Content-Type": "application/json"
                     },
@@ -98,12 +209,12 @@ export default function HandleTransaction({ displayadd, mode, activation, Transa
         }
 
         let define = {
-            userId: localStorage.getItem("userId"),
             title: title.trim(),
             money: Number(money),
             date: date,
             type: type,
-            category: category
+            category: category,
+            categoryColor: categoryColorMap[category] || "#3B82F6"
         };
 
         try {
@@ -111,6 +222,7 @@ export default function HandleTransaction({ displayadd, mode, activation, Transa
                 `https://expense-tracker-two-eta-98.vercel.app/AddTransaction`,
                 {
                     method: "POST",
+                    credentials: "include",
                     headers: {
                         "Content-Type": "application/json"
                     },
@@ -292,22 +404,31 @@ export default function HandleTransaction({ displayadd, mode, activation, Transa
                                     </div>
 
                                     <div className={style.fieldGroup}>
-                                        <label className={`${style.fieldLabel} ${mode === "dark" ? style.darkFieldLabel : ""}`}>
-                                            <i className="fa-solid fa-layer-group" style={{ color: "#059669" }}></i>
-                                            Category
-                                        </label>
+                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                                            <label className={`${style.fieldLabel} ${mode === "dark" ? style.darkFieldLabel : ""}`} style={{ marginBottom: 0 }}>
+                                                <i className="fa-solid fa-layer-group" style={{ color: "#059669" }}></i>
+                                                Category
+                                            </label>
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowCategoryModal(true)}
+                                                className={style.inlineAddCategoryBtn}
+                                            >
+                                                <i className="fa-solid fa-plus"></i> New Category
+                                            </button>
+                                        </div>
                                         <select
                                             name="category"
+                                            defaultValue={Transaction[editIndex]?.category || ""}
                                             className={`${style.formInput} ${style.emeraldFocus} ${mode === "dark" ? style.darkFormInput : ""}`}
                                         >
-                                            <option value="">Select Category</option>
-                                            <option>Job</option>
-                                            <option>Home</option>
-                                            <option>Shopping</option>
-                                            <option>Bill</option>
-                                            <option>Education</option>
-                                            <option>Grocery</option>
-                                            <option>Other</option>
+                                            <option value="">-- Keep current {Transaction[editIndex]?.category ? `(${Transaction[editIndex].category})` : ""} --</option>
+                                            {(Transaction[editIndex]?.category && !allCategories.includes(Transaction[editIndex].category)
+                                                ? [...allCategories, Transaction[editIndex].category]
+                                                : allCategories
+                                            ).map(cat => (
+                                                <option key={cat} value={cat}>{cat}</option>
+                                            ))}
                                         </select>
                                     </div>
                                 </div>
@@ -353,6 +474,14 @@ export default function HandleTransaction({ displayadd, mode, activation, Transa
                         >
                             <i className="fa-solid fa-plus"></i>
                             Add Transaction
+                        </button>
+                        <button
+                            type="button"
+                            className={`${style.addCategoryBtn} ${mode === "dark" ? style.darkAddCategoryBtn : ""}`}
+                            onClick={() => setShowCategoryModal(true)}
+                        >
+                            <i className="fa-solid fa-folder-plus"></i>
+                            Add Category
                         </button>
                     </div>
                 )
@@ -525,8 +654,8 @@ export default function HandleTransaction({ displayadd, mode, activation, Transa
                                         label: "Category Expense",
                                         data: categoryValues,
                                         backgroundColor: categoryLabels.map(
-                                            (_, index) =>
-                                                categoryColors[index % categoryColors.length]
+                                            (label, index) =>
+                                                categoryColorMap[label] || categoryColors[index % categoryColors.length]
                                         ),
                                         borderWidth: 3,
                                         borderColor: mode === "dark"
@@ -629,6 +758,9 @@ export default function HandleTransaction({ displayadd, mode, activation, Transa
                     )}
                 </div>
             </div>
+            <AnimatePresence>
+                {showCategoryModal && <CategoryModal />}
+            </AnimatePresence>
         </div>)
     function AddTransaction({ setShow, pending }) {
         return (
@@ -731,21 +863,27 @@ export default function HandleTransaction({ displayadd, mode, activation, Transa
                         </div>
 
                         <div className={style.fieldGroup}>
-                            <label className={`${style.fieldLabel} ${mode === "dark" ? style.darkFieldLabel : ""}`}>
-                                <i className="fa-solid fa-layer-group" style={{ color: "#2563eb" }}></i>
-                                Category
-                            </label>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                                <label className={`${style.fieldLabel} ${mode === "dark" ? style.darkFieldLabel : ""}`} style={{ marginBottom: 0 }}>
+                                    <i className="fa-solid fa-layer-group" style={{ color: "#2563eb" }}></i>
+                                    Category
+                                </label>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowCategoryModal(true)}
+                                    className={style.inlineAddCategoryBtn}
+                                >
+                                    <i className="fa-solid fa-plus"></i> New Category
+                                </button>
+                            </div>
                             <select
                                 name="category"
                                 className={`${style.formInput} ${mode === "dark" ? style.darkFormInput : ""}`}
+                                defaultValue="Other"
                             >
-                                <option>Job</option>
-                                <option>Home</option>
-                                <option>Shopping</option>
-                                <option>Bill</option>
-                                <option>Education</option>
-                                <option>Grocery</option>
-                                <option>Other</option>
+                                {allCategories.map(cat => (
+                                    <option key={cat} value={cat}>{cat}</option>
+                                ))}
                             </select>
                         </div>
                     </div>
@@ -799,17 +937,13 @@ export default function HandleTransaction({ displayadd, mode, activation, Transa
                     return;
                 }
                 try {
-                    let userId = localStorage.getItem("userId");
-                    if (!userId) {
-                        alert("Login Again");
-                        return;
-                    }
                     let res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/DeleteAllTransaction`, {
                         method: "POST",
+                        credentials: "include",
                         headers: {
                             "Content-Type": "application/json"
                         },
-                        body: JSON.stringify({ userId })
+                        body: JSON.stringify({})
                     });
                     let result = await res.json();
                     if (!result.result && !result.success) {
@@ -829,5 +963,152 @@ export default function HandleTransaction({ displayadd, mode, activation, Transa
             deleteAll();
         }, [setShow, setTransaction]);
         return null;
+    }
+
+    function CategoryModal() {
+        return (
+            <motion.div
+                className={style.modalOverlay}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowCategoryModal(false)}
+            >
+                <motion.form
+                    onSubmit={handleCreateCategory}
+                    initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                    transition={{ duration: 0.25 }}
+                    className={`${style.modalForm} ${mode === "dark" ? style.darkModalForm : ""}`}
+                    onClick={(e) => e.stopPropagation()}
+                    style={{ maxWidth: "480px" }}
+                >
+                    {categoryPending && (
+                        <div className={`${style.loadingOverlay} ${mode === "dark" ? style.darkLoadingOverlay : ""}`}>
+                            <div className={style.spinner}></div>
+                            <p style={{ fontWeight: 600, color: "#2563eb" }}>
+                                Saving Category...
+                            </p>
+                        </div>
+                    )}
+                    <div className={`${style.modalHeader} ${mode === "dark" ? style.darkModalHeader : ""}`}>
+                        <div>
+                            <h2 className={`${style.modalTitle} ${style.blueTitle}`}>
+                                <i className="fa-solid fa-folder-plus"></i>
+                                Create Category
+                            </h2>
+                            <p className={`${style.modalSubtitle} ${mode === "dark" ? style.darkModalSubtitle : ""}`}>
+                                Add a custom category and choose its color.
+                            </p>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => setShowCategoryModal(false)}
+                            className={style.closeButton}
+                        >
+                            <i className="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <div className={style.modalGrid} style={{ gridTemplateColumns: "1fr" }}>
+                        <div className={`${style.fieldGroup} ${style.fullRow}`}>
+                            <label className={`${style.fieldLabel} ${mode === "dark" ? style.darkFieldLabel : ""}`}>
+                                <i className="fa-solid fa-tag" style={{ color: "#2563eb" }}></i>
+                                Category Name *
+                            </label>
+                            <input
+                                type="text"
+                                value={newCategoryName}
+                                onChange={(e) => setNewCategoryName(e.target.value)}
+                                placeholder="e.g. Travel, Gym, Investment, Dining"
+                                className={`${style.formInput} ${mode === "dark" ? style.darkFormInput : ""}`}
+                                required
+                                autoFocus
+                            />
+                        </div>
+
+                        <div className={`${style.fieldGroup} ${style.fullRow}`}>
+                            <label className={`${style.fieldLabel} ${mode === "dark" ? style.darkFieldLabel : ""}`}>
+                                <i className="fa-solid fa-palette" style={{ color: "#2563eb" }}></i>
+                                Select Category Option Color
+                            </label>
+
+                            <div className={style.presetColorsGrid}>
+                                {presetColors.map((col) => (
+                                    <button
+                                        key={col}
+                                        type="button"
+                                        onClick={() => setNewCategoryColor(col)}
+                                        className={`${style.presetColorDot} ${newCategoryColor.toLowerCase() === col.toLowerCase() ? style.presetColorDotActive : ""}`}
+                                        style={{ backgroundColor: col }}
+                                        title={col}
+                                    >
+                                        {newCategoryColor.toLowerCase() === col.toLowerCase() && (
+                                            <i className="fa-solid fa-check" style={{ color: "#ffffff", fontSize: "11px" }}></i>
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className={style.customColorRow}>
+                                <label className={style.customColorPickerLabel}>
+                                    <input
+                                        type="color"
+                                        value={newCategoryColor}
+                                        onChange={(e) => setNewCategoryColor(e.target.value)}
+                                        className={style.hiddenColorInput}
+                                    />
+                                    <span className={style.colorPreviewBox} style={{ backgroundColor: newCategoryColor }}></span>
+                                    <span>Custom Color</span>
+                                </label>
+                                <span className={style.hexDisplay}>{newCategoryColor.toUpperCase()}</span>
+                            </div>
+                        </div>
+
+                        <div className={`${style.fieldGroup} ${style.fullRow}`}>
+                            <label className={`${style.fieldLabel} ${mode === "dark" ? style.darkFieldLabel : ""}`}>
+                                Preview
+                            </label>
+                            <div className={style.categoryPreviewBadge} style={{
+                                backgroundColor: `${newCategoryColor}18`,
+                                borderColor: newCategoryColor,
+                                color: mode === "dark" ? "#ffffff" : "#1f2937"
+                            }}>
+                                <span className={style.previewDot} style={{ backgroundColor: newCategoryColor }}></span>
+                                <span style={{ fontWeight: 600 }}>{newCategoryName.trim() || "Category Name"}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className={style.modalActions}>
+                        <button
+                            type="submit"
+                            disabled={categoryPending || !newCategoryName.trim()}
+                            className={style.submitBtn}
+                        >
+                            {categoryPending ? (
+                                <>
+                                    <i className="fa-solid fa-spinner fa-spin"></i>
+                                    Saving...
+                                </>
+                            ) : (
+                                <>
+                                    <i className="fa-solid fa-check"></i>
+                                    Save Category
+                                </>
+                            )}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setShowCategoryModal(false)}
+                            className={`${style.cancelBtn} ${mode === "dark" ? style.darkCancelBtn : ""}`}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </motion.form>
+            </motion.div>
+        );
     }
 }

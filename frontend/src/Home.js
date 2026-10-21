@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { Online } from './App'
 
 
-export default function Home({ activation, setActivation, mode ,Transaction,setTransaction,Delete}) {
+export default function Home({ activation, setActivation, mode ,Transaction,setTransaction,Delete, categories, setCategories, fetchCategories}) {
     let isOnline = useContext(Online)
     const [activeform, setform] = useState("signup");
     const [data, action, pending] = useActionState((previousData, formData) => HandleSignUp(previousData, formData, setActivation, isOnline), undefined)
@@ -13,7 +13,7 @@ export default function Home({ activation, setActivation, mode ,Transaction,setT
 
     return (
         <>
-            {activation ? <HandleTransaction mode={mode} activation={activation} Transaction={Transaction} setTransaction={setTransaction} Delete={Delete}/> : <div className={`${style.main} ${mode === "dark" ? style.darkMain : ""}`}>
+            {activation ? <HandleTransaction mode={mode} activation={activation} Transaction={Transaction} setTransaction={setTransaction} Delete={Delete} categories={categories} setCategories={setCategories} fetchCategories={fetchCategories}/> : <div className={`${style.main} ${mode === "dark" ? style.darkMain : ""}`}>
 
                 <div className={`${style.container} ${mode === "dark" ? style.dcontainer : ""}`}>
                     {
@@ -492,7 +492,6 @@ async function HandleSignUp(previousData, formData, setActivation, isOnline) {
             setActivation(false);
             return { success: false, message: result.message };
         }
-        localStorage.setItem("userId", result.message);
         setActivation(true);
         return { success: true, message: "Signup Successfully." };
     }
@@ -547,7 +546,6 @@ async function HandleLogin(previousData, formData, setActivation, isOnline) {
                 };
             }
 
-            localStorage.setItem("userId", result.message);
             setActivation(true);
 
             return {

@@ -22,6 +22,7 @@ export const UpdateTransaction = async ({
     userId,
     title,
     category,
+    categoryColor,
     money,
     date,
     type
@@ -35,6 +36,7 @@ export const UpdateTransaction = async ({
             $set: {
                 title: title,
                 category: category,
+                categoryColor: categoryColor,
                 money: money,
                 date: date,
                 type: type

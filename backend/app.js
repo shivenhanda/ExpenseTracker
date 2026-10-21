@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import connectDB from "./database/mongodb.js";
 import transactionRouter from "./transactions/transactions.routes.js";
 import userRouter from "./users/users.routes.js";
+import categoryRouter from "./categories/categories.routes.js";
 
 const app = express();
 app.use((req, res, next) => {
@@ -25,6 +26,7 @@ app.use(express.json());
 
 app.use("/", transactionRouter);
 app.use("/", userRouter);
+app.use("/", categoryRouter);
 
 const staticPath = path.join(
     process.cwd(),

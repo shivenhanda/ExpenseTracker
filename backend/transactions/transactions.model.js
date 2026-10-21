@@ -21,6 +21,9 @@ const schema1 = new mongoose.Schema({
     category: {
         type: String
     },
+    categoryColor: {
+        type: String
+    },
     isUpdate: {
         type: Boolean
     },

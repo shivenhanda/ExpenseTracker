@@ -2,11 +2,22 @@ import { useActionState, useContext, useState } from "react"
 import style from "./Calendar.module.css"
 import style1 from './Reports.module.css'
 import Charts from "./Charts"
-import { Online } from './App'
+import { Online, CategoryContext } from './App'
 
 
-export default function Reports({ activation, mode, Transaction, setTransaction, Delete }) {
+export default function Reports({ activation, mode, Transaction, setTransaction, Delete, categories: propCategories }) {
     let isOnline = useContext(Online)
+    const contextCategory = useContext(CategoryContext);
+    const categories = propCategories || (contextCategory && contextCategory.categories) || [];
+
+    const defaultCategories = ["Job", "Home", "Shopping", "Bill", "Education", "Grocery", "Other"];
+    const customCategoryNames = (Array.isArray(categories) ? categories : [])
+        .map(c => typeof c === "string" ? c : (c.name || c.category))
+        .filter(Boolean);
+    const allCategories = [
+        ...defaultCategories,
+        ...customCategoryNames.filter(c => !defaultCategories.includes(c))
+    ];
     const [currentDate] = useState(new Date())
     const [year, setYear] = useState(currentDate.getFullYear());
     const [month, setMonth] = useState(currentDate.getMonth() + 1);
@@ -34,12 +45,12 @@ export default function Reports({ activation, mode, Transaction, setTransaction,
         })
         let Value = {
             ...Transaction[editIndex],
-            ...obj,
-            userId: localStorage.getItem("userId")
+            ...obj
         }
         try {
             const res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/Updates`, {
                 method: "POST",
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json"
                 },
@@ -133,12 +144,21 @@ export default function Reports({ activation, mode, Transaction, setTransaction,
                         </div>
                         <div className={style.formRow}>
                             <label style={{ color: isDark ? "#d1d5db" : "#374151" }}>Category</label>
-                            <input
-                                type="text"
+                            <select
                                 name="category"
-                                placeholder="Enter category"
+                                defaultValue={Transaction[editIndex]?.category || ""}
                                 style={{ background: isDark ? "#111827" : "#f9fafb", color: isDark ? "#f9fafb" : "#111827", borderColor: isDark ? "#374151" : "#d1d5db" }}
-                            />
+                            >
+                                <option value="">-- Keep current {Transaction[editIndex]?.category ? `(${Transaction[editIndex].category})` : ""} --</option>
+                                {(Transaction[editIndex]?.category && !allCategories.includes(Transaction[editIndex].category)
+                                    ? [...allCategories, Transaction[editIndex].category]
+                                    : allCategories
+                                ).map((cat) => (
+                                    <option key={cat} value={cat}>
+                                        {cat}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
                         <div className={style.btnRow}>

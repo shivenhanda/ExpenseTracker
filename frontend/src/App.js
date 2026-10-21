@@ -11,14 +11,41 @@ import About from "./About";
 import ForgetPassword from "./ForgetPassword";
 
 export const Online = createContext(false)
+export const CategoryContext = createContext({ categories: [], setCategories: () => {}, fetchCategories: () => {} })
 export default function App() {
   const [activation, setActivation] = useState(false)
   const [isOnline, setOnline] = useState(navigator.onLine);
   const [Transaction, setTransaction] = useState([])
+  const [categories, setCategories] = useState([]);
   const [mode, setMode] = useState("light");
   function toggleMode() {
     setMode(prev => (prev === "light" ? "dark" : "light"));
   }
+
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch(
+        "https://expense-tracker-two-eta-98.vercel.app/Categories",
+        {
+          method: "GET",
+          credentials: "include"
+        }
+      );
+      const result = await res.json();
+      let list = [];
+      if (Array.isArray(result)) {
+        list = result;
+      } else if (result.success && Array.isArray(result.categories)) {
+        list = result.categories;
+      } else if (result.success && Array.isArray(result.message)) {
+        list = result.message;
+      }
+      setCategories(list);
+    } catch (error) {
+      console.error("Fetch categories error:", error);
+    }
+  };
+
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -34,7 +61,6 @@ export default function App() {
 
         if (result.success) {
           setActivation(true);
-          localStorage.setItem("userId", result.userId)
         } else {
           setActivation(false);
         }
@@ -68,14 +94,13 @@ export default function App() {
       }
       const fetchTransactions = async () => {
         try {
-          const userId = localStorage.getItem("userId");
-          if (!userId) return;
           const res = await fetch(`https://expense-tracker-two-eta-98.vercel.app/ViewData`, {
             method: "POST",
+            credentials: "include",
             headers: {
               "Content-Type": "application/json"
             },
-            body: JSON.stringify({ userId })
+            body: JSON.stringify({})
           });
           const result = await res.json();
           if (result.success && Array.isArray(result.message)) {
@@ -83,6 +108,7 @@ export default function App() {
               (a, b) => new Date(b.date) - new Date(a.date)
             );
             setTransaction(sorted);
+            await fetchCategories();
           } else {
             alert(result.message || "Failed to fetch transactions");
           }
@@ -105,13 +131,13 @@ export default function App() {
     }
     try {
       let define = {
-        id: data._id,
-        userId: localStorage.getItem("userId")
+        id: data._id
       };
       let res = await fetch(
         `https://expense-tracker-two-eta-98.vercel.app/Delete`,
         {
           method: "POST",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json"
           },
@@ -148,53 +174,56 @@ export default function App() {
   }
   const handleLogout = () => {
     localStorage.clear();
+    setCategories([]);
     window.location.href =
       "https://expense-tracker-two-eta-98.vercel.app/logout";
     setActivation(false)
   };
   return (
     <Online.Provider value={isOnline}>
-      <div className="body">
-        <h1 className={`${mode === "dark" ? "dh1" : ""}`}>Expense Tracker</h1>
-        <div className="links">
-          <Link to="/" className={`Dashboard
-        ${mode === "dark" ? "darkLink" : ""}`}>Dashboard</Link>
-          <Link to="/Calendar" className={`Calendar
-        ${mode === "dark" ? "darkLink" : ""}`}>Calendar</Link>
-          <Link to="/Reports" className={`Reports
-        ${mode === "dark" ? "darkLink" : ""}`}>Reports</Link>
-          <Link to="/About" className={`About
-        ${mode === "dark" ? "darkLink" : ""}`}>About</Link>
-          <div className="dropDown">
-            <Link to="#" className={`Settings ${mode === "dark" ? "darkLink" : ""}`}>
-              Settings
-            </Link>
-            <ul className="lists">
-              <li className={`a
-        ${mode === "dark" ? "da" : ""}`} onClick={() => handleLogout()}>Logout</li>
-              <li><Link to="/ResetPassword" className={`a
-        ${mode === "dark" ? "da" : ""}`}>Reset Password</Link></li>
-              <li><Link to="/DeleteAccount" className={`a
-        ${mode === "dark" ? "da" : ""}`}>Delete Account</Link></li>
-            </ul>
+      <CategoryContext.Provider value={{ categories, setCategories, fetchCategories }}>
+        <div className="body">
+          <h1 className={`${mode === "dark" ? "dh1" : ""}`}>Expense Tracker</h1>
+          <div className="links">
+            <Link to="/" className={`Dashboard
+          ${mode === "dark" ? "darkLink" : ""}`}>Dashboard</Link>
+            <Link to="/Calendar" className={`Calendar
+          ${mode === "dark" ? "darkLink" : ""}`}>Calendar</Link>
+            <Link to="/Reports" className={`Reports
+          ${mode === "dark" ? "darkLink" : ""}`}>Reports</Link>
+            <Link to="/About" className={`About
+          ${mode === "dark" ? "darkLink" : ""}`}>About</Link>
+            <div className="dropDown">
+              <Link to="#" className={`Settings ${mode === "dark" ? "darkLink" : ""}`}>
+                Settings
+              </Link>
+              <ul className="lists">
+                <li className={`a
+          ${mode === "dark" ? "da" : ""}`} onClick={() => handleLogout()}>Logout</li>
+                <li><Link to="/ResetPassword" className={`a
+          ${mode === "dark" ? "da" : ""}`}>Reset Password</Link></li>
+                <li><Link to="/DeleteAccount" className={`a
+          ${mode === "dark" ? "da" : ""}`}>Delete Account</Link></li>
+              </ul>
+            </div>
+            <span className="toggle" onClick={toggleMode}>
+              {mode === "light" ? (<i className="fa-regular fa-lightbulb"></i>) : (<i className="fa-solid fa-lightbulb"></i>)}
+            </span>
           </div>
-          <span className="toggle" onClick={toggleMode}>
-            {mode === "light" ? (<i className="fa-regular fa-lightbulb"></i>) : (<i className="fa-solid fa-lightbulb"></i>)}
-          </span>
+          <main id="main-content">
+            <Routes>
+              <Route path="/Calendar" element={<Calendar activation={activation} mode={mode} Transaction={Transaction} setTransaction={setTransaction} Delete={Delete} categories={categories} />} />
+              <Route path="/Reports" element={<Reports activation={activation} mode={mode} Transaction={Transaction} setTransaction={setTransaction} Delete={Delete} categories={categories} />} />
+              <Route path="/About" element={<About mode={mode} />} />
+              <Route path="/ResetPassword" element={<ResetPassword activation={activation} mode={mode} />} />
+              <Route path="/ForgetPassword" element={<ForgetPassword mode={mode} />} />
+              <Route path="/DeleteAccount" element={<DeleteAccount mode={mode} handleLogout={handleLogout} />} />
+              <Route path="*" element={<Home activation={activation} setActivation={setActivation} mode={mode} Transaction={Transaction} setTransaction={setTransaction} Delete={Delete} categories={categories} setCategories={setCategories} fetchCategories={fetchCategories} />} />
+            </Routes>
+          </main>
         </div>
-        <main id="main-content">
-          <Routes>
-            <Route path="/Calendar" element={<Calendar activation={activation} mode={mode} Transaction={Transaction} setTransaction={setTransaction} Delete={Delete} />} />
-            <Route path="/Reports" element={<Reports activation={activation} mode={mode} Transaction={Transaction} setTransaction={setTransaction} Delete={Delete} />} />
-            <Route path="/About" element={<About mode={mode} />} />
-            <Route path="/ResetPassword" element={<ResetPassword activation={activation} mode={mode} />} />
-            <Route path="/ForgetPassword" element={<ForgetPassword mode={mode} />} />
-            <Route path="/DeleteAccount" element={<DeleteAccount mode={mode} handleLogout={handleLogout} />} />
-            <Route path="*" element={<Home activation={activation} setActivation={setActivation} mode={mode} Transaction={Transaction} setTransaction={setTransaction} Delete={Delete} />} />
-          </Routes>
-        </main>
-      </div>
-      <Analytics />
+        <Analytics />
+      </CategoryContext.Provider>
     </Online.Provider>
   )
 }
