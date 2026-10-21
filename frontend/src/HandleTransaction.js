@@ -759,7 +759,7 @@ export default function HandleTransaction({ displayadd, mode, activation, Transa
                 </div>
             </div>
             <AnimatePresence>
-                {showCategoryModal && <CategoryModal />}
+                {showCategoryModal && CategoryModal()}
             </AnimatePresence>
         </div>)
     function AddTransaction({ setShow, pending }) {
