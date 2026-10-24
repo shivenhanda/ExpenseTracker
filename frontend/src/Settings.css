@@ -916,3 +916,145 @@
         justify-content: center;
     }
 }
+
+.security-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+}
+
+.security-action-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    border-radius: 14px;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    border: 1px solid transparent;
+}
+
+.security-action-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.security-action-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.security-action-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.security-action-text h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.security-action-text p {
+    margin: 3px 0 0 0;
+    font-size: 0.82rem;
+}
+
+.security-action-arrow {
+    font-size: 14px;
+    transition: transform 0.2s ease;
+    opacity: 0.6;
+}
+
+.security-action-card:hover .security-action-arrow {
+    transform: translateX(4px);
+    opacity: 1;
+}
+
+.settings-container.light-mode .security-action-card {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    color: #0f172a;
+}
+
+.settings-container.light-mode .security-action-card p {
+    color: #64748b;
+}
+
+.settings-container.light-mode .security-action-icon.reset {
+    background: #e0f2fe;
+    color: #0284c7;
+}
+
+.settings-container.light-mode .security-action-icon.danger {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.settings-container.light-mode .security-action-card.danger {
+    border-color: #fecaca;
+}
+
+.settings-container.light-mode .security-action-card.danger:hover {
+    background: #fff1f2;
+}
+
+.settings-container.dark-mode .security-action-card {
+    background: rgba(30, 41, 59, 0.6);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: #f8fafc;
+}
+
+.settings-container.dark-mode .security-action-card p {
+    color: #94a3b8;
+}
+
+.settings-container.dark-mode .security-action-icon.reset {
+    background: rgba(56, 189, 248, 0.2);
+    color: #38bdf8;
+}
+
+.settings-container.dark-mode .security-action-icon.danger {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+}
+
+.settings-container.dark-mode .security-action-card.danger {
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.settings-container.dark-mode .security-action-card.danger:hover {
+    background: rgba(239, 68, 68, 0.15);
+}
+
+.security-action-card.logout {
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    width: 100%;
+}
+
+.settings-container.light-mode .security-action-icon.logout {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.settings-container.light-mode .security-action-card.logout:hover {
+    background: #fffbeb;
+}
+
+.settings-container.dark-mode .security-action-icon.logout {
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+}
+
+.settings-container.dark-mode .security-action-card.logout:hover {
+    background: rgba(245, 158, 11, 0.15);
+}

@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
+import { Link } from "react-router-dom";
 import "./Settings.css";
 import { CategoryContext, Online } from "./App";
 
-export default function Settings({ mode, activation, setActivation, toggleMode }) {
+export default function Settings({ mode, activation, setActivation, toggleMode, handleLogout }) {
     const isOnline = useContext(Online);
     const { categories, setCategories, fetchCategories } = useContext(CategoryContext);
     const [userData, setUserData] = useState({
@@ -506,6 +507,69 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
                                 <p>No categories found. Add your first category using the form above!</p>
                             </div>
                         )}
+                    </div>
+                </div>
+
+                <div className="settings-card security-card">
+                    <div className="card-title-group">
+                        <div className="card-icon">
+                            <i className="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <div>
+                            <h2>Account Security</h2>
+                            <p>Manage password credentials and account settings</p>
+                        </div>
+                    </div>
+
+                    <div className="security-actions-grid">
+                        <Link to="/ResetPassword" className="security-action-card reset">
+                            <div className="security-action-info">
+                                <div className="security-action-icon reset">
+                                    <i className="fa-solid fa-key"></i>
+                                </div>
+                                <div className="security-action-text">
+                                    <h4>Reset Password</h4>
+                                    <p>Update your account login password</p>
+                                </div>
+                            </div>
+                            <span className="security-action-arrow">
+                                <i className="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </Link>
+
+                        <button
+                            type="button"
+                            className="security-action-card logout"
+                            onClick={handleLogout}
+                        >
+                            <div className="security-action-info">
+                                <div className="security-action-icon logout">
+                                    <i className="fa-solid fa-right-from-bracket"></i>
+                                </div>
+                                <div className="security-action-text">
+                                    <h4>Logout</h4>
+                                    <p>Sign out of your active session</p>
+                                </div>
+                            </div>
+                            <span className="security-action-arrow">
+                                <i className="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </button>
+
+                        <Link to="/DeleteAccount" className="security-action-card danger">
+                            <div className="security-action-info">
+                                <div className="security-action-icon danger">
+                                    <i className="fa-solid fa-trash-can"></i>
+                                </div>
+                                <div className="security-action-text">
+                                    <h4>Delete Account</h4>
+                                    <p>Permanently remove account and data</p>
+                                </div>
+                            </div>
+                            <span className="security-action-arrow">
+                                <i className="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </Link>
                     </div>
                 </div>
 

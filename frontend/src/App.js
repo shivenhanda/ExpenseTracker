@@ -219,7 +219,7 @@ export default function App() {
               <Route path="/ResetPassword" element={<ResetPassword activation={activation} mode={mode} />} />
               <Route path="/ForgetPassword" element={<ForgetPassword mode={mode} />} />
               <Route path="/DeleteAccount" element={<DeleteAccount mode={mode} handleLogout={handleLogout} />} />
-              <Route path="/Settings" element={<Settings activation={activation} setActivation={setActivation} mode={mode} setMode={setMode} toggleMode={toggleMode} />} />
+              <Route path="/Settings" element={<Settings activation={activation} setActivation={setActivation} mode={mode} setMode={setMode} toggleMode={toggleMode} handleLogout={handleLogout} />} />
               <Route path="*" element={<Home activation={activation} setActivation={setActivation} mode={mode} Transaction={Transaction} setTransaction={setTransaction} Delete={Delete} categories={categories} setCategories={setCategories} fetchCategories={fetchCategories} />} />
             </Routes>
           </main>
