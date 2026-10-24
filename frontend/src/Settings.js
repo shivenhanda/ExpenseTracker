@@ -75,7 +75,6 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
         fetchUserData();
     }, [setActivation]);
 
-    // Change theme mode - ONLY theme is permitted to use localStorage
     const handleThemeChange = (targetMode) => {
         if (mode !== targetMode && typeof toggleMode === "function") {
             toggleMode();
