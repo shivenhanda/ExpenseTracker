@@ -5,8 +5,6 @@ import { CategoryContext, Online } from "./App";
 export default function Settings({ mode, activation, setActivation, toggleMode }) {
     const isOnline = useContext(Online);
     const { categories, setCategories, fetchCategories } = useContext(CategoryContext);
-
-    // User State - directly from API/state (no localStorage)
     const [userData, setUserData] = useState({
         name: "",
         email: "",
@@ -14,12 +12,10 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
     });
     const [loadingUser, setLoadingUser] = useState(false);
 
-    // Category State - directly from CategoryContext/API (no localStorage)
     const [newCategoryName, setNewCategoryName] = useState("");
     const [selectedColor, setSelectedColor] = useState("#3B82F6");
     const [categoryPending, setCategoryPending] = useState(false);
 
-    // Notification banner state
     const [notification, setNotification] = useState({ type: "", message: "" });
 
     const isDarkMode = mode === "dark";
@@ -45,7 +41,6 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
         }, 4000);
     };
 
-    // Fetch user details from CheckAuth API (no localStorage)
     useEffect(() => {
         const fetchUserData = async () => {
             try {
@@ -82,8 +77,6 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
         localStorage.setItem("theme", targetMode);
         document.body.className = targetMode;
     };
-
-    // Add Category via backend API
     const handleAddCategory = async (e) => {
         e.preventDefault();
         const trimmed = newCategoryName.trim();
@@ -216,7 +209,7 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
                                 </h3>
                                 <div className="profile-email-row">
                                     <i className="fa-solid fa-envelope" style={{ opacity: 0.7 }}></i>
-                                    <span>{userData.email || "Email unavailable from /CheckAuth"}</span>
+                                    <span>{userData.email}</span>
                                 </div>
                             </div>
                         </div>
@@ -246,7 +239,6 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
                                     <input
                                         type="email"
                                         value={userData.email || ""}
-                                        placeholder="Not returned by /CheckAuth"
                                         readOnly
                                         disabled
                                     />
@@ -255,10 +247,6 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
                         </div>
 
                         <div className="profile-meta-row">
-                            <span className="meta-chip">
-                                <i className="fa-solid fa-shield-halved" style={{ color: "#10b981" }}></i>
-                                Auth Status: {activation ? "Authenticated" : "Not authenticated"}
-                            </span>
                             <span className="meta-chip">
                                 <i className="fa-solid fa-wifi" style={{ color: isOnline ? "#10b981" : "#ef4444" }}></i>
                                 Connectivity: {isOnline ? "Connected" : "Offline"}
