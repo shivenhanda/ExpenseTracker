@@ -28,7 +28,8 @@ export const CheckAuth = async (req, res) => {
         return res.json({
             success: true,
             userId: decoded.userId,
-            name: decoded.name
+            name: decoded.name,
+            email: decoded.email
         });
 
     } catch (error) {
@@ -53,7 +54,8 @@ export const SignUp = async (req, res) => {
         const token = jwt.sign(
             {
                 name: newUser.name,
-                userId: newUser._id
+                userId: newUser._id,
+                email: email
             },
             process.env.JWT_SECRET,
             { expiresIn: "7d" }
@@ -99,7 +101,8 @@ export const login = async (req, res) => {
         const token = jwt.sign(
             {
                 name: existingUser.name,
-                userId: existingUser._id
+                userId: existingUser._id,
+                email: email
             },
             process.env.JWT_SECRET,
             { expiresIn: "7d" }
