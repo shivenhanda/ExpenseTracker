@@ -9,6 +9,7 @@ import ResetPassword from "./ResetPassword";
 import DeleteAccount from "./DeleteAccount";
 import About from "./About";
 import ForgetPassword from "./ForgetPassword";
+import Settings from "./Settings";
 
 export const Online = createContext(false)
 export const CategoryContext = createContext({ categories: [], setCategories: () => {}, fetchCategories: () => {} })
@@ -194,10 +195,12 @@ export default function App() {
             <Link to="/About" className={`About
           ${mode === "dark" ? "darkLink" : ""}`}>About</Link>
             <div className="dropDown">
-              <Link to="#" className={`Settings ${mode === "dark" ? "darkLink" : ""}`}>
+              <Link to="/Settings" className={`Settings ${mode === "dark" ? "darkLink" : ""}`}>
                 Settings
               </Link>
               <ul className="lists">
+                <li><Link to="/Settings" className={`a
+          ${mode === "dark" ? "da" : ""}`}>Settings</Link></li>
                 <li className={`a
           ${mode === "dark" ? "da" : ""}`} onClick={() => handleLogout()}>Logout</li>
                 <li><Link to="/ResetPassword" className={`a
@@ -218,6 +221,7 @@ export default function App() {
               <Route path="/ResetPassword" element={<ResetPassword activation={activation} mode={mode} />} />
               <Route path="/ForgetPassword" element={<ForgetPassword mode={mode} />} />
               <Route path="/DeleteAccount" element={<DeleteAccount mode={mode} handleLogout={handleLogout} />} />
+              <Route path="/Settings" element={<Settings activation={activation} setActivation={setActivation} mode={mode} setMode={setMode} toggleMode={toggleMode} />} />
               <Route path="*" element={<Home activation={activation} setActivation={setActivation} mode={mode} Transaction={Transaction} setTransaction={setTransaction} Delete={Delete} categories={categories} setCategories={setCategories} fetchCategories={fetchCategories} />} />
             </Routes>
           </main>
