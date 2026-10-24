@@ -56,6 +56,8 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
                         email: data.email || "",
                         userId: data.userId || ""
                     });
+                    console.log("email:", data.email);
+                    console.log("userId", data.userId);
                     if (typeof setActivation === "function") {
                         setActivation(true);
                     }
@@ -77,6 +79,7 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
         localStorage.setItem("theme", targetMode);
         document.body.className = targetMode;
     };
+
     const handleAddCategory = async (e) => {
         e.preventDefault();
         const trimmed = newCategoryName.trim();
@@ -149,16 +152,11 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
         <div className="settings-page">
             <div className={`settings-container ${isDarkMode ? "dark-mode" : "light-mode"}`}>
 
-                {/* Header */}
                 <div className="settings-header">
-                    <span className="settings-badge">
-                        <i className="fa-solid fa-gear"></i> Preferences
-                    </span>
                     <h1>Settings</h1>
                     <p>Manage your account profile, theme appearance, and transaction categories</p>
                 </div>
 
-                {/* Notification Banner */}
                 {notification.message && (
                     <div className={`settings-alert ${notification.type}`}>
                         <span>
@@ -171,7 +169,6 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
                     </div>
                 )}
 
-                {/* 1. USER & EMAIL SECTION */}
                 <div className="settings-card profile-card">
                     <div className="card-title-group">
                         <div className="card-icon">
@@ -215,7 +212,6 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
                         </div>
 
                         <div className="profile-fields-grid">
-                            {/* Username Field */}
                             <div className="info-field">
                                 <label>
                                     <i className="fa-solid fa-user"></i> Username
@@ -230,7 +226,6 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
                                 </div>
                             </div>
 
-                            {/* Email Field */}
                             <div className="info-field">
                                 <label>
                                     <i className="fa-solid fa-at"></i> Email Address
@@ -255,7 +250,6 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
                     </div>
                 </div>
 
-                {/* 2. MODE (LIGHT & DARK) SECTION */}
                 <div className="settings-card theme-card-section">
                     <div className="card-title-group">
                         <div className="card-icon">
@@ -268,7 +262,6 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
                     </div>
 
                     <div className="theme-selector-grid">
-                        {/* Light Mode Option */}
                         <div
                             className={`theme-card ${!isDarkMode ? "active" : ""}`}
                             onClick={() => handleThemeChange("light")}
@@ -297,7 +290,6 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
                             </div>
                         </div>
 
-                        {/* Dark Mode Option */}
                         <div
                             className={`theme-card ${isDarkMode ? "active" : ""}`}
                             onClick={() => handleThemeChange("dark")}
@@ -343,7 +335,6 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
                     </div>
                 </div>
 
-                {/* 3. CATEGORY TO ADD SECTION */}
                 <div className="settings-card categories-card">
                     <div className="card-title-group">
                         <div className="card-icon">
@@ -355,7 +346,6 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
                         </div>
                     </div>
 
-                    {/* Add Category Form */}
                     <form onSubmit={handleAddCategory} className="category-add-form">
                         <div className="category-input-row">
                             <input
@@ -379,7 +369,6 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
                             </div>
                         </div>
 
-                        {/* Preset Color Palette */}
                         <div className="palette-presets">
                             <span style={{ fontSize: "0.85rem", fontWeight: "600", marginRight: "4px" }}>
                                 Preset Colors:
@@ -396,7 +385,6 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
                             ))}
                         </div>
 
-                        {/* Real-time Category Preview */}
                         <div className="category-preview-bar">
                             <span>Preview:</span>
                             <span
@@ -408,7 +396,6 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
                             </span>
                         </div>
 
-                        {/* Add Category Button */}
                         <button
                             type="submit"
                             className="add-category-btn"
@@ -428,7 +415,6 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
                         </button>
                     </form>
 
-                    {/* Existing Categories List */}
                     <div className="category-list-section">
                         <div className="category-list-header">
                             <h3>Existing Categories</h3>
