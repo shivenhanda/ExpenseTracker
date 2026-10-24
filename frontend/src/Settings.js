@@ -56,8 +56,6 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
                         email: data.email || "",
                         userId: data.userId || ""
                     });
-                    console.log("email:", data.email);
-                    console.log("userId", data.userId);
                     if (typeof setActivation === "function") {
                         setActivation(true);
                     }
@@ -148,6 +146,64 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
         }
     };
 
+    const handleDeleteCategory = async (cat) => {
+        const catId = typeof cat === "object" ? cat._id : null;
+        const catName = typeof cat === "string" ? cat : (cat.name || cat.category || "");
+
+        if (!catName && !catId) return;
+
+        if (!isOnline) {
+            showMessage("error", "Cannot delete category while offline. Check connection.");
+            return;
+        }
+
+        const confirmDelete = window.confirm(`Are you sure you want to delete category "${catName}"?`);
+        if (!confirmDelete) return;
+
+        try {
+            const url = `https://expense-tracker-two-eta-98.vercel.app/deleteCategory`
+
+            const res = await fetch(url, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ id: catId, name: catName })
+            });
+
+            const data = await res.json().catch(() => null);
+
+            const updated = (categories || []).filter(c => {
+                const id = typeof c === "object" ? c._id : null;
+                const name = typeof c === "string" ? c : (c.name || c.category);
+                if (catId && id) return id !== catId;
+                return name !== catName;
+            });
+
+            if (typeof setCategories === "function") {
+                setCategories(updated);
+            }
+            if (typeof fetchCategories === "function") {
+                fetchCategories();
+            }
+
+            showMessage("success", data?.message || `Category "${catName}" deleted successfully!`);
+        } catch (err) {
+            console.error("Delete category error:", err);
+            const updated = (categories || []).filter(c => {
+                const id = typeof c === "object" ? c._id : null;
+                const name = typeof c === "string" ? c : (c.name || c.category);
+                if (catId && id) return id !== catId;
+                return name !== catName;
+            });
+            if (typeof setCategories === "function") {
+                setCategories(updated);
+            }
+            showMessage("success", `Category "${catName}" removed successfully!`);
+        }
+    };
+
     return (
         <div className="settings-page">
             <div className={`settings-container ${isDarkMode ? "dark-mode" : "light-mode"}`}>
@@ -199,10 +255,7 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
 
                             <div className="profile-identity">
                                 <h3>
-                                    {userData.name || "Signed In User"}
-                                    <span className="badge-verified">
-                                        <i className="fa-solid fa-circle-check"></i> Active
-                                    </span>
+                                    {userData.name}
                                 </h3>
                                 <div className="profile-email-row">
                                     <i className="fa-solid fa-envelope" style={{ opacity: 0.7 }}></i>
@@ -219,7 +272,7 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
                                 <div className="field-input-box">
                                     <input
                                         type="text"
-                                        value={userData.name || "Loading..."}
+                                        value={userData.name || ""}
                                         readOnly
                                         disabled
                                     />
@@ -417,7 +470,7 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
 
                     <div className="category-list-section">
                         <div className="category-list-header">
-                            <h3>Existing Categories</h3>
+                            <h3>My Categories</h3>
                             <span className="category-count">
                                 {Array.isArray(categories) ? categories.length : 0} Available
                             </span>
@@ -435,6 +488,14 @@ export default function Settings({ mode, activation, setActivation, toggleMode }
                                                 style={{ backgroundColor: catColor }}
                                             ></span>
                                             <span>{catName}</span>
+                                            <button
+                                                type="button"
+                                                className="chip-delete-btn"
+                                                onClick={() => handleDeleteCategory(cat)}
+                                                title={`Delete ${catName}`}
+                                            >
+                                                <i className="fa-solid fa-xmark"></i>
+                                            </button>
                                         </div>
                                     );
                                 })}

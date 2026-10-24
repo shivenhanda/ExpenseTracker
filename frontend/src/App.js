@@ -199,8 +199,6 @@ export default function App() {
                 Settings
               </Link>
               <ul className="lists">
-                <li><Link to="/Settings" className={`a
-          ${mode === "dark" ? "da" : ""}`}>Settings</Link></li>
                 <li className={`a
           ${mode === "dark" ? "da" : ""}`} onClick={() => handleLogout()}>Logout</li>
                 <li><Link to="/ResetPassword" className={`a

@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import connectDB from "../database/mongodb.js";
 import CategoryModel from "./categories.model.js";
 import jwt from "jsonwebtoken";
@@ -111,6 +112,61 @@ export const getCategories = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "Failed to fetch categories"
+        });
+    }
+};
+
+export const deleteCategory = async (req, res) => {
+    try {
+        await connectDB();
+        const userId = getAuthenticatedUserId(req);
+        const targetId = req.params?.id || req.body?.id || req.body?.categoryId;
+        const targetName = req.body?.name || req.body?.category;
+
+        if (!userId) {
+            return res.status(401).json({
+                success: false,
+                message: "Authentication required"
+            });
+        }
+
+        let query = { userId };
+        if (targetId && mongoose.Types.ObjectId.isValid(targetId)) {
+            query._id = targetId;
+        } else if (targetName) {
+            query.name = { $regex: new RegExp(`^${targetName.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, "i") };
+        } else {
+            return res.status(400).json({
+                success: false,
+                message: "Category ID or name is required"
+            });
+        }
+
+        let deleted = await CategoryModel.findOneAndDelete(query);
+        if (!deleted && targetName) {
+            deleted = await CategoryModel.findOneAndDelete({
+                userId,
+                name: { $regex: new RegExp(`^${targetName.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, "i") }
+            });
+        }
+
+        if (!deleted) {
+            return res.status(404).json({
+                success: false,
+                message: "Category not found"
+            });
+        }
+
+        return res.json({
+            success: true,
+            message: "Category deleted successfully"
+        });
+
+    } catch (error) {
+        console.error("DELETE CATEGORY ERROR:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to delete category"
         });
     }
 };
