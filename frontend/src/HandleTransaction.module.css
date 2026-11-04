@@ -674,3 +674,23 @@
     border-radius: 50%;
     display: inline-block;
 }
+
+.edit,
+.delete {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    min-height: 40px;
+}
+
+.editIcon,
+.deleteIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    touch-action: manipulation;
+}

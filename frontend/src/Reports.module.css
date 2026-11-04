@@ -135,10 +135,35 @@ h3 {
 @media (max-width: 768px) {
 
     .type,
-    .category,
+    .category {
+        display: none;
+    }
+
+    .data,
+    .headerRow {
+        grid-template-columns: 1fr 1.7fr 1fr 40px 40px;
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
     .edit,
     .delete {
-        display: none;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+        min-height: 40px;
+    }
+
+    .editIcon,
+    .deleteIcon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        touch-action: manipulation;
     }
 
     .data,
@@ -159,11 +184,18 @@ h3 {
 
     .data,
     .headerRow {
-        grid-template-columns: 1fr 1.6fr 1fr;
+        grid-template-columns: minmax(42px, 0.9fr) minmax(70px, 1.5fr) minmax(48px, 0.9fr) 40px 40px;
         padding: 9px 10px;
         gap: 4px;
         margin: 4px 8px;
         border-radius: 12px;
+    }
+
+    .edit,
+    .delete {
+        display: flex !important;
+        min-width: 40px;
+        min-height: 40px;
     }
 
     h3,
